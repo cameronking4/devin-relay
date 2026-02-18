@@ -18,33 +18,33 @@ export type Feature = {
 
 export const features: Feature[] = [
     {
-        title: "Dashboard",
+        title: "Event Sources",
         description:
-            "launchmvpfast provides a powerful dashboard that allows you to manage your SaaS project. With our starterkits, components, and building guides, you can quickly set up a robust dashboard for your project.",
+            "Connect GitHub PR events and generic JSON webhooks. Each trigger gets a unique endpoint with optional HMAC validation. No custom glue code—just point webhooks at Relay and go.",
         image: "https://utfs.io/f/43bbc3c8-cf3c-4fae-a0eb-9183f1779489-294m81.png",
         imageDark:
             "https://utfs.io/f/fddea366-51c6-45f4-bd54-84d273ad9fb9-1ly324.png",
     },
     {
-        title: "Authentication",
+        title: "Webhook Ingestion",
         description:
-            "launchmvpfast provides a secure authentication system that allows users to sign up and log in to your SaaS. With our starterkits, components, and building guides, you can quickly set up a robust authentication system for your project.",
+            "Signature validation, idempotency via delivery ID, and raw payload storage. Events are enqueued async—responds in under 2 seconds. Never blocks on AI calls inside the request lifecycle.",
         image: "https://utfs.io/f/805616c1-22b8-4508-9890-9ba9e2867a41-p24dnn.png",
         imageDark:
             "https://utfs.io/f/9074c0de-d9ea-4c0b-9d49-55dca1253a3f-6ig3yq.png",
     },
     {
-        title: "Organizational level Payments",
+        title: "Trigger Configuration",
         description:
-            "launchmvpfast provides a flexible payment system that allows you to manage your SaaS project's payments. With our starterkits, components, and building guides, you can quickly set up a robust payment system for your project.",
+            "Configure event source, event type, repository filter, and prompt template. Mustache-style interpolation with variable picker UI. Concurrency limits and daily caps keep automation under control.",
         image: "https://utfs.io/f/43bbc3c8-cf3c-4fae-a0eb-9183f1779489-294m81.png",
         imageDark:
             "https://utfs.io/f/fddea366-51c6-45f4-bd54-84d273ad9fb9-1ly324.png",
     },
     {
-        title: "User Management",
+        title: "Devin Integration & Output Routing",
         description:
-            "launchmvpfast provides a user management system that allows you to manage your SaaS project's users. With our starterkits, components, and building guides, you can quickly set up a robust user management system for your project.",
+            "BYOK Devin API key, encrypted at rest. Renders your prompt, creates a Devin session, polls until completion, and posts the output to GitHub PR comments. Trust through visibility—every execution is logged.",
         image: "https://utfs.io/f/72a2c035-69e0-46ca-84a8-446e4dabf77c-3koi6e.png",
         imageDark:
             "https://utfs.io/f/89099112-4273-4375-9e44-1b3394600e21-c6ikq1.png",

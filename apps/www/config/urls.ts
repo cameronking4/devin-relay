@@ -26,9 +26,9 @@ export const urls = {
         base: '/docs',
     },
     socials: {
-        gh: 'https://github.com/alifarooq9/launchmvpfast',
+        gh: 'https://github.com/cameronking4/devin-relay/tree/main',
         suggestions:
-            'https://github.com/alifarooq9/launchmvpfast/discussions/categories/suggestions',
+            'https://github.com/cameronking4/devin-relay/discussions/categories/suggestions',
         x: 'https://x.com/AliFarooqDev',
         ali: 'https://x.com/AliFarooqDev',
     },

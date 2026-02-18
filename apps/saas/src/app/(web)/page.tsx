@@ -14,7 +14,7 @@ import Balancer from "react-wrap-balancer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Build Your MVP in Days, not weeks. Next.js Starter Kit",
+    title: "Relay — Event-Driven AI Orchestration for Engineering Signals",
 };
 
 export const dynamic = "force-static";
@@ -23,16 +23,17 @@ export default async function HomePage() {
     return (
         <WebPageWrapper>
             <WebPageHeader
-                badge="Launch your saas in 24 hours"
-                title="Build Your MVP in Days, not weeks. Open Source Starter Kit"
+                badge="Webhooks → Devin → GitHub"
+                title="Event-Driven AI Orchestration for Engineering Signals"
             >
                 <Balancer
                     as="p"
                     className="text-center text-base text-muted-foreground sm:text-lg"
                 >
-                    Elevate your development game with launchmvpfast! Launch
-                    your apps faster with our SaaS starterkits, components,
-                    building guides, and more. Customizable. Open Source.
+                    Connect a webhook and trigger Devin within 15 minutes without
+                    writing code. Relay converts webhook events into structured
+                    Devin sessions and routes outputs back into engineering
+                    systems.
                 </Balancer>
 
                 <div className="flex items-center gap-3">
@@ -49,9 +50,9 @@ export default async function HomePage() {
                         href={siteUrls.auth.signup}
                         className={buttonVariants()}
                     >
-                        Signup
+                        Get Started
                         <span className="ml-1 font-light italic">
-                            — it&apos;s free
+                            — no code required
                         </span>
                     </Link>
                 </div>

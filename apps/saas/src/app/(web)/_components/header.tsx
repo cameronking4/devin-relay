@@ -19,7 +19,7 @@ export function WebHeader() {
 
                     <Link href={siteUrls.home}>
                         <Icons.logo />
-                        <span className="sr-only">launchmvpfast logo</span>
+                        <span className="sr-only">Relay logo</span>
                     </Link>
                 </div>
 

@@ -25,11 +25,11 @@ export default function ContactPage() {
         <WebPageWrapper>
             <WebPageHeader
                 title={supportPageConfig.title}
-                badge="Get in touch with us"
+                badge="Platform & DevEx support"
             >
                 <p>
-                    If you have any questions or need help, feel free to reach
-                    out to us.
+                    Questions about webhook setup, Devin integration, or
+                    engineering workflows? Reach out.
                 </p>
             </WebPageHeader>
 

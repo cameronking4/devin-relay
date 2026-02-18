@@ -1,3 +1,3 @@
 export const pricingPageConfig = {
-    title: "Pricing",
+    title: "Relay Pricing — Event-Driven AI Orchestration",
 } as const;

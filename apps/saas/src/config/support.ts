@@ -24,9 +24,9 @@ export type SupportInfo = {
 
 export const supportInfos: SupportInfo[] = [
     {
-        title: "Say Hello",
+        title: "General",
         description:
-            "Get in touch with us to learn more about our products and services.",
+            "Questions about Relay, webhook setup, or event-driven AI automation.",
         email: "hello@example.com",
         buttonHref: `mailto:hello@example.com`,
         buttonText: "Get in touch",
@@ -34,23 +34,23 @@ export const supportInfos: SupportInfo[] = [
     {
         title: "Tech Support",
         description:
-            "Get help with any technical issues you are facing. Our team will help you resolve any issues.",
+            "Devin integration, GitHub routing, or execution issues. Our team will help you debug.",
         email: "tech@example.com",
         buttonHref: `mailto:tech@example.com`,
         buttonText: "Get in touch",
     },
     {
-        title: "Sales",
+        title: "Enterprise",
         description:
-            "Get help with any sales-related questions. Our team will help you with any sales inquiries.",
+            "For teams needing higher volume, custom integrations, or dedicated support.",
         email: "sales@example.com",
         buttonHref: `mailto:sales@example.com`,
-        buttonText: "Get in touch",
+        buttonText: "Contact sales",
     },
     {
-        title: "Our Blog",
+        title: "Blog",
         description:
-            "Read our blog to learn more about our products and the latest updates.",
+            "Read about Relay, engineering signals, and event-driven AI orchestration.",
         buttonHref: `${siteUrls.blogs}`,
         buttonText: "Read Blog",
     },

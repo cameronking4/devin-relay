@@ -169,7 +169,7 @@ const dummyAccounts = [
         id: '3',
         name: 'Ali Farooq',
         email: 'ali@example.com',
-        imageUrl: 'https://github.com/alifarooq9.png',
+        imageUrl: 'https://github.com/cameronking4.png',
         initials: 'AF',
     },
 ]

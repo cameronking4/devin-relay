@@ -188,7 +188,7 @@ async function StarCount() {
     async function getGitHubStars() {
         try {
             const response = await fetch(
-                'https://api.github.com/repos/alifarooq9/launchmvpfast',
+                'https://api.github.com/repos/cameronking4/devin-relay',
                 {
                     next: {
                         revalidate: 8400,

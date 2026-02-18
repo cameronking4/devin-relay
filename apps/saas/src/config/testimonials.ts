@@ -19,7 +19,7 @@ type Testimonial = {
 };
 
 export const featuredTestimonial: Testimonial = {
-    body: "Integer id nunc sit semper purus. Bibendum at lacus ut arcu blandit montes vitae auctor libero. Hac condimentum dignissim nibh vulputate ut nunc. Amet nibh orci mi venenatis blandit vel et proin. Non hendrerit in vel ac diam.",
+    body: "Had a webhook to Devin flow running in under 15 minutes. No custom glue code, no Zapier. Just connected GitHub, pasted a prompt template, and Devin started commenting on PRs. Exactly what we needed.",
     author: {
         name: "Brenna Goyette",
         handle: "brennagoyette",
@@ -33,7 +33,7 @@ export const testimonials: Testimonial[][][] = [
     [
         [
             {
-                body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+                body: "We were spending hours on webhook plumbing. Relay handles ingestion, signature validation, and Devin orchestration. Our platform team can finally focus on prompts instead of glue.",
                 author: {
                     name: "Leslie Alexander",
                     handle: "lesliealexander",
@@ -42,7 +42,7 @@ export const testimonials: Testimonial[][][] = [
                 },
             },
             {
-                body: "Aut reprehenderit voluptatem eum asperiores beatae id. Iure molestiae ipsam ut officia rem nulla blanditiis.",
+                body: "The execution dashboard gives us full visibility. Every payload, every rendered prompt, every Devin output. Trust through visibility is exactly right.",
                 author: {
                     name: "Lindsay Walton",
                     handle: "lindsaywalton",
@@ -54,7 +54,7 @@ export const testimonials: Testimonial[][][] = [
         ],
         [
             {
-                body: "Aut reprehenderit voluptatem eum asperiores beatae id. Iure molestiae ipsam ut officia rem nulla blanditiis.",
+                body: "The execution dashboard gives us full visibility. Every payload, every rendered prompt, every Devin output. Trust through visibility is exactly right.",
                 author: {
                     name: "Lindsay Walton",
                     handle: "lindsaywalton",
@@ -68,7 +68,7 @@ export const testimonials: Testimonial[][][] = [
     [
         [
             {
-                body: "Voluptas quos itaque ipsam in voluptatem est. Iste eos blanditiis repudiandae. Earum deserunt enim molestiae ipsum perferendis recusandae saepe corrupti.",
+                body: "BYOK for Devin was the right call. We control our AI keys, Relay handles the orchestration. No vendor lock-in on the AI side.",
                 author: {
                     name: "Tom Cook",
                     handle: "tomcook",
@@ -81,7 +81,7 @@ export const testimonials: Testimonial[][][] = [
         ],
         [
             {
-                body: "Molestias ea earum quos nostrum doloremque sed. Quaerat quasi aut velit incidunt excepturi rerum voluptatem minus harum.",
+                body: "Conditional workflows would be nice later, but for MVP this is perfect. GitHub PR → Devin → comment. Simple, auditable, no surprises.",
                 author: {
                     name: "Leonard Krasner",
                     handle: "leonardkrasner",
@@ -90,7 +90,7 @@ export const testimonials: Testimonial[][][] = [
                 },
             },
             {
-                body: "Voluptas quos itaque ipsam in voluptatem est. Iste eos blanditiis repudiandae. Earum deserunt enim molestiae ipsum perferendis recusandae saepe corrupti.",
+                body: "BYOK for Devin was the right call. We control our AI keys, Relay handles the orchestration. No vendor lock-in on the AI side.",
                 author: {
                     name: "Tom Cook",
                     handle: "tomcook",

@@ -7,19 +7,19 @@ export function Promotion() {
                 as="h2"
                 className="text-center font-heading text-3xl font-bold md:text-5xl"
             >
-                Launch your SaaS in just a few days 🚀
+                Connect a webhook. Trigger Devin. Post to GitHub. 🚀
             </Balancer>
             <Balancer
                 as="p"
                 className="text-center text-base leading-relaxed text-background/70 sm:text-xl"
             >
-                Because launchmvpfast comes with a SaaS starter kit, Blocks and
-                guides, and more, you can launch your SaaS in just a few days.
-                Get started with our starter kits, components, building guides,
-                and more. Customizable.{" "}
+                Relay eliminates custom glue code for webhook hosting, signature
+                validation, prompt rendering, Devin orchestration, and GitHub
+                output. No Zapier clone—it&apos;s{" "}
                 <span className="rounded-[5px] bg-background p-1 font-semibold text-foreground">
-                    Open Source.
-                </span>
+                    AI orchestration infrastructure
+                </span>{" "}
+                for engineering signals.
             </Balancer>
         </section>
     );

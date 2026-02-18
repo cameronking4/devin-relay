@@ -9,7 +9,7 @@
 
 export const siteUrls = {
     publicUrl: "https://saasdemo.launchmvpfast.com",
-    github: "https://github.com/alifarooq9/launchmvpfast",
+    github: "https://github.com/cameronking4/devin-relay/tree/main",
     home: "/",
     pricing: "/pricing",
     features: "/features",

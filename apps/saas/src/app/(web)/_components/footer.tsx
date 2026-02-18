@@ -25,7 +25,7 @@ export function WebFooter() {
                                     className: "w-6 h-6 fill-primary",
                                 }}
                             />
-                            <span className="sr-only">launchmvpfast logo</span>
+                            <span className="sr-only">Relay logo</span>
                         </Link>
                         <Balancer as="p" className="text-muted-foreground">
                             {siteConfig.description}
@@ -54,7 +54,7 @@ export function WebFooter() {
                         >
                             <Icons.gitHub className="h-4 w-4" />
                             <span className="sr-only">
-                                launchmvpfast github
+                                Relay github
                             </span>
                         </Link>
                         <ThemeToggle />
@@ -78,7 +78,7 @@ export function WebFooter() {
                         />
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-sm font-semibold">Usefull links</h3>
+                        <h3 className="text-sm font-semibold">Useful links</h3>
                         {navigation.map((item) => (
                             <FooterLink
                                 key={item.label}

@@ -7,10 +7,10 @@ export function Testimonials() {
         <section className="flex flex-col items-center justify-center gap-20">
             <div className="grid gap-3 ">
                 <h2 className="text-center text-2xl font-bold sm:text-3xl">
-                    Testimonials
+                    What Engineers Are Saying
                 </h2>
                 <p className="text-center text-base text-muted-foreground sm:text-xl">
-                    People have said...
+                    Platform and DevEx teams building with Relay
                 </p>
             </div>
 

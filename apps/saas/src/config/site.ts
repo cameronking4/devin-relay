@@ -5,11 +5,11 @@
  */
 
 export const siteConfig = {
-    name: "Relay (for Devin)",
+    name: "Relay",
     description:
-        "Get your startup off the ground quickly with launchmvpfast! This open source Next.js starter kit provides the foundation you need to build your MVP fast – pre-built components, optimized performance, and ready-to-go styling",
+        "Event-driven AI orchestration for engineering signals. Connect webhooks to Devin, route outputs to GitHub—no glue code required. The AI control plane for platform and DevEx teams.",
     orgImage:
         "https://utfs.io/f/4ae0ddb1-4260-46f5-aa7c-70408cc192b9-aadavt.png",
-    contactEmail: "hello@support.launchmvpfast.com",
-    noReplyEmail: "launchmvpfast@support.launchmvpfast.com",
+    contactEmail: "hello@support.relay.dev",
+    noReplyEmail: "relay@support.relay.dev",
 } as const;

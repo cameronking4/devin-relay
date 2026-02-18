@@ -49,62 +49,62 @@ export const pricingIds = {
 export const pricingFeatures: PricingFeature[] = [
     {
         id: "1",
-        title: "SSO with unlimited social connections and MFA",
+        title: "GitHub integration (pull_request, issue_comment)",
         inludedIn: [pricingIds.free, pricingIds.pro, pricingIds.premium],
     },
     {
         id: "2",
-        title: "Custom domains",
+        title: "Generic JSON webhooks with HMAC validation",
         inludedIn: [pricingIds.free, pricingIds.pro, pricingIds.premium],
     },
     {
         id: "3",
-        title: "Basic role and permission management",
+        title: "Mustache prompt templates with variable picker",
         inludedIn: [pricingIds.free, pricingIds.pro, pricingIds.premium],
     },
     {
         id: "4",
-        title: "View and manage users",
+        title: "Execution dashboard (visibility, latency, errors)",
         inludedIn: [pricingIds.free, pricingIds.pro, pricingIds.premium],
     },
     {
         id: "5",
-        title: "Custom Branding",
+        title: "Schema introspection for custom webhooks",
         inludedIn: [pricingIds.pro, pricingIds.premium],
     },
     {
         id: "7",
-        title: "launchmvpfast Branding",
+        title: "Higher concurrency limit (default 3 → 10)",
         inludedIn: [pricingIds.pro, pricingIds.premium],
     },
     {
         id: "8",
-        title: "Custom Branding",
+        title: "Higher daily execution cap (default 50 → 200)",
         inludedIn: [pricingIds.pro, pricingIds.premium],
     },
     {
         id: "9",
-        title: "Up to 2,000 machine to machine (M2M) connections",
+        title: "Dry-run mode for prompt testing",
         inludedIn: [pricingIds.pro, pricingIds.premium],
     },
     {
         id: "10",
-        title: "launchmvpfast Branding",
+        title: "Up to 100 executions per day",
         inludedIn: [pricingIds.premium],
     },
     {
         id: "11",
-        title: "Custom Branding",
+        title: "Priority execution queue",
         inludedIn: [pricingIds.premium],
     },
     {
         id: "12",
-        title: "Up to 2,000 machine to machine (M2M) connections",
+        title: "Extended session timeout (10 min → 30 min)",
         inludedIn: [pricingIds.premium],
     },
     {
         id: "13",
-        title: "launchmvpfast Branding",
+        title: "Schema version history",
         inludedIn: [pricingIds.premium],
     },
 ];
@@ -112,9 +112,9 @@ export const pricingFeatures: PricingFeature[] = [
 export const pricingPlans: PrincingPlan[] = [
     {
         id: pricingIds.free,
-        title: "Free",
+        title: "Starter",
         description:
-            "Everything you need to get started with 10,500 free MAU. No setup fees, monthly fees, or hidden fees.",
+            "1 project, 3 triggers. Connect a webhook and trigger Devin in 15 minutes. No code required.",
         price: {
             monthly: 0,
             yearly: 0,
@@ -125,16 +125,16 @@ export const pricingPlans: PrincingPlan[] = [
         },
         duration: "Forever",
         highlight:
-            "No credit card required. 30-day money-back guarantee. No hidden fees.",
+            "No credit card required. Default 3 concurrent sessions, 50 executions/day cap.",
         buttonHighlighted: false,
-        uniqueFeatures: ["Up to 2,000 machine to machine (M2M) connections"],
+        uniqueFeatures: ["1 project, 3 triggers, 50 executions/day"],
     },
     {
         id: pricingIds.pro,
         badge: "Most Popular",
         title: "Pro",
         description:
-            "Advanced features to help you scale any business without limits.",
+            "For platform and DevEx teams scaling event-driven AI automation.",
         price: {
             monthly: 99,
             yearly: 999,
@@ -146,15 +146,15 @@ export const pricingPlans: PrincingPlan[] = [
         },
         duration: "per month",
         highlight:
-            "No credit card required. 30-day money-back guarantee. No hidden fees.",
+            "Higher concurrency, schema introspection, dry-run mode. For AI-forward startups (10–200 engineers).",
         buttonHighlighted: true,
-        uniqueFeatures: ["Up to 5,000 machine to machine (M2M) connections"],
+        uniqueFeatures: ["5 projects, 15 triggers, 200 executions/day"],
     },
     {
         id: pricingIds.premium,
-        title: "Premium",
+        title: "Team",
         description:
-            "For teams with more complex needs requiring the highest levels of support.",
+            "For teams with higher volume and extended session timeouts.",
         price: {
             monthly: 199,
             yearly: 1999,
@@ -166,8 +166,8 @@ export const pricingPlans: PrincingPlan[] = [
         },
         duration: "per month",
         highlight:
-            "No credit card required. 30-day money-back guarantee. No hidden fees.",
+            "Priority queue, 30 min timeout, schema version history.",
         buttonHighlighted: false,
-        uniqueFeatures: ["Up to 100,000 machine to machine (M2M) connections"],
+        uniqueFeatures: ["Unlimited projects, 50 triggers, 500 executions/day"],
     },
 ];

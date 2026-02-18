@@ -21,13 +21,13 @@ export default function PricingPage() {
     return (
         <WebPageWrapper>
             <WebPageHeader
-                title="Flexible Pricing Plans for You"
-                badge="Beta Pricing"
+                title="Simple Pricing for Platform & DevEx Teams"
+                badge="MVP"
             >
                 <p className="text-center text-base">
-                    <span>No hidden Fees </span>
+                    <span>No hidden fees </span>
                     <span className="font-light italic text-muted-foreground">
-                        - Cancel at any time
+                        — start with one project, one webhook, one trigger
                     </span>
                 </p>
             </WebPageHeader>
