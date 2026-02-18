@@ -87,5 +87,79 @@ export function generateDatadogPayload(eventType: string): {
     };
   }
 
+  if (eventType === "monitor_no_data") {
+    return {
+      payload: {
+        "@alert": {
+          id: alertId,
+          title: "No Data - API Response Time",
+          text: "Monitor has not received data for 5 minutes",
+          date_happened: Math.floor(Date.now() / 1000),
+          priority: "normal",
+          source_type_name: "monitor",
+          alert_type: "no_data",
+          aggregated_key: `monitor:${monitorId}`,
+          tags: ["env:production", "service:api"],
+        },
+        "@title": "No Data - API Response Time",
+        "@message": "Monitor has not received data for 5 minutes",
+        alert_type: "no_data",
+        alert_transition: "No Data",
+        date: Math.floor(Date.now() / 1000),
+        event_type: "monitor",
+        id: alertId,
+        monitor_id: monitorId,
+        monitor_name: "API Response Time",
+        monitor_priority: 2,
+        msg_title: "No Data - API Response Time",
+        msg_text: "Monitor has not received data for 5 minutes",
+        org: { id: 12345, name: "example-org" },
+        priority: "normal",
+        tags: ["env:production", "service:api"],
+        text: "Monitor has not received data for 5 minutes",
+        title: "No Data - API Response Time",
+        url: `https://app.datadoghq.com/monitors/${monitorId}`,
+      },
+      headers: {},
+    };
+  }
+
+  if (eventType === "monitor_warning") {
+    return {
+      payload: {
+        "@alert": {
+          id: alertId,
+          title: "Warning - High Error Rate",
+          text: "Error rate above 5% threshold",
+          date_happened: Math.floor(Date.now() / 1000),
+          priority: "normal",
+          source_type_name: "monitor",
+          alert_type: "warning",
+          aggregated_key: `monitor:${monitorId}`,
+          tags: ["env:production", "service:api"],
+        },
+        "@title": "Warning - High Error Rate",
+        "@message": "Error rate above 5% threshold (current: 7.2%)",
+        alert_type: "warning",
+        alert_transition: "Warning",
+        date: Math.floor(Date.now() / 1000),
+        event_type: "monitor",
+        id: alertId,
+        monitor_id: monitorId,
+        monitor_name: "High Error Rate",
+        monitor_priority: 2,
+        msg_title: "Warning - High Error Rate",
+        msg_text: "Error rate above 5% threshold (current: 7.2%)",
+        org: { id: 12345, name: "example-org" },
+        priority: "normal",
+        tags: ["env:production", "service:api"],
+        text: "Error rate above 5% threshold (current: 7.2%)",
+        title: "Warning - High Error Rate",
+        url: `https://app.datadoghq.com/monitors/${monitorId}`,
+      },
+      headers: {},
+    };
+  }
+
   throw new Error(`Unknown Datadog event type: ${eventType}`);
 }

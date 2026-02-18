@@ -116,6 +116,37 @@ export function generatePagerDutyPayload(eventType: string): {
       };
     }
 
+    case "incident_escalated": {
+      return {
+        payload: {
+          event: "incident.escalated",
+          created_at: now,
+          incident: {
+            ...baseIncident,
+            status: "triggered",
+            incident_key: `high-cpu-${incidentNumber}`,
+            escalation_level: 2,
+            escalations: [
+              {
+                at: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+                escalation_policy: {
+                  id: baseIncident.escalation_policy.id,
+                  type: "escalation_policy_reference",
+                  summary: "Default Escalation Policy",
+                  html_url: "https://example.pagerduty.com/escalation_policies/xyz",
+                },
+              },
+            ],
+            trigger_summary_data: {
+              subject: "High CPU Usage Alert - Escalated",
+              description: "No acknowledgment within 15 minutes. Escalated to L2 on-call.",
+            },
+          },
+        },
+        headers: {},
+      };
+    }
+
     default:
       throw new Error(`Unknown PagerDuty event type: ${eventType}`);
   }

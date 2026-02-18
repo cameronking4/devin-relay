@@ -4,58 +4,69 @@ export function generateGrafanaPayload(eventType: string): {
   payload: unknown;
   headers: Record<string, string>;
 } {
-  const state = eventType === "alerting" ? "alerting" : "ok";
-  const alertId = randomUUID();
-  const dashboardId = Math.floor(Math.random() * 1000);
-  const panelId = Math.floor(Math.random() * 100);
+  const state = eventType === "alerting" || eventType === "alerting_multi" ? "firing" : "resolved";
+  const isMulti = eventType === "alerting_multi";
+  const now = new Date().toISOString();
+
+  const baseAlert = {
+    status: state,
+    labels: {
+      alertname: "High memory usage",
+      team: "platform",
+      zone: "us-east-1",
+    },
+    annotations: {
+      description: "The system has high memory usage",
+      runbook_url: "https://runbooks.example.com/high-memory",
+      summary: "Memory usage above 85% for zone us-east-1",
+    },
+    startsAt: state === "firing" ? now : new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+    endsAt: state === "resolved" ? now : "0001-01-01T00:00:00Z",
+    generatorURL: "https://grafana.example.com/alerting/1afz29v7z/edit",
+    fingerprint: randomUUID().replace(/-/g, "").slice(0, 16),
+    silenceURL:
+      "https://grafana.example.com/alerting/silence/new?matchers=alertname%3DHigh%20memory%20usage%2Cteam%3Dplatform",
+    dashboardURL: "https://grafana.example.com/d/abc123/monitoring",
+    panelURL: "https://grafana.example.com/d/abc123/monitoring?viewPanel=2",
+    values: { B: 87.2, C: 1 },
+  };
+
+  const cpuAlert = {
+    ...baseAlert,
+    labels: {
+      alertname: "High CPU usage",
+      team: "platform",
+      zone: "eu-west-1",
+    },
+    annotations: {
+      description: "The system has high CPU usage",
+      runbook_url: "https://runbooks.example.com/high-cpu",
+      summary: "CPU usage above 80% for zone eu-west-1",
+    },
+    fingerprint: randomUUID().replace(/-/g, "").slice(0, 16),
+  };
+
+  const alerts = isMulti ? [baseAlert, cpuAlert] : [baseAlert];
 
   const payload = {
-    title: state === "alerting" ? "[Alerting] High CPU Usage" : "[OK] High CPU Usage",
-    state,
-    message: state === "alerting" 
-      ? "CPU usage is above 80%"
-      : "CPU usage has returned to normal",
-    ruleId: 1,
-    ruleName: "High CPU Usage",
-    ruleUrl: `http://grafana:3000/alerting/list`,
-    stateChanges: {
-      previousState: state === "alerting" ? "ok" : "alerting",
-      newState: state,
-    },
-    imageUrl: `http://grafana:3000/render/d-solo/${dashboardId}/dashboard?panelId=${panelId}`,
-    evalMatches: [
-      {
-        value: state === "alerting" ? 85 : 45,
-        metric: "cpu_usage",
-        tags: {
-          instance: "server-01",
-          job: "node-exporter",
-        },
-      },
-    ],
-    dashboardId,
-    panelId,
+    receiver: "Relay Webhook",
+    status: state,
     orgId: 1,
-    tags: {
-      environment: "production",
-      service: "api",
-    },
-    alerts: [
-      {
-        labels: {
-          alertname: "High CPU Usage",
-          severity: "critical",
-          instance: "server-01",
-        },
-        annotations: {
-          summary: "High CPU usage detected",
-          description: "CPU usage is above 80%",
-        },
-        state: state === "alerting" ? "alerting" : "ok",
-        activeAt: new Date().toISOString(),
-        value: state === "alerting" ? "85" : "45",
-      },
-    ],
+    alerts,
+    groupLabels: isMulti ? { team: "platform" } : {},
+    commonLabels: isMulti ? { team: "platform" } : { alertname: baseAlert.labels.alertname, team: baseAlert.labels.team },
+    commonAnnotations: isMulti ? {} : { runbook_url: baseAlert.annotations.runbook_url },
+    externalURL: "https://grafana.example.com/",
+    version: "1",
+    groupKey: isMulti ? "{}:{team=\"platform\"}" : "{}:{}",
+    truncatedAlerts: 0,
+    title: isMulti ? `[FIRING:2] (platform)` : `[${state.toUpperCase()}:1] High memory usage`,
+    state: state === "firing" ? "alerting" : "ok",
+    message: isMulti
+      ? `**Firing**\n\nLabels:\n - alertname = High memory usage\n - team = platform\n - zone = us-east-1\n\nLabels:\n - alertname = High CPU usage\n - team = platform\n - zone = eu-west-1`
+      : state === "firing"
+        ? "**Firing**\n\nLabels:\n - alertname = High memory usage\n - team = platform\n - zone = us-east-1\nSource: https://grafana.example.com/alerting/1afz29v7z/edit"
+        : "**Resolved**\n\nLabels:\n - alertname = High memory usage\n - team = platform",
   };
 
   return {

@@ -22,6 +22,19 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { EVENTS, SERVICES, type Event } from "@/lib/events";
 
+const SERVICE_LABELS: Record<string, string> = {
+  sentry: "Sentry",
+  vercel: "Vercel",
+  prometheus: "Prometheus",
+  datadog: "Datadog",
+  grafana: "Grafana",
+  pagerduty: "PagerDuty",
+  github: "GitHub",
+  stripe: "Stripe",
+  supabase: "Supabase",
+  linear: "Linear",
+};
+
 type ResponseLogEntry = {
   event: string;
   service: string;
@@ -172,7 +185,7 @@ export default function Home() {
                   <SelectContent>
                     {SERVICES.map((service) => (
                       <SelectItem key={service} value={service}>
-                        {service.charAt(0).toUpperCase() + service.slice(1)}
+                        {SERVICE_LABELS[service] ?? service.charAt(0).toUpperCase() + service.slice(1)}
                       </SelectItem>
                     ))}
                   </SelectContent>

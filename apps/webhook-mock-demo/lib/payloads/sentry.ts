@@ -177,6 +177,94 @@ export function generateSentryPayload(eventType: string): {
       };
     }
 
+    case "issue_resolved": {
+      return {
+        payload: {
+          action: "resolved",
+          installation: { uuid: randomUUID() },
+          data: {
+            issue: {
+              url: `${baseUrl}/api/0/organizations/${orgSlug}/issues/${issueId}/`,
+              web_url: `${baseUrl}/${orgSlug}/issues/${issueId}/`,
+              project_url: `${baseUrl}/${orgSlug}/issues/?project=4509877862268928`,
+              id: issueId,
+              shareId: null,
+              shortId: "PROD-2K",
+              title: "TypeError: Cannot read property 'userId' of null",
+              culprit: "auth.middleware.ts:87",
+              permalink: `${baseUrl}/${orgSlug}/issues/${issueId}/`,
+              logger: "node",
+              level: "error",
+              status: "resolved",
+              statusDetails: { inRelease: "1.2.3", inNextRelease: false },
+              substatus: "resolved",
+              isPublic: false,
+              platform: "node",
+              project: {
+                id: "112313123123134",
+                name: projectSlug,
+                slug: projectSlug,
+                platform: "node",
+              },
+              type: "default",
+              metadata: {
+                title: "TypeError: Cannot read property 'userId' of null",
+                sdk: { name: "sentry.javascript.node", name_normalized: "sentry.javascript.node" },
+                severity: 1,
+                severity_reason: "log_level_error",
+                initial_priority: 50,
+              },
+              numComments: 2,
+              assignedTo: { id: randomUUID(), type: "user", email: "dev@example.com", name: "Dev User" },
+              issueType: "error",
+              issueCategory: "error",
+              priority: "medium",
+              count: "47",
+              userCount: 12,
+              firstSeen: new Date(Date.now() - 86400000 * 2).toISOString(),
+              lastSeen: new Date().toISOString(),
+            },
+          },
+          actor: { type: "user", id: randomUUID(), name: "Dev User", email: "dev@example.com" },
+        },
+        headers: { "Sentry-Hook-Resource": "issue" },
+      };
+    }
+
+    case "issue_assigned": {
+      return {
+        payload: {
+          action: "assigned",
+          installation: { uuid: randomUUID() },
+          data: {
+            issue: {
+              url: `${baseUrl}/api/0/organizations/${orgSlug}/issues/${issueId}/`,
+              web_url: `${baseUrl}/${orgSlug}/issues/${issueId}/`,
+              id: issueId,
+              shortId: "API-1Z",
+              title: "Database connection pool exhausted",
+              culprit: "db.js:204",
+              status: "unresolved",
+              substatus: "ongoing",
+              project: { name: projectSlug, slug: projectSlug },
+              assignedTo: {
+                id: randomUUID(),
+                type: "user",
+                email: "oncall@example.com",
+                name: "On-Call Engineer",
+              },
+              priority: "high",
+              count: "156",
+              userCount: 23,
+              lastSeen: new Date().toISOString(),
+            },
+          },
+          actor: { type: "user", id: randomUUID(), name: "Team Lead", email: "lead@example.com" },
+        },
+        headers: { "Sentry-Hook-Resource": "issue" },
+      };
+    }
+
     default:
       throw new Error(`Unknown Sentry event type: ${eventType}`);
   }
