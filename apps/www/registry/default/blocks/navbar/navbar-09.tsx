@@ -17,7 +17,7 @@ import {
     SelectLabel,
 } from '@/registry/default/ui/select'
 import { cn } from '@/lib/utils'
-import { HandbagIcon, SearchIcon } from 'lucide-react'
+import { SearchIcon, ShoppingBag } from 'lucide-react'
 import { SelectTrigger } from '@radix-ui/react-select'
 import { MobileNav } from './mobile-nav'
 // import Link from 'next/link'
@@ -202,7 +202,7 @@ export default function Navbar() {
                         size="sm"
                         className="h-8 cursor-pointer"
                     >
-                        <HandbagIcon />
+                        <ShoppingBag />
                         <span className="text-foreground/90 text-sm">
                             {totalItems}
                         </span>

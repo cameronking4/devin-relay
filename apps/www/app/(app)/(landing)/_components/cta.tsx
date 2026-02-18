@@ -46,11 +46,11 @@ export function CallToAction() {
                     viewport={{ once: true, amount: 0.8 }}
                     className="max-w-2xl"
                 >
-                    Have an Idea?{' '}
+                    Connect a webhook and trigger{' '}
                     <span className="text-foreground/70">
-                        tell us we can build your
+                        Devin within 15 minutes
                     </span>{' '}
-                    MVP 10x Faster.
+                    without writing code.
                 </MotionSectionHeading>
                 <MotionSectionDescription
                     variants={variants}
@@ -59,9 +59,9 @@ export function CallToAction() {
                     custom={0.2}
                     viewport={{ once: true, amount: 0.8 }}
                 >
-                    Skip the hassle of building your MVP from scratch yourself.
-                    Let us take care of your MVP development so you can focus on
-                    growing it.
+                    Relay is AI orchestration infrastructure for engineering
+                    signals. Not a chatbot, PR bot, or Zapier clone—the
+                    beginning of an AI control plane.
                 </MotionSectionDescription>
                 <m.div
                     className="mt-6 flex flex-col justify-center gap-4 sm:flex-row"
@@ -72,21 +72,18 @@ export function CallToAction() {
                     viewport={{ once: true, amount: 0.8 }}
                 >
                     <Link
-                        href="https://cal.com/launchmvpfast/30min"
+                        href={urls.app.relay.signup}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={buttonVariants()}
                     >
-                        Book a Free Consultation
+                        Get Started
                     </Link>
                     <Link
-                        href={urls.socials.gh}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={urls.docs.base}
                         className={buttonVariants({ variant: 'outline' })}
                     >
-                        <Icons.gitHub />
-                        Give us a Star
+                        Documentation
                     </Link>
                 </m.div>
 

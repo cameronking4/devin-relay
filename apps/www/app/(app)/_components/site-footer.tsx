@@ -19,8 +19,8 @@ export function SiteFooter() {
                         {siteConfig.name}
                     </Link>
                     <p className="text-muted-foreground text-sm text-balance">
-                        Build and ship faster. Transform ideas into reality with
-                        pre-built components, blocks, starterkits and more.
+                        Event-driven AI orchestration for engineering signals.
+                        Webhooks → Devin → GitHub. No glue code.
                     </p>
                     <Link
                         href={urls.docs.base}
@@ -116,7 +116,7 @@ export function SiteFooter() {
 
             <div className="font-heading text-foreground/10 pointer-events-none relative hidden w-full overflow-hidden text-center text-[6vw] font-bold whitespace-nowrap select-none md:block">
                 <div className="from-background pointer-events-none absolute inset-0 z-10 bg-gradient-to-b via-transparent to-transparent"></div>
-                Built by Developers for Developers
+                AI Control Plane for Engineering Signals
             </div>
         </footer>
     )

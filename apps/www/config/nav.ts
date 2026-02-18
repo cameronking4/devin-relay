@@ -43,20 +43,21 @@ export const navConfig: NavConfig = {
             subMenu: true,
             items: [
                 {
-                    href: urls.app.components,
-                    label: 'Components',
-                    description: 'Reusable UI components for your web apps.',
-                },
-                {
-                    href: urls.app.starterkits.base,
-                    label: 'Starter Kits',
+                    href: urls.app.relay.dashboard,
+                    label: 'Relay',
                     description:
-                        'Accelerate your MVP with our open-source starter kits.',
+                        'Event-driven AI orchestration for engineering signals.',
                 },
                 {
-                    href: urls.app.blocks,
-                    label: 'Blocks',
-                    description: 'Pre-built sections for faster development.',
+                    href: urls.app.relay.dashboard,
+                    label: 'Triggers',
+                    description:
+                        'Prompt templates, Devin integration, GitHub output.',
+                },
+                {
+                    href: urls.docs.base,
+                    label: 'Docs',
+                    description: 'Setup guides and API reference.',
                 },
             ],
         },
@@ -84,16 +85,16 @@ export const navConfig: NavConfig = {
     footerNav: {
         everythingByUs: [
             {
+                label: 'Relay',
+                href: urls.app.relay.dashboard,
+            },
+            {
+                label: 'Documentation',
+                href: urls.docs.base,
+            },
+            {
                 label: 'Components',
                 href: urls.app.components,
-            },
-            {
-                label: 'Starter Kits',
-                href: urls.app.starterkits.base,
-            },
-            {
-                label: 'Blocks',
-                href: urls.app.blocks,
             },
         ],
         pro: [

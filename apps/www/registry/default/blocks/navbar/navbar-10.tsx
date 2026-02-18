@@ -19,9 +19,9 @@ import {
 import { cn } from '@/lib/utils'
 import {
     ChevronDownIcon,
-    HandbagIcon,
     InfoIcon,
     SearchIcon,
+    ShoppingBag,
 } from 'lucide-react'
 import { SelectTrigger } from '@radix-ui/react-select'
 import UserProfileDropdown from './user-profile-dropdown'
@@ -215,7 +215,7 @@ export default function Navbar() {
                         size="sm"
                         className="h-8 cursor-pointer"
                     >
-                        <HandbagIcon />
+                        <ShoppingBag />
                         <span className="text-foreground/90 text-sm">
                             {totalItems}
                         </span>

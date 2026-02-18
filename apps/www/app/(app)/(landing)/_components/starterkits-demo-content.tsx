@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { memo, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Autoplay from 'embla-carousel-autoplay'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import * as m from 'motion/react-m'
@@ -81,7 +81,7 @@ export function StarterkitsDemoContent() {
     )
 }
 
-const StarterKitItem = memo(function StarterKitItem({
+function StarterKitItem({
     image,
     index,
     current,
@@ -148,7 +148,7 @@ const StarterKitItem = memo(function StarterKitItem({
                         >
                             <div className="flex flex-col items-start gap-3 px-5 py-4">
                                 <p className="text-base font-semibold text-white">
-                                    SaaS Starter Kit
+                                    Relay Dashboard
                                 </p>
                                 <div className="flex items-center gap-2">
                                     <Link
@@ -187,4 +187,4 @@ const StarterKitItem = memo(function StarterKitItem({
             </Card>
         </CarouselItem>
     )
-})
+}

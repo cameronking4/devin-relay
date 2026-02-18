@@ -15,7 +15,6 @@ import {
     BookOpenIcon,
     ChevronsUpDownIcon,
     CircleArrowOutUpRightIcon,
-    CircleFadingArrowUpIcon,
     CloudSunIcon,
     CreditCardIcon,
     GiftIcon,
@@ -24,6 +23,7 @@ import {
     LogOutIcon,
     StarIcon,
     UserRoundIcon,
+    Users,
 } from 'lucide-react'
 import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu'
 import { Badge } from '@/registry/default/ui/badge'
@@ -279,7 +279,7 @@ export default function UserProfileDropdown({
                             onSelect={(e) => e.preventDefault()}
                         >
                             <SelectTrigger className="w-full">
-                                <CircleFadingArrowUpIcon />
+                                <Users className="size-4" />
                                 <span>Switch Account</span>
 
                                 <ChevronsUpDownIcon className="ml-auto" />

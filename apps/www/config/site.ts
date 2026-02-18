@@ -1,6 +1,6 @@
 export const siteConfig = {
-    name: 'Launch MVP Fast',
-    noSpacesName: 'LaunchMVPFast',
+    name: 'Relay',
+    noSpacesName: 'Relay',
     dbPrefix: 'lmf_',
     ogImages: {
         base: 'https://www.launchmvpfast.com/og.png',

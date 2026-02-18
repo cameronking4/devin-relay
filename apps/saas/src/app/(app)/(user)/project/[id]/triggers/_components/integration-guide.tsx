@@ -117,10 +117,9 @@ const INTEGRATIONS = [
 export function IntegrationGuide({ triggerId }: { triggerId?: string }) {
     const origin =
         typeof window !== "undefined" ? window.location.origin : "";
-    const webhookUrl = triggerId
-        ? `${origin}/api/webhook/custom/${triggerId}`
-        : "https://your-domain.com/api/webhook/custom/{triggerId}";
-
+        const webhookUrl = triggerId
+            ? `${origin}/api/webhook/custom/${triggerId}`
+            : `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/webhook/custom/{triggerId}`;
     return (
         <Card>
             <CardHeader>

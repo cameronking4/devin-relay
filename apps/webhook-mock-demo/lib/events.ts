@@ -98,4 +98,4 @@ export const EVENTS: ServiceEvents = {
   ],
 };
 
-export const SERVICES = Object.keys(EVENTS) as Array<keyof typeof EVENTS>;
+export const SERVICES = Object.keys(EVENTS) as string[];

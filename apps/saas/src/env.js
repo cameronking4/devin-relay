@@ -37,14 +37,14 @@ export const env = createEnv({
             : z.string().url(),
         GOOGLE_CLIENT_ID: isDev ? z.string().optional() : z.string(),
         GOOGLE_CLIENT_SECRET: isDev ? z.string().optional() : z.string(),
-        GITHUB_CLIENT_ID: isDev ? z.string().optional() : z.string(),
-        GITHUB_CLIENT_SECRET: isDev ? z.string().optional() : z.string(),
+        GITHUB_CLIENT_ID: z.string().optional(),
+        GITHUB_CLIENT_SECRET: z.string().optional(),
         RESEND_API_KEY: isDev ? z.string().optional() : z.string(),
         UPLOADTHING_SECRET: isDev ? z.string().optional() : z.string(),
         UPLOADTHING_ID: isDev ? z.string().optional() : z.string(),
-        LEMONSQUEEZY_API_KEY: isDev ? z.string().optional() : z.string(),
-        LEMONSQUEEZY_STORE_ID: isDev ? z.string().optional() : z.string(),
-        LEMONSQUEEZY_WEBHOOK_SECRET: isDev ? z.string().optional() : z.string(),
+        LEMONSQUEEZY_API_KEY: z.string().optional(),
+        LEMONSQUEEZY_STORE_ID: z.string().optional(),
+        LEMONSQUEEZY_WEBHOOK_SECRET: z.string().optional(),
         REDIS_URL: isDev
             ? z.string().url().optional().default("redis://localhost:6379")
             : z.string().url(),
@@ -58,7 +58,7 @@ export const env = createEnv({
      */
     client: {
         // NEXT_PUBLIC_CLIENTVAR: z.string(),
-        NEXT_PUBLIC_POSTHOG_KEY: isDev ? z.string().optional() : z.string(),
+        NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
         NEXT_PUBLIC_WAITLIST_MODE: z.enum(["on", "off"]).default("off"),
         NEXT_PUBLIC_MAINTENANCE_MODE: z.enum(["on", "off"]).default("off"),
     },

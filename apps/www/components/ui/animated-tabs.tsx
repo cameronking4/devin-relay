@@ -70,26 +70,32 @@ function Tabs({
     )
 }
 
-const TabsList = forwardRef<
-    React.ElementRef<typeof TabsPrimitive.List>,
-    React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-    <TabsPrimitive.List
-        ref={ref}
-        data-slot="tabs-list"
-        className={cn(
-            'bg-muted text-muted-foreground inline-flex h-fit w-fit items-center justify-center rounded-lg p-[3px]',
-            className
-        )}
-        {...props}
-    />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+function TabsList({
+    className,
+    children,
+    ...props
+}: React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & {
+    children?: React.ReactNode
+}) {
+    return (
+        <TabsPrimitive.List
+            data-slot="tabs-list"
+            className={cn(
+                'bg-muted text-muted-foreground inline-flex h-fit w-fit items-center justify-center rounded-lg p-[3px]',
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </TabsPrimitive.List>
+    )
+}
 
-const TabsTrigger = forwardRef<
-    React.ElementRef<typeof TabsPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, children, ...props }, ref) => {
+function TabsTrigger({
+    className,
+    children,
+    ...props
+}: React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>) {
     const { value } = useTabs()
     const isActive = value === props.value
 
@@ -102,7 +108,6 @@ const TabsTrigger = forwardRef<
                 />
             )}
             <TabsPrimitive.Trigger
-                ref={ref}
                 data-slot="tabs-trigger"
                 className={cn(
                     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:text-foreground text-foreground dark:text-muted-foreground relative z-10 inline-flex h-[calc(100%-1px)] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -114,8 +119,7 @@ const TabsTrigger = forwardRef<
             </TabsPrimitive.Trigger>
         </div>
     )
-})
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+}
 
 const TabsContent = forwardRef<
     React.ElementRef<typeof TabsPrimitive.Content>,

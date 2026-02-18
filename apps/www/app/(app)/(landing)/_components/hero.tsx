@@ -40,7 +40,8 @@ const variants = {
     }),
 }
 
-const PageDescriptionMotion = m.create(PageDescription)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- React 19 + motion type compatibility
+const PageDescriptionMotion = m.create(PageDescription as any)
 
 export function Hero() {
     const isMobile = useIsMobile()
@@ -54,9 +55,9 @@ export function Hero() {
                 custom={{ delay: 0.5 }}
             >
                 <Announcement
-                    url={urls.app.pricing}
-                    text="Want us to build your MVP?"
-                    actionText="Contact us"
+                    url={urls.app.relay.signup}
+                    text="Connect a webhook and trigger Devin in 15 minutes"
+                    actionText="Get Started"
                 />
             </m.div>
 
@@ -68,10 +69,10 @@ export function Hero() {
                     speedSegment={h1Transition.speedSegment}
                     delay={h1Transition.delay}
                 >
-                    <span className="text-foreground">Launch</span> your{' '}
-                    <span className="text-foreground">MVP</span> in{' '}
-                    <span className="text-foreground">days,</span> not
-                    months{' '}
+                    <span className="text-foreground">Event-Driven</span> AI{' '}
+                    <span className="text-foreground">Orchestration</span> for{' '}
+                    <span className="text-foreground">Engineering</span>{' '}
+                    Signals{' '}
                 </TextEffect>
             </PageHeading>
             <PageDescriptionMotion
@@ -80,15 +81,13 @@ export function Hero() {
                 animate="visible"
                 custom={{ delay: 0.8 }}
             >
-                <span className="text-foreground font-bold">Accelerate</span>{' '}
-                your <span className="text-foreground font-bold">MVP</span> with{' '}
-                <span className="text-foreground font-bold">free</span>,{' '}
-                <span className="text-foreground font-bold">starter kits</span>{' '}
-                and reusable{' '}
-                <span className="text-foreground font-bold">components</span>—go
-                from <span className="text-foreground font-bold">idea</span> to{' '}
-                <span className="text-foreground font-bold">prototype</span> in{' '}
-                <span className="text-foreground font-bold">days</span>.
+                <span className="text-foreground font-bold">Relay</span> converts{' '}
+                <span className="text-foreground font-bold">webhook events</span>{' '}
+                into structured{' '}
+                <span className="text-foreground font-bold">Devin</span> sessions
+                and routes outputs back into{' '}
+                <span className="text-foreground font-bold">engineering systems</span>.
+                No custom glue code required.
             </PageDescriptionMotion>
             <PageActions>
                 <m.div
@@ -98,7 +97,7 @@ export function Hero() {
                     custom={{ delay: 1 }}
                 >
                     <Link
-                        href={urls.app.components}
+                        href={urls.app.relay.signup}
                         className={cn(
                             buttonVariants({
                                 size: 'xl',
@@ -109,7 +108,7 @@ export function Hero() {
                     >
                         Get Started —{' '}
                         <span className="font-normal italic">
-                            it&apos;s free
+                            no code required
                         </span>
                     </Link>
                 </m.div>
@@ -129,7 +128,7 @@ export function Hero() {
                             })
                         )}
                     >
-                        Want Us to Build?
+                        View Pricing
                     </Link>
                 </m.div>
             </PageActions>

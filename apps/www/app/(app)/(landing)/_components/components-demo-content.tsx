@@ -13,7 +13,6 @@ import {
     CarouselItem,
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import { memo } from 'react'
 import Autoplay from 'embla-carousel-autoplay'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
@@ -68,7 +67,7 @@ export function ComponentsDemoContent() {
     )
 }
 
-const ComponentItem = memo(function ComponentItem({
+function ComponentItem({
     component,
 }: {
     component: Component
@@ -101,4 +100,4 @@ const ComponentItem = memo(function ComponentItem({
             </Card>
         </CarouselItem>
     )
-})
+}

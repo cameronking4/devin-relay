@@ -10,8 +10,12 @@ export const env = createEnv({
         NODE_ENV: z
             .enum(['development', 'test', 'production'])
             .default('development'),
-        DATABASE_URL: z.string().url(),
-        RESEND_API_KEY: z.string().min(1),
+        DATABASE_URL: z
+            .string()
+            .url()
+            .optional()
+            .default('postgres://localhost:5432/placeholder'),
+        RESEND_API_KEY: z.string().min(1).optional().default('re_placeholder'),
     },
 
     /**

@@ -7,7 +7,7 @@
   "files": [
     {
       "path": "registry/default/hooks/use-is-mac.ts",
-      "content": "import { useEffect, useState } from 'react'\r\n\r\nexport function useIsMac() {\r\n    const [isMac, setIsMac] = useState(true)\r\n\r\n    useEffect(() => {\r\n        setIsMac(navigator.platform.toUpperCase().includes('MAC'))\r\n    }, [])\r\n\r\n    return isMac\r\n}\r\n",
+      "content": "import { useEffect, useState } from 'react'\n\nexport function useIsMac() {\n    const [isMac, setIsMac] = useState(true)\n\n    useEffect(() => {\n        setIsMac(navigator.platform.toUpperCase().includes('MAC'))\n    }, [])\n\n    return isMac\n}\n",
       "type": "registry:hook"
     }
   ]

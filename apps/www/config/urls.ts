@@ -2,6 +2,10 @@ export const urls = {
     base: '/',
     public: 'https://launchmvpfast.com',
     app: {
+        relay: {
+            signup: 'https://saas.launchmvpfast.com/auth/signup',
+            dashboard: 'https://saas.launchmvpfast.com',
+        },
         components: '/components',
         starterkits: {
             base: '/open-source-starterkits',

@@ -33,7 +33,7 @@ function flow({ colors }: { colors: string[] }) {
 export function Banner() {
     return (
         <Link
-            href={urls.app.earlyAccess}
+            href={urls.app.relay.signup}
             className="bg-background relative container flex h-12 w-full items-center justify-center gap-2 text-center text-sm font-semibold"
         >
             {flow({
@@ -50,8 +50,8 @@ export function Banner() {
 
             <div className="z-20 flex items-center justify-center gap-1.5">
                 <p>
-                    More components, starterkits, and blocks are coming soon! —
-                    Get early access
+                    Event-driven AI orchestration for engineering signals. —
+                    Get started
                 </p>
             </div>
         </Link>

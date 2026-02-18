@@ -52,16 +52,18 @@ const floatingAnimation = {
         }) satisfies Transition,
 }
 
-const MotionTerminal = m.create(Terminal)
-const MotionMockBrowser = m.create(MockBrowser)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- React 19 + motion type compatibility
+const MotionTerminal = m.create(Terminal as any)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- React 19 + motion type compatibility
+const MotionMockBrowser = m.create(MockBrowser as any)
 
 export function Benefits() {
     return (
         <SectionHeader>
-            <SectionHeading>Why use us?</SectionHeading>
+            <SectionHeading>Why Relay?</SectionHeading>
             <SectionDescription>
-                Ready to copy and paste components, blocks, templates, and
-                starterkits.
+                AI orchestration infrastructure for engineering signals. No glue
+                code. Full visibility.
             </SectionDescription>
 
             <SectionContent className="border-border bg-background divide-border divide grid grid-cols-1 gap-0 overflow-hidden rounded-xl border md:grid-cols-2">
@@ -69,14 +71,12 @@ export function Benefits() {
                     description={
                         <span>
                             <span className="text-foreground">
-                                Easy to install in your codebase
+                                No custom glue code
                             </span>{' '}
                             <span className="text-foreground/60">
-                                – Copy and paste, or install it with{' '}
-                                <span className="text-foreground">
-                                    Shadcn CLI
-                                </span>
-                                .
+                                – Relay handles webhook hosting, signature
+                                validation, payload transformation, Devin
+                                orchestration, and GitHub output routing.
                             </span>
                         </span>
                     }
@@ -92,9 +92,9 @@ export function Benefits() {
                         >
                             &gt;{' '}
                             <span className="text-muted-foreground">
-                                git clone
+                                Webhook received
                             </span>{' '}
-                            https://github.com/alifarooq9/launchmvpfast
+                            → validate + dedupe → enqueue
                         </MotionTerminal>
                         <MotionTerminal
                             className="ml-auto max-w-[90%]"
@@ -105,29 +105,29 @@ export function Benefits() {
                         >
                             &gt;{' '}
                             <span className="text-muted-foreground">
-                                npx shadcn@latest add
+                                Render prompt
                             </span>{' '}
-                            https://launchmvpfast.com/r/prompt-input-01.json
+                            → Devin session → GitHub comment
                         </MotionTerminal>
                     </div>
                 </BenefitCard>
                 <BenefitCard
                     description={
                         <span>
-                            <span className="text-foreground">Open Source</span>{' '}
+                            <span className="text-foreground">
+                                Trust through visibility
+                            </span>{' '}
                             <span className="text-foreground/60">
-                                – Free to use and modify under{' '}
-                                <span className="text-foreground">
-                                    MIT License
-                                </span>
-                                .
+                                – Full execution logs: raw payload, rendered
+                                prompt, Devin output, latency, and errors for
+                                every run.
                             </span>
                         </span>
                     }
                     className="border-b"
                 >
                     <MotionMockBrowser
-                        url="git.new/launchmvpfast"
+                        url="relay.app/executions"
                         animate={floatingAnimation.animate}
                         transition={floatingAnimation.transition(Math.random())}
                     >
@@ -155,11 +155,11 @@ export function Benefits() {
                     description={
                         <span>
                             <span className="text-foreground">
-                                Fast Development
+                                15-minute setup
                             </span>{' '}
                             <span className="text-foreground/60">
-                                – Build your MVP quickly with pre-built
-                                components, blocks, starterkits, and more.
+                                – Connect a webhook, configure a prompt template,
+                                and trigger Devin—no code written.
                             </span>
                         </span>
                     }
@@ -171,14 +171,12 @@ export function Benefits() {
                     description={
                         <span>
                             <span className="text-foreground">
-                                Ready to Use
+                                GitHub + generic webhooks
                             </span>{' '}
                             <span className="text-foreground/60">
-                                – Complete UI components and{' '}
-                                <span className="text-foreground">
-                                    production ready starter kits
-                                </span>{' '}
-                                included.
+                                – Native support for PR events, issue comments,
+                                and custom JSON webhooks with schema
+                                introspection.
                             </span>
                         </span>
                     }
@@ -200,7 +198,7 @@ function ReadyToUseContent() {
             >
                 <CopyIcon className="size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Copy code from launchmvpfast.com
+                    Create trigger with prompt template
                 </div>
             </m.div>
             <m.div
@@ -210,7 +208,7 @@ function ReadyToUseContent() {
             >
                 <ClipboardPasteIcon className="size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Paste into your project
+                    Webhook receives event payload
                 </div>
             </m.div>
             <m.div
@@ -220,7 +218,7 @@ function ReadyToUseContent() {
             >
                 <GitBranchIcon className="size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Clone & customize full starter kits
+                    Devin runs & posts to GitHub
                 </div>
             </m.div>
         </div>
@@ -240,7 +238,7 @@ function FastDevelopmentCardContent() {
                 </div>
                 <GitBranchIcon className="size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Clone starter-kit of your need
+                    Add Devin API key & GitHub App
                 </div>
             </m.div>
             <m.div
@@ -253,7 +251,7 @@ function FastDevelopmentCardContent() {
                 </div>
                 <CodeIcon className="size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Add your own features
+                    Configure prompt template
                 </div>
             </m.div>
             <m.div
@@ -266,7 +264,7 @@ function FastDevelopmentCardContent() {
                 </div>
                 <Icons.vercel className="fill-foreground size-3" />
                 <div className="font-mono text-sm font-medium">
-                    Deploy your MVP
+                    Open PR → Devin comments
                 </div>
             </m.div>
         </div>

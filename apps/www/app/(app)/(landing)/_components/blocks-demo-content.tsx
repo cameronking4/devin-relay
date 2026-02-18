@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { memo, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Autoplay from 'embla-carousel-autoplay'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import * as m from 'motion/react-m'
@@ -96,7 +96,7 @@ export function BlocksDemoContent() {
     )
 }
 
-const BlocksItem = memo(function BlocksItem({
+function BlocksItem({
     block,
     index,
     current,
@@ -199,4 +199,4 @@ const BlocksItem = memo(function BlocksItem({
             </Card>
         </CarouselItem>
     )
-})
+}

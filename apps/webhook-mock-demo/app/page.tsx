@@ -265,7 +265,7 @@ export default function Home() {
                           >
                             {entry.status} {entry.statusText}
                           </div>
-                          {entry.body && (
+                          {entry.body != null ? (
                             <details className="mt-2">
                               <summary className="cursor-pointer text-xs text-muted-foreground">
                                 View response body
@@ -274,7 +274,7 @@ export default function Home() {
                                 {JSON.stringify(entry.body, null, 2)}
                               </pre>
                             </details>
-                          )}
+                          ) : null}
                         </div>
                       </Card>
                     ))}

@@ -1,5 +1,5 @@
 {
-    "name": "www",
+    "name": "devin-relay-www",
     "version": "0.1.0",
     "private": true,
     "scripts": {

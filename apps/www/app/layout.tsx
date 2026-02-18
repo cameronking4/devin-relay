@@ -8,26 +8,24 @@ import { urls } from '@/config/urls'
 import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
-    title: `${siteConfig.noSpacesName}: Open Source Starter Kits & UI Components`,
+    title: `${siteConfig.noSpacesName} — Event-Driven AI Orchestration for Engineering Signals`,
     description:
-        'Build faster with free, open-source starter kits, UI components & blocks from LaunchMVPFast. Accelerate your MVP launch today.',
+        'Relay converts webhook events into structured Devin sessions and routes outputs back into engineering systems. Connect a webhook and trigger Devin within 15 minutes without writing code.',
     metadataBase: new URL(urls.public),
     keywords: [
-        'Launch MVP Fast', // Brand
-        'Next.js Starter Kit', // Primary Offering & Tech
-        'Open Source Starter Kit', // Key USP & Offering Type
-        'SaaS MVP', // Target Use Case
-        'Reusable UI Components', // Secondary Offering
-        'Tailwind CSS Components', // Specific Tech for UI
+        'Relay', // Brand
+        'Event-Driven AI', // Primary Offering
+        'AI Orchestration', // Core Capability
+        'Webhook to Devin', // Key Flow
+        'Engineering Signals', // Target Use Case
+        'GitHub Integration', // Native Integration
+        'Devin', // AI Provider
+        'Platform Engineering', // Target ICP
+        'DevEx', // Target ICP
         'Next.js', // Core Technology
-        'React', // Underlying Technology
-        'Tailwind CSS', // Core Styling Technology
-        'Drizzle ORM', // Key Backend Technology
-        'NextAuth.js', // Key Authentication Technology
-        'MVP Development', // Core Service/Benefit
-        'Open Source', // Key Value Proposition
-        'Better Auth',
-        'Shadcn',
+        'TypeScript', // Core Technology
+        'PostgreSQL', // Backend
+        'Redis', // Queue Layer
     ],
     authors: [
         {
@@ -42,7 +40,7 @@ export const metadata: Metadata = {
         url: urls.public,
         title: siteConfig.name,
         description:
-            'Build faster with free, open-source starter kits, UI components & blocks from LaunchMVPFast. Accelerate your MVP launch today.',
+            'Relay converts webhook events into structured Devin sessions and routes outputs back into engineering systems. Connect a webhook and trigger Devin within 15 minutes without writing code.',
         siteName: siteConfig.name,
         images: [
             {
@@ -57,7 +55,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: siteConfig.name,
         description:
-            'Build faster with free, open-source starter kits, UI components & blocks from LaunchMVPFast. Accelerate your MVP launch today.',
+            'Relay converts webhook events into structured Devin sessions and routes outputs back into engineering systems. Connect a webhook and trigger Devin within 15 minutes without writing code.',
         images: [siteConfig.ogImages.base],
         creator: '@AliFarooqDev',
     },

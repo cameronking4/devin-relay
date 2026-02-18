@@ -1,7 +1,6 @@
 import { BorderTrail } from '@/components/ui/border-trail'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { forwardRef } from 'react'
 
 type PageContainerProps = {
     as?: React.ElementType
@@ -63,13 +62,13 @@ export function PageHeading({
         </h1>
     )
 }
-export const PageDescription = forwardRef<
-    HTMLParagraphElement,
-    React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
+export function PageDescription({
+    className,
+    children,
+    ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
     return (
         <p
-            ref={ref}
             className={cn(
                 'text-muted-foreground max-w-2xl text-center font-medium text-balance md:text-lg lg:text-xl',
                 className
@@ -79,9 +78,7 @@ export const PageDescription = forwardRef<
             {children}
         </p>
     )
-})
-
-PageDescription.displayName = 'PageDescription'
+}
 
 export function PageActions({
     className,

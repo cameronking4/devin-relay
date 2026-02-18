@@ -8,9 +8,9 @@ import { Benefits } from '@/app/(app)/(landing)/_components/benefits'
 import { PageContainer } from '@/app/(app)/_components/page-header'
 
 export const metadata: Metadata = {
-    title: `${siteConfig.name} | Open Source Starter Kits & UI Components`,
+    title: `${siteConfig.name} — Event-Driven AI Orchestration for Engineering Signals`,
     description:
-        'Build and launch your SaaS MVP faster with our open-source starter kits, reusable components, and expert developer services. Get started today!',
+        'Relay converts webhook events into structured Devin sessions and routes outputs back into engineering systems. Connect a webhook and trigger Devin within 15 minutes without writing code.',
 }
 
 export default function MarketingPage() {

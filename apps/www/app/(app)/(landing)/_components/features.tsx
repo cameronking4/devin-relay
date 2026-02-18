@@ -91,59 +91,60 @@ function FeatureCard({
 }
 
 export function Features() {
-    const startkitsFeatures = [
-        'Next.js 15 + TypeScript with Tailwind v4 integration.',
-        'ShadCN UI components with dark/light mode support.',
-        'Authentication, database and payments and more pre-configured out of the box.',
+    const eventSourcesFeatures = [
+        'GitHub: pull_request.opened, pull_request.synchronize, issue_comment.created.',
+        'Generic webhook: JSON POST, unique endpoint per trigger, optional HMAC validation.',
+        'Schema introspection: Flattened field paths, click-to-insert variables.',
     ]
 
-    const componentsFeatures = [
-        'Built with ShadCN UI components and Tailwind CSS blocks for pixel-perfect design.',
-        'TypeScript-ready: Fully typed with JSDoc comments and Storybook stories.',
-        'Reusable components: Easily integrate into your Next.js projects with minimal setup.',
+    const triggerConfigFeatures = [
+        'Mustache-style template interpolation with variable picker UI.',
+        'Test render with sample payload, version history, dry-run mode.',
+        'BYOK Devin API key, encrypted at rest, never logged.',
     ]
 
-    const blocksFeatures = [
-        'Pre-built sections: Hero headers, feature grids, pricing tables, and testimonials—drop into any page.',
-        'Responsive: Customize via CSS variables for branding.',
-        'Shadcn & Tailwind blocks: Use in any shadcn or Tailwind project.',
+    const executionFeatures = [
+        'Execution list: event source, status, latency, timestamp.',
+        'Detail view: raw payload, rendered prompt, Devin output, errors, retry info.',
+        'Concurrency limits, daily caps, kill switch, idempotency.',
     ]
 
     const featureCards = [
         {
-            title: 'Open-Source Starter Kits',
+            title: 'Event Sources',
             description:
-                'A collection of open-source starter kits designed to help you kickstart your SaaS MVP development. Each kit is built with the latest technologies and best practices in mind.',
-            features: startkitsFeatures,
-            linkHref: urls.app.starterkits.base,
-            linkText: 'View All Starter Kits',
-            heroText: 'Open Source Starter Kits',
+                'Native GitHub integration and generic JSON webhooks. No custom endpoints to host—Relay provides unique URLs per trigger with optional HMAC validation and schema introspection.',
+            features: eventSourcesFeatures,
+            linkHref: urls.app.relay.dashboard,
+            linkText: 'View Relay',
+            heroText: 'Event Sources',
         },
         {
-            title: 'Re-usable Components',
+            title: 'Trigger Configuration',
             description:
-                'A collection of re-usable components designed to help you build your SaaS MVP faster. Each component is built with the latest technologies and best practices in mind.',
-            features: componentsFeatures,
-            linkHref: urls.app.components,
-            linkText: 'View All Components',
-            heroText: 'Re-usable Components',
+                'Define event source, filters, and prompt templates. Mustache-style variables with test render, dry-run mode, and version history. BYOK Devin integration.',
+            features: triggerConfigFeatures,
+            linkHref: urls.app.relay.dashboard,
+            linkText: 'View Relay',
+            heroText: 'Trigger Config',
         },
         {
-            title: 'UI Blocks',
+            title: 'Execution Visibility',
             description:
-                'A collection of pre-built UI blocks designed to help you build your SaaS MVP faster. Each block is built with the latest technologies and best practices in mind.',
-            features: blocksFeatures,
-            linkHref: urls.app.blocks,
-            linkText: 'View All UI Blocks',
-            heroText: 'UI Blocks',
+                'Full audit trail for every run. Raw payload, rendered prompt, Devin output, latency, and errors. Trust through visibility with concurrency and daily caps.',
+            features: executionFeatures,
+            linkHref: urls.app.relay.dashboard,
+            linkText: 'View Relay',
+            heroText: 'Execution Dashboard',
         },
     ]
 
     return (
         <SectionHeader>
-            <SectionHeading>What we offer.</SectionHeading>
+            <SectionHeading>What Relay offers.</SectionHeading>
             <SectionDescription>
-                What we offer in our open-source library.
+                Event → Context Binding → Prompt Rendering → Devin Session →
+                Structured Action.
             </SectionDescription>
 
             <SectionContent className="gap-14">

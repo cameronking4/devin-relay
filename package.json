@@ -1,5 +1,5 @@
 {
-  "name": "launchmvpfast",
+  "name": "devin-relay",
   "private": true,
   "scripts": {
     "build": "turbo build",

@@ -6,7 +6,7 @@ import {
     TabsList,
     TabsTrigger,
     TabsContent,
-} from '@/components/ui/animated-tabs'
+} from '@/components/ui/tabs'
 import { useState } from 'react'
 import * as m from 'motion/react-m'
 import { ComponentsDemoContent } from '@/app/(app)/(landing)/_components/components-demo-content'
@@ -102,18 +102,18 @@ export function Demos() {
 
 const tabs = [
     {
-        label: 'Starter Kits',
-        description: 'Open-source starter kits to kickstart your SaaS MVP',
+        label: 'Event Sources',
+        description: 'GitHub PR events, issue comments, generic JSON webhooks',
         value: 'starter-kits',
     },
     {
-        label: 'Components',
-        description: 'Reusable UI components for your projects',
+        label: 'Trigger Config',
+        description: 'Prompt templates with variable picker and Mustache-style interpolation',
         value: 'components',
     },
     {
-        label: 'Blocks',
-        description: 'Pre-built blocks for rapid development',
+        label: 'Execution Visibility',
+        description: 'Full audit trail: payload, rendered prompt, Devin output',
         value: 'blocks',
     },
 ]
