@@ -1,20 +1,99 @@
-# launchmvpfast
-Elevate your development game with launchmvpfast! Launch your apps faster with our SaaS starterkits, components, building blocks. Customizable. Open Source.
+# Relay
 
-![Cover-launchmvpfast](https://www.launchmvpfast.com/og.png)
+**Event-driven AI orchestration for engineering signals.**
 
-## SaaS Starterkit
+Modern dev tools emit webhooks. AI systems reason—but don't natively integrate with those signals. Relay closes the loop.
 
-Soon to be launched. In development. Documentation will be available soon as well. Want to explore it yourself?
+Connect a webhook. Trigger Devin. Route outputs to GitHub. **Zero glue code.**
 
-Head over to `/starterkits/saas` and play with it.
+![Relay — AI orchestration for engineering signals](https://www.launchmvpfast.com/og.png)
 
-# Docs (Coming soon)
+---
 
-## Contribution
+## The problem
 
-Please read the [contributing guide](https://github.com/alifarooq9/launchmvpfast/blob/main/CONTRIBUTING.md).
+Every team building AI automation writes the same boilerplate:
+
+- Host webhook endpoints
+- Validate signatures, dedupe deliveries
+- Transform payloads into prompts
+- Orchestrate AI sessions
+- Handle retries, concurrency, timeouts
+- Post results back to GitHub
+- Build audit logs for visibility
+
+**Relay does all of this.** So you focus on prompts and product, not plumbing.
+
+---
+
+## What Relay delivers
+
+**Event → Context Binding → Prompt Rendering → Devin Session → Structured Action**
+
+- **Native GitHub integration** — `pull_request.opened`, `pull_request.synchronize`, `issue_comment.created`
+- **Generic webhooks** — JSON POST, unique URL per trigger, optional HMAC, schema introspection
+- **BYOK Devin** — your API key, encrypted at rest, never logged
+- **Full visibility** — raw payload, rendered prompt, Devin output, latency, errors for every execution
+
+Not a chatbot. Not a PR bot. Not a Zapier clone. **Relay is the beginning of an AI control plane.**
+
+---
+
+## Who it's for
+
+- **Platform engineers** shipping internal tooling
+- **DevEx teams** automating code review and feedback loops
+- **AI-forward startups** (10–200 engineers) experimenting with automation
+
+If you use GitHub and modern SaaS tooling—and you'd rather not maintain glue code—Relay is built for you.
+
+---
+
+## Get started
+
+**Live product:** [saas.launchmvpfast.com](https://saas.launchmvpfast.com)
+
+**Goal:** Connect a webhook and trigger Devin within 15 minutes. No code written.
+
+```bash
+# Clone the monorepo
+git clone https://github.com/alifarooq9/launchmvpfast.git
+cd launchmvpfast
+
+# Install dependencies
+pnpm install
+
+# Run Relay (SaaS app)
+pnpm --filter=saas dev
+
+# Run marketing site
+pnpm --filter=www dev
+```
+
+See [`apps/saas/README.md`](apps/saas/README.md) for environment setup and local development.
+
+---
+
+## Stack
+
+- **Next.js** (App Router, latest) + **TypeScript**
+- **PostgreSQL** (Prisma/Drizzle) + **Redis** (BullMQ)
+- **Devin** (BYOK) + **GitHub** (App installation)
+- **Vercel** (frontend/API) + worker for background jobs
+
+---
+
+## Monorepo structure
+
+```
+apps/
+├── saas/          # Relay product — projects, triggers, executions
+├── www/           # Marketing site
+└── webhook-mock-demo/  # Webhook testing demo
+```
+
+---
 
 ## License
 
-License under the [MIT License](https://github.com/alifarooq9/launchmvpfast/blob/main/LICENSE.md)
+[MIT](LICENSE.md)
