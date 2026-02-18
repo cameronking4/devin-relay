@@ -3,17 +3,21 @@ import { relayProjectsPageConfig } from "@/app/(app)/(user)/project/_constants/p
 import {
     getRelayProjects,
     getProjectStats,
+    getOrgProjectAggregateStats,
 } from "@/server/actions/relay/queries";
-import { siteUrls } from "@/config/urls";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { PlusIcon } from "lucide-react";
 import { CreateProjectDialog } from "./_components/create-project-dialog";
+import { ProjectsHeaderActions } from "./_components/projects-header-actions";
+import { ProjectsOverviewStats } from "./_components/projects-overview-stats";
+import { ExecutionActivityChart } from "./_components/execution-activity-chart";
+import { ProjectCard } from "./_components/project-card";
 
 export default async function ProjectListPage() {
-    const projects = await getRelayProjects();
-    const stats = await Promise.all(
+    const [projects, aggregateStats] = await Promise.all([
+        getRelayProjects(),
+        getOrgProjectAggregateStats(),
+    ]);
+
+    const statsByProject = await Promise.all(
         projects.map((p) => getProjectStats(p.id)),
     );
 
@@ -21,51 +25,64 @@ export default async function ProjectListPage() {
         <AppPageShell
             title={relayProjectsPageConfig.title}
             description={relayProjectsPageConfig.description}
+            actions={<ProjectsHeaderActions projects={projects} />}
         >
-            <div className="flex flex-col gap-6">
-                <div className="flex justify-end">
-                    <CreateProjectDialog />
-                </div>
-                {projects.length === 0 ? (
-                    <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg border border-dashed border-border p-8">
-                        <p className="text-muted-foreground mb-4 text-center text-sm">
-                            No projects yet. Create your first project to start
-                            receiving webhooks and running Devin.
-                        </p>
-                        <CreateProjectDialog triggerLabel="Create your first project" />
+            <div className="flex flex-col gap-8">
+                <ProjectsOverviewStats stats={aggregateStats} />
+
+                <ExecutionActivityChart
+                    data={aggregateStats.executionHistory}
+                />
+
+                <section>
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-lg font-semibold">
+                            Your projects
+                        </h2>
+                        {projects.length > 0 && (
+                            <ProjectsHeaderActions projects={projects} />
+                        )}
                     </div>
-                ) : (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {projects.map((project, i) => (
-                            <Link
-                                key={project.id}
-                                href={siteUrls.relay.project(project.id)}
-                            >
-                                <Card className="transition-colors hover:bg-muted/50">
-                                    <CardHeader className="pb-2">
-                                        <span className="font-medium">
-                                            {project.name}
-                                        </span>
-                                    </CardHeader>
-                                    <CardContent className="text-sm text-muted-foreground">
-                                        <span>
-                                            {stats[i]?.triggerCount ?? 0} triggers
-                                        </span>
-                                        {stats[i]?.lastExecution ? (
-                                            <span>
-                                                {" "}
-                                                · Last run{" "}
-                                                {new Date(
-                                                    stats[i].lastExecution!,
-                                                ).toLocaleDateString()}
-                                            </span>
-                                        ) : null}
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+
+                    {projects.length === 0 ? (
+                        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 p-12">
+                            <div className="mx-auto max-w-md text-center">
+                                <p className="text-muted-foreground mb-2 text-base">
+                                    No projects yet. Create your first project to
+                                    start receiving webhooks and running Devin.
+                                </p>
+                                <p className="text-muted-foreground mb-6 text-sm">
+                                    Set up event-driven AI automation in minutes.
+                                </p>
+                                <CreateProjectDialog triggerLabel="Create your first project" />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {projects.map((project, i) => (
+                                <ProjectCard
+                                    key={project.id}
+                                    project={{
+                                        id: project.id,
+                                        name: project.name,
+                                        createdAt: project.createdAt,
+                                    }}
+                                    stats={{
+                                        triggerCount:
+                                            statsByProject[i]?.triggerCount ??
+                                            0,
+                                        executionsToday:
+                                            statsByProject[i]
+                                                ?.executionsToday ?? 0,
+                                        lastExecution:
+                                            statsByProject[i]?.lastExecution ??
+                                            null,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
             </div>
         </AppPageShell>
     );

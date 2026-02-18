@@ -10,7 +10,100 @@ import {
 } from "@/server/db/schema";
 import { protectedProcedure } from "@/server/procedures";
 import { renderPrompt } from "@/server/relay/template";
-import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNotNull, ne, sql } from "drizzle-orm";
+
+export async function getOrgProjectAggregateStats() {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg)
+        return {
+            projectCount: 0,
+            triggerCount: 0,
+            executionsToday: 0,
+            totalExecutions: 0,
+            executionHistory: [] as { date: string; count: number }[],
+        };
+
+    const projectIds = await db
+        .select({ id: relayProjects.id })
+        .from(relayProjects)
+        .where(eq(relayProjects.orgId, currentOrg.id));
+    const ids = projectIds.map((p) => p.id);
+    if (ids.length === 0)
+        return {
+            projectCount: 0,
+            triggerCount: 0,
+            executionsToday: 0,
+            totalExecutions: 0,
+            executionHistory: [] as { date: string; count: number }[],
+        };
+
+    const [projectCount] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(relayProjects)
+        .where(eq(relayProjects.orgId, currentOrg.id));
+
+    const [triggerCount] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(relayTriggers)
+        .where(inArray(relayTriggers.projectId, ids));
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [execToday] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(relayExecutions)
+        .where(
+            and(
+                inArray(relayExecutions.projectId, ids),
+                gte(relayExecutions.createdAt, today),
+            ),
+        );
+
+    const [totalExec] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(relayExecutions)
+        .where(inArray(relayExecutions.projectId, ids));
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const historyRows = await db
+        .select({
+            date: sql<string>`date(${relayExecutions.createdAt})::text`,
+            count: sql<number>`count(*)::int`,
+        })
+        .from(relayExecutions)
+        .where(
+            and(
+                inArray(relayExecutions.projectId, ids),
+                gte(relayExecutions.createdAt, sevenDaysAgo),
+            ),
+        )
+        .groupBy(sql`date(${relayExecutions.createdAt})`);
+
+    const dateMap = new Map<string, number>();
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(d.getDate() + i);
+        dateMap.set(d.toISOString().slice(0, 10), 0);
+    }
+    for (const r of historyRows) {
+        dateMap.set(r.date, r.count);
+    }
+    const executionHistory = Array.from(dateMap.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, count]) => ({ date, count }));
+
+    return {
+        projectCount: projectCount?.count ?? 0,
+        triggerCount: triggerCount?.count ?? 0,
+        executionsToday: execToday?.count ?? 0,
+        totalExecutions: totalExec?.count ?? 0,
+        executionHistory,
+    };
+}
 
 export async function getRelayProjects() {
     const { user } = await protectedProcedure();
@@ -172,6 +265,67 @@ export async function getTriggerById(triggerId: string, projectId: string) {
     const project = await getRelayProjectById(projectId);
     if (!project || project.orgId !== currentOrg.id) return null;
     return trigger;
+}
+
+export async function getDevinSessionsForOrg(opts?: {
+    status?: string;
+    projectId?: string;
+    limit?: number;
+}) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return [];
+
+    const projectIds = await db
+        .select({ id: relayProjects.id, name: relayProjects.name })
+        .from(relayProjects)
+        .where(eq(relayProjects.orgId, currentOrg.id));
+    const ids = projectIds.map((p) => p.id);
+    if (ids.length === 0) return [];
+
+    const conditions = [
+        inArray(relayExecutions.projectId, ids),
+        isNotNull(relayExecutions.aiSessionId),
+        ne(relayExecutions.aiSessionId, ""),
+    ];
+    if (opts?.status) {
+        conditions.push(
+            eq(
+                relayExecutions.status,
+                opts.status as "pending" | "running" | "completed" | "failed",
+            ),
+        );
+    }
+    if (opts?.projectId) {
+        conditions.push(eq(relayExecutions.projectId, opts.projectId));
+    }
+
+    const limit = opts?.limit ?? 100;
+
+    const rows = await db
+        .select({
+            id: relayExecutions.id,
+            aiSessionId: relayExecutions.aiSessionId,
+            status: relayExecutions.status,
+            latencyMs: relayExecutions.latencyMs,
+            createdAt: relayExecutions.createdAt,
+            triggerName: relayTriggers.name,
+            projectId: relayExecutions.projectId,
+        })
+        .from(relayExecutions)
+        .innerJoin(
+            relayTriggers,
+            eq(relayExecutions.triggerId, relayTriggers.id),
+        )
+        .where(and(...conditions))
+        .orderBy(desc(relayExecutions.createdAt))
+        .limit(limit);
+
+    const projectNameMap = new Map(projectIds.map((p) => [p.id, p.name]));
+
+    return rows.map((r) => ({
+        ...r,
+        projectName: projectNameMap.get(r.projectId) ?? "Unknown",
+    }));
 }
 
 export async function getExecutionsByProjectId(

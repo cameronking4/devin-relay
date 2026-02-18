@@ -56,6 +56,45 @@ export async function updateRelayProjectDevinKey(
     revalidatePath(siteUrls.relay.project(projectId));
 }
 
+export async function updateRelayProject(projectId: string, name: string) {
+    await protectedProcedure();
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) throw new Error("No organization selected");
+
+    await db
+        .update(relayProjects)
+        .set({ name: name.trim().slice(0, 255) })
+        .where(
+            and(
+                eq(relayProjects.id, projectId),
+                eq(relayProjects.orgId, currentOrg.id),
+            ),
+        );
+    revalidatePath(siteUrls.relay.projects);
+    revalidatePath(siteUrls.relay.project(projectId));
+}
+
+export async function deleteRelayProject(projectId: string) {
+    await protectedProcedure();
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) throw new Error("No organization selected");
+
+    const project = await getRelayProjectById(projectId);
+    if (!project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    await db
+        .delete(relayProjects)
+        .where(
+            and(
+                eq(relayProjects.id, projectId),
+                eq(relayProjects.orgId, currentOrg.id),
+            ),
+        );
+    revalidatePath(siteUrls.relay.projects);
+}
+
 export async function updateRelayProjectContextInstructions(
     projectId: string,
     contextInstructions: string | null,
