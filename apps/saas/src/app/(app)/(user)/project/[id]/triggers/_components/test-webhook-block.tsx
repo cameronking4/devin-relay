@@ -8,6 +8,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 import Link from "next/link";
 import { siteUrls } from "@/config/urls";
 import { useState } from "react";
@@ -64,46 +70,57 @@ export function TestWebhookBlock({
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Test webhook</CardTitle>
-                <CardDescription>
+            <Accordion type="single" collapsible defaultValue="">
+                <AccordionItem value="test-webhook" className="border-none">
+                    <CardHeader className="pb-3">
+                        <AccordionTrigger className="hover:no-underline">
+                            <div className="text-left">
+                                <CardTitle>Test webhook</CardTitle>
+                                <CardDescription>
                     Send a test payload to see how it’s received. Then open
                     Executions to view the raw payload and infer variables for
                     conditions and the prompt template.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div>
-                    <label className="text-muted-foreground mb-1 block text-sm">
-                        JSON body
-                    </label>
-                    <textarea
-                        className="border-input focus-visible:ring-ring min-h-[140px] w-full rounded-md border px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-1"
-                        value={payload}
-                        onChange={(e) => setPayload(e.target.value)}
-                        placeholder='{"message": "hello"}'
-                        spellCheck={false}
-                    />
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        variant="default"
-                        onClick={sendTest}
-                        disabled={pending || !url}
-                    >
-                        {pending ? "Sending…" : "Send test request"}
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href={siteUrls.relay.executions(projectId)}>
-                            View executions
-                        </Link>
-                    </Button>
-                </div>
-                <p className="text-muted-foreground text-xs">
-                    Use dot notation in conditions and templates, e.g.{" "}
-                    <code>payload.message</code>, <code>payload.repository.name</code>.
-                </p>
-            </CardContent>
+                                </CardDescription>
+                            </div>
+                        </AccordionTrigger>
+                    </CardHeader>
+                    <AccordionContent>
+                        <CardContent className="space-y-4 pt-0">
+                            <div>
+                                <label className="text-muted-foreground mb-1 block text-sm">
+                                    JSON body
+                                </label>
+                                <textarea
+                                    className="border-input focus-visible:ring-ring min-h-[140px] w-full rounded-md border px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-1"
+                                    value={payload}
+                                    onChange={(e) => setPayload(e.target.value)}
+                                    placeholder='{"message": "hello"}'
+                                    spellCheck={false}
+                                />
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <Button
+                                    variant="default"
+                                    onClick={sendTest}
+                                    disabled={pending || !url}
+                                >
+                                    {pending ? "Sending…" : "Send test request"}
+                                </Button>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={siteUrls.relay.executions(projectId)}>
+                                        View executions
+                                    </Link>
+                                </Button>
+                            </div>
+                            <p className="text-muted-foreground text-xs">
+                                Use dot notation in conditions and templates,
+                                e.g. <code>payload.message</code>,{" "}
+                                <code>payload.repository.name</code>.
+                            </p>
+                        </CardContent>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </Card>
     );
 }

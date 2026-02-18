@@ -232,6 +232,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                         value={promptTemplate}
                         onChange={setPromptTemplate}
                         projectId={projectId}
+                        triggerId={triggerId ?? undefined}
                         githubRepo={basicInfo.githubRepo}
                         includePaths={advanced.includePaths}
                         excludePaths={advanced.excludePaths}

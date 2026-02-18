@@ -2,21 +2,17 @@
 
 import { Label } from "@/components/ui/label";
 
-const COMMON_PATHS = [
-    "payload.message",
-    "payload.error_count",
-    "payload.action",
-    "payload.repository.name",
-];
-
 export function PromptEditor({
     value,
     onChange,
     placeholder,
+    suggestedPaths = [],
 }: {
     value: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    /** Inferred paths from test connection; only show variable picker when present */
+    suggestedPaths?: string[];
 }) {
     return (
         <div className="space-y-2">
@@ -36,23 +32,25 @@ export function PromptEditor({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />
-            <div className="flex flex-wrap gap-2">
-                <span className="text-muted-foreground text-xs">
-                    Insert variable:
-                </span>
-                {COMMON_PATHS.map((path) => (
-                    <button
-                        key={path}
-                        type="button"
-                        className="text-muted-foreground hover:text-foreground rounded bg-muted px-2 py-0.5 text-xs"
-                        onClick={() =>
-                            onChange(value + ` {{${path}}}`)
-                        }
-                    >
-                        {path}
-                    </button>
-                ))}
-            </div>
+            {suggestedPaths.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-muted-foreground text-xs">
+                        From recent events:
+                    </span>
+                    {suggestedPaths.map((path) => (
+                        <button
+                            key={path}
+                            type="button"
+                            className="rounded-md border border-border bg-muted px-2 py-0.5 text-xs transition-colors hover:bg-muted/80"
+                            onClick={() =>
+                                onChange(value + ` {{${path}}}`)
+                            }
+                        >
+                            {path}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

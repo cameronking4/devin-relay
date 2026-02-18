@@ -3,6 +3,7 @@
 import { db } from "@/server/db";
 import { accounts } from "@/server/db/schema";
 import { getUser } from "@/server/auth";
+import { protectedProcedure } from "@/server/procedures";
 import { and, eq } from "drizzle-orm";
 
 export type GitHubRepo = {

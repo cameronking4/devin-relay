@@ -24,6 +24,20 @@ type TreeNode = {
     children: TreeNode[];
 };
 
+function getAllSelectablePaths(nodes: TreeNode[]): string[] {
+    const paths: string[] = [];
+    function walk(n: TreeNode[]) {
+        for (const node of n) {
+            paths.push(
+                node.type === "tree" ? `${node.fullPath}/**` : node.fullPath,
+            );
+            if (node.type === "tree") walk(node.children);
+        }
+    }
+    walk(nodes);
+    return paths;
+}
+
 function buildTree(entries: GitHubTreeEntry[]): TreeNode[] {
     const nodeMap = new Map<string, TreeNode>();
 
@@ -150,6 +164,15 @@ export function RepoTreePickerDialog({
         });
     };
 
+    const allPaths = getAllSelectablePaths(tree);
+    const allSelected =
+        allPaths.length > 0 &&
+        allPaths.every((p) => selected.has(p));
+    const toggleAll = () => {
+        if (allSelected) setSelected(new Set());
+        else setSelected(new Set(allPaths));
+    };
+
     function renderNode(node: TreeNode, depth: number) {
         const pathToUse =
             node.type === "tree" ? `${node.fullPath}/**` : node.fullPath;
@@ -218,7 +241,19 @@ export function RepoTreePickerDialog({
                         use glob (e.g. src/**).
                     </DialogDescription>
                 </DialogHeader>
-                <ScrollArea className="flex-1 min-h-[300px] max-h-[400px] rounded-md border">
+                <div className="flex items-center justify-end gap-1 -mt-1 mb-1">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                        onClick={toggleAll}
+                        disabled={loading || tree.length === 0}
+                    >
+                        {allSelected ? "None" : "All"}
+                    </Button>
+                </div>
+                <ScrollArea className="flex-1 min-h-0 max-h-[400px] rounded-md border">
                     {loading && (
                         <div className="flex items-center justify-center py-12">
                             <Icons.loader className="h-8 w-8 animate-spin text-muted-foreground" />

@@ -16,12 +16,18 @@ export function DevinPromptPreview({
     githubRepo,
     includePaths,
     excludePaths,
+    samplePayload,
+    embedded = false,
 }: {
     projectId: string;
     promptTemplate: string;
     githubRepo: string;
     includePaths: string[];
     excludePaths: string[];
+    /** Optional payload from recent test connection for realistic preview */
+    samplePayload?: unknown;
+    /** When true, render content without accordion (for single-preview layouts) */
+    embedded?: boolean;
 }) {
     const [prompt, setPrompt] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -38,6 +44,7 @@ export function DevinPromptPreview({
                 githubRepo,
                 includePaths: includePaths ?? [],
                 excludePaths: excludePaths ?? [],
+                samplePayload,
             });
             if ("error" in result) {
                 setError(result.error);
@@ -58,14 +65,54 @@ export function DevinPromptPreview({
         githubRepo,
         includePaths,
         excludePaths,
+        samplePayload,
     ]);
 
     useEffect(() => {
         fetchPreview();
     }, [fetchPreview]);
 
+    const content = (
+        <>
+            {error && (
+                <p className="text-destructive mb-2 text-sm">{error}</p>
+            )}
+            {prompt && !error && (
+                <div className="bg-muted max-h-[400px] overflow-auto rounded-md p-4">
+                    <pre className="whitespace-pre-wrap font-mono text-xs">
+                        {prompt}
+                    </pre>
+                </div>
+            )}
+            {!prompt && !error && !loading && (
+                <p className="text-muted-foreground text-sm">
+                    Configure trigger to see the full prompt.
+                </p>
+            )}
+        </>
+    );
+
+    if (embedded) {
+        return (
+            <div className="w-full">
+                {loading && (
+                    <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Icons.loader className="h-4 w-4 animate-spin" />
+                        Loading…
+                    </div>
+                )}
+                {content}
+            </div>
+        );
+    }
+
     return (
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+            type="single"
+            collapsible
+            defaultValue="full-prompt"
+            className="w-full"
+        >
             <AccordionItem value="full-prompt" className="border-none">
                 <AccordionTrigger className="hover:no-underline">
                     <span className="font-medium">
@@ -75,23 +122,7 @@ export function DevinPromptPreview({
                         <Icons.loader className="ml-2 h-4 w-4 animate-spin" />
                     )}
                 </AccordionTrigger>
-                <AccordionContent>
-                    {error && (
-                        <p className="text-destructive mb-2 text-sm">{error}</p>
-                    )}
-                    {prompt && !error && (
-                        <div className="bg-muted max-h-[400px] overflow-auto rounded-md p-4">
-                            <pre className="whitespace-pre-wrap font-mono text-xs">
-                                {prompt}
-                            </pre>
-                        </div>
-                    )}
-                    {!prompt && !error && !loading && (
-                        <p className="text-muted-foreground text-sm">
-                            Configure trigger to see the full prompt.
-                        </p>
-                    )}
-                </AccordionContent>
+                <AccordionContent>{content}</AccordionContent>
             </AccordionItem>
         </Accordion>
     );
