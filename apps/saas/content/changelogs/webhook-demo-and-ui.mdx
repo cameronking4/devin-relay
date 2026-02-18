@@ -1,0 +1,26 @@
+---
+title: "Webhook mock demo expansion and project UI overhaul"
+description: "Expanded webhook mock demo with new services and event types, project overview stats, Devin session links, and improved webhook ingestion."
+version: "0.4.0"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.0 expands the webhook mock demo, adds project-level stats, and hardens webhook ingestion.
+
+### Features
+
+- **Expanded mock demo** — Added GitHub, Stripe, Supabase, and Linear event types with service labels for clearer UI; new payload generators for Datadog, PagerDuty, and restructured Grafana/Prometheus multi-alert payloads
+- **Project overview stats** — Aggregate metrics displayed on the projects page with a dedicated stats component and activity chart
+- **Devin session links** — Execution detail view, summary, and table now link directly to the corresponding Devin session
+- **Prompt preview improvements** — Sample payload support for realistic previews, embedded single-preview mode, and suggested paths from recent events in the prompt editor
+- **Webhook POST validation** — JSON and URL-encoded body parsing, empty/oversized payload checks, and consistent delivery-ID hashing
+
+### UI and cleanup
+
+- Project dialog and header actions redesigned for consistent spacing
+- Footer links and support contacts updated for Relay branding
+- Obsolete starterkit trigger components removed to streamline the codebase
+
+### Support
+
+Questions or issues? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
