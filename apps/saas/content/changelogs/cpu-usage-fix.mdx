@@ -1,0 +1,26 @@
+---
+title: "CPU usage reduction and smarter retry logic"
+description: "Progressive polling backoff, rate-limited workers, and bounded low-noise retries to significantly reduce CPU consumption."
+version: "0.4.1"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.1 focuses on resource efficiency—reducing CPU usage across polling, worker concurrency, and low-noise retry paths.
+
+### Improvements
+
+- **Progressive polling backoff** — Session polling starts at 5 s and ramps to 30 s based on elapsed time, replacing the fixed 2 s interval
+- **Exponential error backoff** — Consecutive poll failures now use capped exponential backoff instead of linear delays
+- **Rate-limited workers** — Worker concurrency reduced from 5 to 3 with a 10-per-minute rate limiter to prevent burst CPU spikes
+- **Bounded low-noise retries** — Low-noise mode retries use exponential backoff (30 s base, 5 min cap) and stop after 10 attempts, recording a failure instead of retrying indefinitely
+
+### Technical
+
+- `devin-adapter` polling loop tracks elapsed time instead of attempt count, with dynamic interval scaling
+- `processor` accepts a `retryCount` parameter; exceeding the retry limit writes a failed execution record
+- `queue` worker options updated with `limiter` configuration and new `retryCount` field on `ExecutionJobData`
+- Worker script forwards `retryCount` from job data to the processor
+
+### Support
+
+Questions or feedback? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
