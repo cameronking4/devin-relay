@@ -13,9 +13,11 @@ import { env } from "@/env";
 import { and, eq, gte, sql } from "drizzle-orm";
 
 const SESSION_TIMEOUT_MS = 600_000; // 10 min
-const LOW_NOISE_RETRY_DELAY_MS = 20_000; // 20s
+const LOW_NOISE_BASE_DELAY_MS = 30_000; // 30s
+const LOW_NOISE_MAX_DELAY_MS = 300_000; // 5 min
+const LOW_NOISE_MAX_RETRIES = 10;
 
-export async function processExecutionJob(eventId: string): Promise<void> {
+export async function processExecutionJob(eventId: string, retryCount = 0): Promise<void> {
     const events = await db
         .select()
         .from(relayEvents)
@@ -48,10 +50,26 @@ export async function processExecutionJob(eventId: string): Promise<void> {
                 ),
             );
         if ((running?.count ?? 0) > 0) {
+            if (retryCount >= LOW_NOISE_MAX_RETRIES) {
+                await db
+                    .insert(relayExecutions)
+                    .values({
+                        eventId: event.id,
+                        projectId: event.projectId,
+                        triggerId: trigger.id,
+                        status: "failed",
+                        error: `Low-noise retry limit (${LOW_NOISE_MAX_RETRIES}) exceeded`,
+                    });
+                return;
+            }
+            const delay = Math.min(
+                LOW_NOISE_BASE_DELAY_MS * Math.pow(2, retryCount),
+                LOW_NOISE_MAX_DELAY_MS,
+            );
             await executionQueue.add(
                 "execute",
-                { eventId },
-                { delay: LOW_NOISE_RETRY_DELAY_MS },
+                { eventId, retryCount: retryCount + 1 },
+                { delay },
             );
             return;
         }

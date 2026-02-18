@@ -8,9 +8,9 @@ import { processExecutionJob } from "../src/server/relay/processor";
 import { createExecutionWorker } from "../src/server/relay/queue";
 
 const worker = createExecutionWorker(async (job) => {
-    const { eventId } = job.data;
+    const { eventId, retryCount } = job.data;
     console.log(`[worker] Processing event ${eventId}`);
-    await processExecutionJob(eventId);
+    await processExecutionJob(eventId, retryCount ?? 0);
 });
 
 worker.on("completed", (job) => {

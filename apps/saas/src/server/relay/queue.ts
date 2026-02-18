@@ -19,18 +19,22 @@ export const executionQueue = new Queue(executionQueueName, {
 });
 
 export function createExecutionWorker(
-    processor: (job: { id: string; data: { eventId: string } }) => Promise<void>,
+    processor: (job: { id: string; data: { eventId: string; retryCount?: number } }) => Promise<void>,
 ) {
     return new Worker(
         executionQueueName,
         async (job) => {
-            await processor(job as { id: string; data: { eventId: string } });
+            await processor(job as { id: string; data: { eventId: string; retryCount?: number } });
         },
         {
             connection,
-            concurrency: 5,
+            concurrency: 3,
+            limiter: {
+                max: 10,
+                duration: 60_000,
+            },
         },
     );
 }
 
-export type ExecutionJobData = { eventId: string };
+export type ExecutionJobData = { eventId: string; retryCount?: number };
