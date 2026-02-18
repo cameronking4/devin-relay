@@ -33,14 +33,6 @@ export async function POST(
         );
     }
 
-    const trimmed = body.trim();
-    if (!trimmed) {
-        return NextResponse.json(
-            { error: "Empty body" },
-            { status: 400 },
-        );
-    }
-
     if (body.length > MAX_PAYLOAD_BYTES) {
         return NextResponse.json(
             { error: "Payload too large" },
@@ -48,9 +40,34 @@ export async function POST(
         );
     }
 
+    const contentType = request.headers.get("Content-Type") ?? "";
+    const isFormEncoded =
+        contentType.includes("application/x-www-form-urlencoded");
+
+    let rawPayload: string;
+    if (isFormEncoded) {
+        const params = new URLSearchParams(body);
+        const payloadParam = params.get("payload");
+        if (!payloadParam) {
+            return NextResponse.json(
+                { error: "Missing payload in form body" },
+                { status: 400 },
+            );
+        }
+        rawPayload = payloadParam;
+    } else {
+        rawPayload = body.trim();
+        if (!rawPayload) {
+            return NextResponse.json(
+                { error: "Empty body" },
+                { status: 400 },
+            );
+        }
+    }
+
     let payload: unknown;
     try {
-        payload = JSON.parse(trimmed) as unknown;
+        payload = JSON.parse(rawPayload) as unknown;
     } catch {
         return NextResponse.json(
             { error: "Invalid JSON" },
@@ -61,7 +78,7 @@ export async function POST(
     const deliveryId =
         request.headers.get("X-Relay-Delivery-Id") ??
         request.headers.get("X-GitHub-Delivery") ??
-        crypto.createHash("sha256").update(body).digest("hex");
+        crypto.createHash("sha256").update(rawPayload).digest("hex");
 
     const triggers = await db
         .select()
