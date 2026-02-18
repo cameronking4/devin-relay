@@ -1,0 +1,29 @@
+---
+title: "Expanded webhook mock demo services"
+description: "Added GitHub, Stripe, Supabase, and Linear mock payloads with new event types and improved payload generation across all services."
+version: "0.4.0"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.0 expands the webhook mock demo with four new services and richer event coverage across existing ones.
+
+### New Services
+
+- **GitHub** — Push, pull request opened/closed, issue opened, and workflow run completed events
+- **Stripe** — Payment intent succeeded/failed, subscription created/deleted, invoice payment failed, and checkout session completed events
+- **Supabase** — Database insert/update/delete webhook events and edge function invocation events
+- **Linear** — Issue created/updated, comment created, and cycle started/completed events
+
+### Improvements
+
+- **Service labels** — Human-readable service names displayed in the UI
+- **Datadog** — New alert types including log anomaly and APM latency alerts
+- **Grafana** — Multi-alert scenarios with expanded alert details
+- **PagerDuty** — Additional incident event types
+- **Prometheus** — Multi-alert payload handling
+- **Sentry** — New error and performance alert conditions
+- **Vercel** — Broader deployment and domain event coverage
+
+### Support
+
+Questions about the webhook mock demo or payload formats? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
