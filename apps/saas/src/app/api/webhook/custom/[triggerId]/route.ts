@@ -95,6 +95,24 @@ export async function POST(
         return NextResponse.json({ status: "ok" }, { status: 200 });
     }
 
+    const ABANDONMENT_MS = 15 * 60 * 1000; // 15 minutes
+    const setupComplete = (trigger as { setupComplete?: boolean }).setupComplete ?? true;
+    const isAbandoned =
+        !setupComplete &&
+        Date.now() - trigger.createdAt.getTime() > ABANDONMENT_MS;
+    if (isAbandoned) {
+        await db
+            .update(relayTriggers)
+            .set({ setupComplete: true })
+            .where(
+                and(
+                    eq(relayTriggers.id, triggerId),
+                    eq(relayTriggers.projectId, trigger.projectId),
+                ),
+            );
+    }
+    const shouldExecute = setupComplete || isAbandoned;
+
     const existing = await db
         .select({ id: relayEvents.id })
         .from(relayEvents)
@@ -149,11 +167,13 @@ export async function POST(
             );
         const count = countResult[0]?.count ?? 0;
         if (count < thresholdConfig.count) {
-            await evaluateWorkflowsOnNewEvent({
-                projectId: trigger.projectId,
-                triggerId: trigger.id,
-            });
-            return NextResponse.json({ status: "ok" }, { status: 200 });
+            if (shouldExecute) {
+                await evaluateWorkflowsOnNewEvent({
+                    projectId: trigger.projectId,
+                    triggerId: trigger.id,
+                });
+            }
+            return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
         }
 
         const windowEnd = new Date();
@@ -161,36 +181,39 @@ export async function POST(
             Date.now() / (windowMinutes * 60 * 1000),
         );
         const jobId = `batch-${triggerId}-${bucket}`.slice(0, 100);
+        if (shouldExecute) {
+            await executionQueue.add(
+                "execute-batch",
+                {
+                    kind: "batch",
+                    triggerId,
+                    windowStart: since.toISOString(),
+                    windowEnd: windowEnd.toISOString(),
+                },
+                { jobId },
+            );
+            await evaluateWorkflowsOnNewEvent({
+                projectId: trigger.projectId,
+                triggerId: trigger.id,
+            });
+        }
+        return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
+    }
+
+    if (shouldExecute) {
         await executionQueue.add(
-            "execute-batch",
+            "execute",
             {
-                kind: "batch",
-                triggerId,
-                windowStart: since.toISOString(),
-                windowEnd: windowEnd.toISOString(),
+                kind: "single",
+                eventId: event.id,
             },
-            { jobId },
+            { jobId: `${triggerId}-${deliveryId}`.slice(0, 100) },
         );
         await evaluateWorkflowsOnNewEvent({
             projectId: trigger.projectId,
             triggerId: trigger.id,
         });
-        return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
     }
-
-    await executionQueue.add(
-        "execute",
-        {
-            kind: "single",
-            eventId: event.id,
-        },
-        { jobId: `${triggerId}-${deliveryId}`.slice(0, 100) },
-    );
-
-    await evaluateWorkflowsOnNewEvent({
-        projectId: trigger.projectId,
-        triggerId: trigger.id,
-    });
 
     return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
 }

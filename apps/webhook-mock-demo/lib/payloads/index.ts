@@ -5,9 +5,16 @@ import { generateDatadogPayload } from "./datadog";
 import { generateGrafanaPayload } from "./grafana";
 import { generatePagerDutyPayload } from "./pagerduty";
 import { generateGitHubPayload } from "./github";
-import { generateStripePayload } from "./stripe";
-import { generateSupabasePayload } from "./supabase";
+import { generateVantaPayload } from "./vanta";
+import { generateCrowdStrikePayload } from "./crowdstrike";
 import { generateLinearPayload } from "./linear";
+import { generatePostHogPayload } from "./posthog";
+import { generateLogflarePayload } from "./logflare";
+import { generateOtelPayload } from "./otel";
+import { generateAzureMonitorPayload } from "./azure-monitor";
+import { generateAzureDevOpsPayload } from "./azure-devops";
+import { generateTypeformPayload } from "./typeform";
+import { generateCloudWatchPayload } from "./cloudwatch";
 
 export function generatePayload(
   service: string,
@@ -28,12 +35,26 @@ export function generatePayload(
       return generatePagerDutyPayload(eventType);
     case "github":
       return generateGitHubPayload(eventType);
-    case "stripe":
-      return generateStripePayload(eventType);
-    case "supabase":
-      return generateSupabasePayload(eventType);
+    case "vanta":
+      return generateVantaPayload(eventType);
+    case "crowdstrike":
+      return generateCrowdStrikePayload(eventType);
     case "linear":
       return generateLinearPayload(eventType);
+    case "posthog":
+      return generatePostHogPayload(eventType);
+    case "logflare":
+      return generateLogflarePayload(eventType);
+    case "otel":
+      return generateOtelPayload(eventType);
+    case "azure_monitor":
+      return generateAzureMonitorPayload(eventType);
+    case "azure_devops":
+      return generateAzureDevOpsPayload(eventType);
+    case "typeform":
+      return generateTypeformPayload(eventType);
+    case "cloudwatch":
+      return generateCloudWatchPayload(eventType);
     default:
       throw new Error(`Unknown service: ${service}`);
   }

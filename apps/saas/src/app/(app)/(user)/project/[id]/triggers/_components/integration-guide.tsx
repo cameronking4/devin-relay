@@ -128,9 +128,23 @@ export function IntegrationGuide({ triggerId }: { triggerId?: string }) {
                     Integration Guide
                 </CardTitle>
                 <CardDescription>
-                    Configure external services to send webhooks to your trigger.
-                    Copy the webhook URL and follow the setup instructions below.
+                    Set up your service to send webhooks to this trigger for Devin. Test webhooks instantly using our mock API library.
                 </CardDescription>
+                <p className="mt-2 text-xs text-muted-foreground">
+                </p>
+            <div className="mt-2">
+                <a
+                    href="https://devin-relay-testing.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow transition hover:bg-primary/90"
+                >
+                    Visit Production Signals Library
+                    <span className="inline-block" aria-hidden>
+                        ↗
+                    </span>
+                </a>
+            </div>
             </CardHeader>
             <CardContent className="space-y-4">
                 {/* <div className="bg-muted rounded-md p-3">

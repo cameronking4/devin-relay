@@ -9,8 +9,13 @@ import { BasicInfoStep, type BasicInfoValues } from "./basic-info-step";
 import { WebhookSetupStep } from "./webhook-setup-step";
 import { AdvancedSettingsSection, type AdvancedSettingsValues } from "./advanced-settings-section";
 import { PromptConfigStep } from "./prompt-config-step";
-import { createRelayTrigger, updateRelayTrigger } from "@/server/actions/relay/mutations";
+import {
+    backfillPendingEventsForTrigger,
+    createRelayTrigger,
+    updateRelayTrigger,
+} from "@/server/actions/relay/mutations";
 import { siteUrls } from "@/config/urls";
+import confetti from "canvas-confetti";
 
 const DEFAULT_BASIC_INFO: BasicInfoValues = {
     name: "",
@@ -67,6 +72,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                 dailyCap: advanced.dailyCap,
                 includePaths: advanced.includePaths,
                 excludePaths: advanced.excludePaths,
+                setupComplete: false,
             });
             setTriggerId(trigger.id);
             toast.success("Trigger created");
@@ -109,7 +115,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
 
         setIsSaving(true);
         try {
-            // Update trigger with final values
+            // Update trigger with final values and mark setup complete
             await updateRelayTrigger(projectId, triggerId, {
                 name: basicInfo.name,
                 source: basicInfo.source,
@@ -123,7 +129,10 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                 includePaths: advanced.includePaths,
                 excludePaths: advanced.excludePaths,
                 lowNoiseMode,
+                setupComplete: true,
             });
+            await backfillPendingEventsForTrigger(projectId, triggerId);
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
             toast.success("Trigger configured");
             router.push(siteUrls.relay.trigger(projectId, triggerId));
         } catch (e) {

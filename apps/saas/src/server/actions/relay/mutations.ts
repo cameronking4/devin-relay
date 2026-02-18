@@ -3,9 +3,10 @@
 import { getOrganizations } from "@/server/actions/organization/queries";
 import { getRelayProjectById } from "@/server/actions/relay/queries";
 import { db } from "@/server/db";
-import { relayProjects, relayTriggers, relayWorkflows } from "@/server/db/schema";
+import { relayEvents, relayProjects, relayTriggers, relayWorkflows } from "@/server/db/schema";
+import { executionQueue } from "@/server/relay/queue";
 import { protectedProcedure } from "@/server/procedures";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { encrypt, decrypt } from "@/server/relay/encryption";
 import { env } from "@/env";
@@ -130,6 +131,7 @@ export async function createRelayTrigger(
         includePaths?: PathPolicyPaths;
         excludePaths?: PathPolicyPaths;
         lowNoiseMode?: boolean;
+        setupComplete?: boolean;
     },
 ) {
     await protectedProcedure();
@@ -155,6 +157,7 @@ export async function createRelayTrigger(
             includePaths: data.includePaths ?? [],
             excludePaths: data.excludePaths ?? [],
             lowNoiseMode: data.lowNoiseMode ?? false,
+            setupComplete: data.setupComplete ?? true,
         })
         .returning();
     if (!trigger) throw new Error("Failed to create trigger");
@@ -179,6 +182,7 @@ export async function updateRelayTrigger(
         includePaths?: PathPolicyPaths;
         excludePaths?: PathPolicyPaths;
         lowNoiseMode?: boolean;
+        setupComplete?: boolean;
     },
 ) {
     await protectedProcedure();
@@ -215,6 +219,7 @@ export async function updateRelayTrigger(
             ...(data.includePaths !== undefined && { includePaths: data.includePaths }),
             ...(data.excludePaths !== undefined && { excludePaths: data.excludePaths }),
             ...(data.lowNoiseMode !== undefined && { lowNoiseMode: data.lowNoiseMode }),
+            ...(data.setupComplete !== undefined && { setupComplete: data.setupComplete }),
         })
         .where(
             and(
@@ -225,6 +230,37 @@ export async function updateRelayTrigger(
     revalidatePath(siteUrls.relay.project(projectId));
     revalidatePath(siteUrls.relay.triggers(projectId));
     revalidatePath(siteUrls.relay.trigger(projectId, triggerId));
+}
+
+export async function backfillPendingEventsForTrigger(
+    projectId: string,
+    triggerId: string,
+) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    const pending = await db
+        .select({ id: relayEvents.id, deliveryId: relayEvents.deliveryId })
+        .from(relayEvents)
+        .where(
+            and(
+                eq(relayEvents.triggerId, triggerId),
+                isNull(relayEvents.executionId),
+            ),
+        );
+
+    for (const ev of pending) {
+        const jobId = `${triggerId}-${ev.deliveryId}`.slice(0, 100);
+        await executionQueue.add(
+            "execute",
+            { kind: "single", eventId: ev.id },
+            { jobId },
+        );
+    }
 }
 
 export async function deleteRelayTrigger(projectId: string, triggerId: string) {

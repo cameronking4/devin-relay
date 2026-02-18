@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle2, XCircle, Clock, ChevronDown, ChevronUp } from "lucide-react";
@@ -19,6 +20,8 @@ export type ResponseLogEntry = {
 
 type ResponseLogProps = {
   entries: ResponseLogEntry[];
+  /** When true, fill available height instead of fixed 420px */
+  fillHeight?: boolean;
 };
 
 function formatTimestamp(ts: string) {
@@ -36,6 +39,7 @@ function getStatusDisplay(ok: boolean, status: number) {
       icon: CheckCircle2,
       variant: "success" as const,
       label: `${status} OK`,
+      emoji: "✅",
     };
   }
   if (status === 0) {
@@ -43,20 +47,22 @@ function getStatusDisplay(ok: boolean, status: number) {
       icon: XCircle,
       variant: "error" as const,
       label: "Failed",
+      emoji: "❌",
     };
   }
   return {
     icon: XCircle,
     variant: "error" as const,
     label: `${status} ${status < 500 ? "Error" : "Server Error"}`,
+    emoji: "⚠️",
   };
 }
 
-export function ResponseLog({ entries }: ResponseLogProps) {
+export function ResponseLog({ entries, fillHeight = false }: ResponseLogProps) {
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col", fillHeight && "min-h-0 flex-1")}>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-semibold">Response log</h3>
+        <h3 className="font-semibold text-foreground">Response log</h3>
         {entries.length > 0 && (
           <span className="text-xs text-muted-foreground">
             {entries.length} request{entries.length !== 1 ? "s" : ""}
@@ -65,8 +71,12 @@ export function ResponseLog({ entries }: ResponseLogProps) {
       </div>
 
       {entries.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 py-16 text-center">
-          <div className="rounded-full bg-muted p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/10 py-16 text-center"
+        >
+          <div className="rounded-full bg-muted/50 p-4">
             <Clock className="h-8 w-8 text-muted-foreground" />
           </div>
           <p className="mt-4 text-sm font-medium text-foreground">
@@ -75,13 +85,27 @@ export function ResponseLog({ entries }: ResponseLogProps) {
           <p className="mt-1 max-w-[200px] text-sm text-muted-foreground">
             Send an event to see responses here
           </p>
-        </div>
+          <span className="mt-3 text-2xl">📥</span>
+        </motion.div>
       ) : (
-        <ScrollArea className="h-[420px] pr-3">
+        <ScrollArea className={cn(
+          "pr-3",
+          fillHeight ? "flex-1 min-h-0" : "h-[420px]"
+        )}>
           <div className="space-y-2">
-            {entries.map((entry, index) => (
-              <LogEntry key={`${entry.timestamp}-${index}`} entry={entry} />
-            ))}
+            <AnimatePresence mode="popLayout">
+              {entries.map((entry, index) => (
+                <motion.div
+                  key={`${entry.timestamp}-${index}`}
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <LogEntry entry={entry} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </ScrollArea>
       )}
@@ -101,8 +125,8 @@ function LogEntry({ entry }: { entry: ResponseLogEntry }) {
       className={cn(
         "rounded-xl border bg-card/80 p-4 transition-colors",
         entry.ok
-          ? "border-emerald-200/50 dark:border-emerald-800/30"
-          : "border-red-200/50 dark:border-red-800/30"
+          ? "border-emerald-500/30 dark:border-emerald-800/40"
+          : "border-red-500/30 dark:border-red-800/40"
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -111,7 +135,7 @@ function LogEntry({ entry }: { entry: ResponseLogEntry }) {
             <StatusIcon
               className={cn(
                 "h-4 w-4 shrink-0",
-                entry.ok ? "text-emerald-600" : "text-red-600"
+                entry.ok ? "text-emerald-500" : "text-red-500"
               )}
             />
             <span className="font-medium text-foreground">{entry.event}</span>
@@ -152,9 +176,13 @@ function LogEntry({ entry }: { entry: ResponseLogEntry }) {
             {expanded ? "Hide" : "View"} response body
           </button>
           {expanded && (
-            <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-muted/50 p-3 font-mono text-xs">
+            <motion.pre
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              className="mt-2 max-h-48 overflow-auto rounded-lg bg-muted/50 p-3 font-mono text-xs"
+            >
               {JSON.stringify(entry.body, null, 2)}
-            </pre>
+            </motion.pre>
           )}
         </div>
       )}

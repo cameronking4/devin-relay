@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
@@ -15,8 +15,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Webhook Mock - Relay Testing",
-  description: "Test Relay webhooks with production-ready mock events from Sentry, Vercel, Stripe, GitHub & more",
+  title: "Production Signals Mock - Relay Testing",
+  description: "Test Relay webhooks with production-ready events from Sentry, Vercel, Azure DevOps, Typeform, Vanta, CrowdStrike, PostHog, Logflare & more",
 };
 
 export default function RootLayout({
@@ -25,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={`dark ${dmSans.variable} ${jetbrainsMono.variable}`}>
+      <body className="font-sans antialiased bg-[hsl(var(--background))]">{children}</body>
     </html>
   );
 }

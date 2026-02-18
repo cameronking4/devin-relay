@@ -1,0 +1,1 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ADD COLUMN "setupComplete" boolean DEFAULT true NOT NULL;

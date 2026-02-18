@@ -403,6 +403,7 @@ export const relayTriggers = createTable(
         concurrencyLimit: integer("concurrencyLimit").default(3).notNull(),
         dailyCap: integer("dailyCap").default(50).notNull(),
         lowNoiseMode: boolean("lowNoiseMode").default(false).notNull(),
+        setupComplete: boolean("setupComplete").default(true).notNull(),
         createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     },
     (t) => ({
