@@ -79,22 +79,44 @@ export async function executeSession(
 
         const data = (await getRes.json()) as {
             status_enum?: string;
+            output?: string;
             messages?: Array<{ content?: string; role?: string }>;
             structured_output?: unknown;
         };
 
-        // Check for completion statuses: "stopped" or "blocked" (per Devin API docs)
-        if (data.status_enum === "stopped" || data.status_enum === "blocked") {
-            if (data.messages?.length) {
-                const last = data.messages[data.messages.length - 1];
+        // Terminal statuses per Devin v1 API: finished, blocked, stopped, expired
+        const isTerminal =
+            data.status_enum === "finished" ||
+            data.status_enum === "stopped" ||
+            data.status_enum === "blocked" ||
+            data.status_enum === "expired";
+
+        if (isTerminal) {
+            // Prefer top-level output (some API versions return this directly)
+            if (typeof data.output === "string" && data.output.trim()) {
+                output = data.output;
+            }
+            // Fallback: structured_output
+            if (!output && data.structured_output != null) {
+                output =
+                    typeof data.structured_output === "string"
+                        ? data.structured_output
+                        : JSON.stringify(data.structured_output);
+            }
+            // Fallback: last assistant message content
+            if (!output && data.messages?.length) {
+                const assistantMessages = data.messages.filter(
+                    (m) => m.role === "assistant" && m.content,
+                );
+                const last = assistantMessages[assistantMessages.length - 1];
                 output = last?.content ?? "";
             }
-            if (data.structured_output != null) {
-                output =
-                    output ||
-                    (typeof data.structured_output === "string"
-                        ? data.structured_output
-                        : JSON.stringify(data.structured_output));
+            // Fallback: concatenate all assistant messages for fuller output
+            if (!output && data.messages?.length) {
+                output = data.messages
+                    .filter((m) => m.role === "assistant" && m.content)
+                    .map((m) => m.content)
+                    .join("\n\n");
             }
             break;
         }

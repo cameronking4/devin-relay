@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { siteUrls } from "@/config/urls";
+import { ExternalLinkIcon } from "lucide-react";
 
 type Execution = Awaited<
     ReturnType<
@@ -64,6 +67,25 @@ export function ExecutionSummary({
                             : "—"}
                     </p>
                 </div>
+                {execution.aiSessionId && (
+                    <div className="sm:col-span-2">
+                        <p className="text-muted-foreground text-sm">
+                            Devin session
+                        </p>
+                        <Button variant="outline" size="sm" asChild>
+                            <a
+                                href={siteUrls.devin.session(
+                                    execution.aiSessionId,
+                                )}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open in Devin
+                                <ExternalLinkIcon className="ml-1 h-4 w-4" />
+                            </a>
+                        </Button>
+                    </div>
+                )}
                 {execution.error && (
                     <div className="sm:col-span-2">
                         <p className="text-muted-foreground text-sm">

@@ -50,6 +50,11 @@ export const siteUrls = {
         settings: "/profile/settings",
         billing: "/profile/billing",
     },
+    devin: {
+        /** Devin app session URL - use with session ID from Devin API */
+        session: (sessionId: string) =>
+            `https://app.devin.ai/sessions/${sessionId}`,
+    },
     relay: {
         projects: "/project",
         projectNew: "/project/new",

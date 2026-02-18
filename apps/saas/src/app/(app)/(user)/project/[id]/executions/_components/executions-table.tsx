@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { siteUrls } from "@/config/urls";
 import Link from "next/link";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, ExternalLinkIcon } from "lucide-react";
 
 type ExecutionRow = Awaited<
     ReturnType<
@@ -46,6 +46,7 @@ export function ExecutionsTable({
                         <TableHead>Trigger</TableHead>
                         <TableHead>Latency</TableHead>
                         <TableHead>Started</TableHead>
+                        <TableHead>Devin</TableHead>
                         <TableHead className="w-[80px]">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -73,6 +74,26 @@ export function ExecutionsTable({
                                     : e.createdAt
                                       ? new Date(e.createdAt).toLocaleString()
                                       : "—"}
+                            </TableCell>
+                            <TableCell>
+                                {e.aiSessionId ? (
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <a
+                                            href={siteUrls.devin.session(
+                                                e.aiSessionId,
+                                            )}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View session
+                                            <ExternalLinkIcon className="ml-1 h-4 w-4" />
+                                        </a>
+                                    </Button>
+                                ) : (
+                                    <span className="text-muted-foreground text-sm">
+                                        —
+                                    </span>
+                                )}
                             </TableCell>
                             <TableCell>
                                 <Button variant="ghost" size="sm" asChild>

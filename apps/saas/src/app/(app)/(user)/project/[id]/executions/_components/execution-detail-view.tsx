@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { siteUrls } from "@/config/urls";
 import { CopyIcon } from "lucide-react";
 import { toast } from "sonner";
 import { ExecutionSummary } from "./execution-summary";
@@ -79,8 +80,21 @@ export function ExecutionDetailView({
             </TabsContent>
             <TabsContent value="output">
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Devin output</CardTitle>
+                        {execution.aiSessionId && (
+                            <Button variant="outline" size="sm" asChild>
+                                <a
+                                    href={siteUrls.devin.session(
+                                        execution.aiSessionId,
+                                    )}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open in Devin
+                                </a>
+                            </Button>
+                        )}
                     </CardHeader>
                     <CardContent>
                         <OutputViewer content={execution.output} />

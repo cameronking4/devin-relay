@@ -204,6 +204,7 @@ export async function getExecutionsByProjectId(
             startedAt: relayExecutions.startedAt,
             createdAt: relayExecutions.createdAt,
             triggerName: relayTriggers.name,
+            aiSessionId: relayExecutions.aiSessionId,
         })
         .from(relayExecutions)
         .innerJoin(

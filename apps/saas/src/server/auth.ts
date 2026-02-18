@@ -140,8 +140,21 @@ export const authOptions: NextAuthOptions = {
             clientSecret: env.GITHUB_CLIENT_SECRET,
             authorization: {
                 params: {
-                    scope: "read:user repo",
+                    scope: "read:user user:email repo",
                 },
+            },
+            profile(profile) {
+                // GitHub may return null email when user keeps it private.
+                // Use GitHub's noreply format so we always have a valid email for the schema.
+                const email =
+                    profile.email ??
+                    `${profile.id}+${profile.login}@users.noreply.github.com`;
+                return {
+                    id: profile.id.toString(),
+                    name: profile.name ?? profile.login,
+                    email,
+                    image: profile.avatar_url,
+                };
             },
         }),
         /**
