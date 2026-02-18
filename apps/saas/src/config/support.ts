@@ -27,24 +27,24 @@ export const supportInfos: SupportInfo[] = [
         title: "General",
         description:
             "Questions about Relay, webhook setup, or event-driven AI automation.",
-        email: "hello@example.com",
-        buttonHref: `mailto:hello@example.com`,
+        email: "hello@support.relay.dev",
+        buttonHref: "mailto:hello@support.relay.dev",
         buttonText: "Get in touch",
     },
     {
         title: "Tech Support",
         description:
             "Devin integration, GitHub routing, or execution issues. Our team will help you debug.",
-        email: "tech@example.com",
-        buttonHref: `mailto:tech@example.com`,
+        email: "tech@support.relay.dev",
+        buttonHref: "mailto:tech@support.relay.dev",
         buttonText: "Get in touch",
     },
     {
         title: "Enterprise",
         description:
             "For teams needing higher volume, custom integrations, or dedicated support.",
-        email: "sales@example.com",
-        buttonHref: `mailto:sales@example.com`,
+        email: "sales@support.relay.dev",
+        buttonHref: "mailto:sales@support.relay.dev",
         buttonText: "Contact sales",
     },
     {

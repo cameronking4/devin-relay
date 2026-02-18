@@ -1,27 +1,27 @@
 ---
-title: "Launch of launchmvpfast 3"
-description: "launchmvpfast is a platform to create and launch SaaS products quickly."
-version: "0.4.0"
-publishedAt: 2024-10-06
-thumbnail: "https://fakeimg.pl/896x400/d1d1d1/6b6b6b"
+title: "GitHub repository support for triggers"
+description: "Connect triggers to GitHub repositories with path policies, repo tree picker, and improved webhook setup flow."
+version: "0.3.0"
+publishedAt: 2026-02-18
 ---
 
+Relay v0.3.0 enhances trigger management with native GitHub repository integration.
 
 ### Features
 
--   Create and launch SaaS products quickly.
--   Manage your SaaS products from a single dashboard.
--   Monitor your SaaS products and get real-time insights.
--   Track your SaaS product usage and performance.
--   Manage your SaaS product plans and billing.
--   Integrate with your existing SaaS products.
--   Get support and help from launchmvpfast's community.
+- **GitHub repository input** — Associate each trigger with a specific GitHub repository directly in the trigger form and wizard
+- **Path policies** — Configure include/exclude paths to scope when a trigger fires (e.g., only `src/`, exclude `node_modules/`)
+- **Repo tree picker** — Visual dialog to browse and select repository paths for include/exclude rules
+- **Devin prompt preview** — Preview how your template renders before saving
+- **Webhook status polling** — Refined polling and guidance messages for clearer setup feedback
+- **Layout improvements** — Trigger pages, execution views, and project layout reorganized for consistency
 
+### Technical
 
-### Pricing
+- New Drizzle migrations for trigger path and repository metadata
+- GitHub actions for repository and tree access
+- Context builder and template engine updated to use repository scope
 
-launchmvpfast is a free SaaS product. You can try it out for free and see how it works.
+### Support
 
-### Support 
-
-If you have any questions or issues, you can contact us at [support@launchmvpfast.com](mailto:support@launchmvpfast.com).
+Devin integration, GitHub routing, or execution issues? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).

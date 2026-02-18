@@ -63,41 +63,47 @@ export function WebFooter() {
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                     <div className="flex flex-col gap-2">
                         <h3 className="text-sm font-semibold">Resources</h3>
-                        {navigation.map((item) => (
-                            <FooterLink
-                                key={item.label}
-                                href={item.href}
-                                label={item.label}
-                                external={item.external}
-                            />
-                        ))}
+                        <FooterLink
+                            href={siteUrls.docs}
+                            label="Docs"
+                        />
+                        <FooterLink
+                            href={siteUrls.changelogs}
+                            label="Changelogs"
+                        />
+                        <FooterLink
+                            href={siteUrls.support}
+                            label="Support"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <h3 className="text-sm font-semibold">Company</h3>
                         <FooterLink
                             href={siteUrls.github}
                             label="Github"
                             external
                         />
+                        <FooterLink
+                            href="https://x.com/cameronyking4"
+                            label="Twitter"
+                            external
+                        />
+                        <FooterLink
+                            href={siteUrls.features}
+                            label="Features"
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-sm font-semibold">Useful links</h3>
-                        {navigation.map((item) => (
-                            <FooterLink
-                                key={item.label}
-                                href={item.href}
-                                label={item.label}
-                                external={item.external}
-                            />
-                        ))}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <h3 className="text-sm font-semibold">More</h3>
-                        {navigation.map((item) => (
-                            <FooterLink
-                                key={item.label}
-                                href={item.href}
-                                label={item.label}
-                                external={item.external}
-                            />
-                        ))}
+                        <h3 className="text-sm font-semibold">Contact</h3>
+                        <FooterLink
+                            href={siteUrls.feedback}
+                            label="Feedback"
+                        />
+                        <FooterLink
+                            href="mailto:hello@launchmvpfast.com"
+                            label="Email Us"
+                            external
+                        />
                     </div>
                 </div>
             </footer>

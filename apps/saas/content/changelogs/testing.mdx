@@ -1,27 +1,23 @@
 ---
-title: "Launch of launchmvpfast 2"
-description: "launchmvpfast is a platform to create and launch SaaS products quickly."
-version: "0.1.0"
-publishedAt: 2024-08-01
-thumbnail: "https://fakeimg.pl/896x400/d1d1d1/6b6b6b"
+title: "Relay rebrand and configuration updates"
+description: "Full rebrand to Relay, updated environment variables, installation docs, and worker runtime fixes."
+version: "0.2.0"
+publishedAt: 2026-02-17
 ---
 
+Relay v0.2.0 brings a complete rebrand and configuration overhaul.
 
-### Features
+### Changes
 
--   Create and launch SaaS products quickly.
--   Manage your SaaS products from a single dashboard.
--   Monitor your SaaS products and get real-time insights.
--   Track your SaaS product usage and performance.
--   Manage your SaaS product plans and billing.
--   Integrate with your existing SaaS products.
--   Get support and help from launchmvpfast's community.
+- **Rebrand to Relay** — All project references, creator attribution, page titles, and descriptions updated
+- **Environment variables** — Renamed and simplified for clearer configuration (`RELAY_*` where applicable)
+- **Installation docs** — Updated getting-started guide and setup instructions
+- **Support and contact** — Revised GitHub links and support contact information across the app
+- **Worker runtime** — `dotenv` moved to dependencies for production worker builds
+- **Env validation** — Worker only requires `DATABASE_URL`, `REDIS_URL`, and `RELAY_ENCRYPTION_KEY`; full validation skipped for worker process
+- **CI** — Allow pnpm install to proceed when lockfile is out of sync (Render CI)
+- **Package manager** — pnpm lockfile and `.gitignore` adjustments for lockfile handling
 
+### Support
 
-### Pricing
-
-launchmvpfast is a free SaaS product. You can try it out for free and see how it works.
-
-### Support 
-
-If you have any questions or issues, you can contact us at [support@launchmvpfast.com](mailto:support@launchmvpfast.com).
+Questions or issues? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or open an issue on GitHub.

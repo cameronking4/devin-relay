@@ -1,27 +1,25 @@
 ---
-title: "Launch of launchmvpfast"
-description: "launchmvpfast is a platform to create and launch SaaS products quickly."
-version: "0.0.0"
-publishedAt: 2024-04-01
+title: "Launch of Relay"
+description: "Relay is event-driven AI orchestration for engineering signals. Connect webhooks to Devin, route outputs to GitHub—zero glue code."
+version: "0.1.0"
+publishedAt: 2026-02-16
 ---
 
-launchmvpfast is a platform to create and launch SaaS products quickly.
+Relay is the AI control plane for platform and DevEx teams. Connect a webhook, trigger Devin, and route outputs to GitHub—without maintaining glue code.
 
 ### Features
 
--   Create and launch SaaS products quickly.
--   Manage your SaaS products from a single dashboard.
--   Monitor your SaaS products and get real-time insights.
--   Track your SaaS product usage and performance.
--   Manage your SaaS product plans and billing.
--   Integrate with your existing SaaS products.
--   Get support and help from launchmvpfast's community.
+- **Projects and triggers** — Create projects and configure webhook-triggered workflows from a single dashboard
+- **Generic webhooks** — Unique URL per trigger, JSON POST ingestion, optional HMAC, schema introspection
+- **BYOK Devin** — Your API key, encrypted at rest, never logged
+- **Condition builder** — Filter events by payload paths before invoking Devin
+- **Execution visibility** — Raw payload, rendered prompt, Devin output, latency, and errors for every run
+- **Webhook mock demo** — Test triggers with Datadog, Grafana, PagerDuty, Prometheus, Sentry, and Vercel-style payloads
 
+### Stack
 
-### Pricing
+Next.js (App Router), TypeScript, PostgreSQL (Drizzle), Redis (BullMQ), Devin, GitHub App, Vercel + worker for background jobs.
 
-launchmvpfast is a free SaaS product. You can try it out for free and see how it works.
+### Support
 
-### Support 
-
-If you have any questions or issues, you can contact us at [support@launchmvpfast.com](mailto:support@launchmvpfast.com).
+Questions about Relay, webhook setup, or event-driven AI automation? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev).
