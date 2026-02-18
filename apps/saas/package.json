@@ -12,10 +12,10 @@
         "dev": "next dev",
         "dev:demo": "SKIP_ENV_VALIDATION=1 next dev",
         "dev:turbo": "next dev --turbo",
-        "dev:worker": "tsx scripts/worker.ts",
+        "dev:worker": "SKIP_ENV_VALIDATION=1 tsx scripts/worker.ts",
         "lint": "next lint",
         "start": "next start",
-        "worker": "tsx scripts/worker.ts"
+        "worker": "SKIP_ENV_VALIDATION=1 tsx scripts/worker.ts"
     },
     "dependencies": {
         "@auth/drizzle-adapter": "^0.7.0",
