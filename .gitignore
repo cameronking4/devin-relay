@@ -27,8 +27,8 @@ out/
 build
 dist
 
-# lock files
-pnpm-lock.yaml
+# lock files - keep pnpm-lock.yaml committed for reproducible installs on Vercel
+# pnpm-lock.yaml
 
 
 # Debug
