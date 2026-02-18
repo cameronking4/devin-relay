@@ -1,19 +1,30 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 export const env = createEnv({
     /**
      * Specify your server-side environment variables schema here. This way you can ensure the app
      * isn't built with invalid env vars.
      */
     server: {
-        DATABASE_URL: z
-            .string()
-            .url()
-            .refine(
-                (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-                "You forgot to change the default URL",
-            ),
+        DATABASE_URL: isDev
+            ? z
+                .string()
+                .url()
+                .refine(
+                    (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
+                    "You forgot to change the default URL",
+                )
+                .default("postgresql://postgres:postgres@localhost:5432/saas_dev")
+            : z
+                .string()
+                .url()
+                .refine(
+                    (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
+                    "You forgot to change the default URL",
+                ),
         NODE_ENV: z
             .enum(["development", "test", "production"])
             .default("development"),
@@ -21,17 +32,19 @@ export const env = createEnv({
             process.env.NODE_ENV === "production"
                 ? z.string()
                 : z.string().optional(),
-        NEXTAUTH_URL: z.string().url(),
-        GOOGLE_CLIENT_ID: z.string(),
-        GOOGLE_CLIENT_SECRET: z.string(),
-        GITHUB_CLIENT_ID: z.string(),
-        GITHUB_CLIENT_SECRET: z.string(),
-        RESEND_API_KEY: z.string(),
-        UPLOADTHING_SECRET: z.string(),
-        UPLOADTHING_ID: z.string(),
-        LEMONSQUEEZY_API_KEY: z.string(),
-        LEMONSQUEEZY_STORE_ID: z.string(),
-        LEMONSQUEEZY_WEBHOOK_SECRET: z.string(),
+        NEXTAUTH_URL: isDev
+            ? z.string().url().default("http://localhost:3000")
+            : z.string().url(),
+        GOOGLE_CLIENT_ID: isDev ? z.string().optional() : z.string(),
+        GOOGLE_CLIENT_SECRET: isDev ? z.string().optional() : z.string(),
+        GITHUB_CLIENT_ID: isDev ? z.string().optional() : z.string(),
+        GITHUB_CLIENT_SECRET: isDev ? z.string().optional() : z.string(),
+        RESEND_API_KEY: isDev ? z.string().optional() : z.string(),
+        UPLOADTHING_SECRET: isDev ? z.string().optional() : z.string(),
+        UPLOADTHING_ID: isDev ? z.string().optional() : z.string(),
+        LEMONSQUEEZY_API_KEY: isDev ? z.string().optional() : z.string(),
+        LEMONSQUEEZY_STORE_ID: isDev ? z.string().optional() : z.string(),
+        LEMONSQUEEZY_WEBHOOK_SECRET: isDev ? z.string().optional() : z.string(),
     },
 
     /**
@@ -41,7 +54,7 @@ export const env = createEnv({
      */
     client: {
         // NEXT_PUBLIC_CLIENTVAR: z.string(),
-        NEXT_PUBLIC_POSTHOG_KEY: z.string(),
+        NEXT_PUBLIC_POSTHOG_KEY: isDev ? z.string().optional() : z.string(),
         NEXT_PUBLIC_WAITLIST_MODE: z.enum(["on", "off"]).default("off"),
         NEXT_PUBLIC_MAINTENANCE_MODE: z.enum(["on", "off"]).default("off"),
     },

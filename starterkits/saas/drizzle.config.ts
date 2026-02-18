@@ -1,12 +1,15 @@
-import { type Config } from "drizzle-kit";
+import "dotenv/config";
+
+import { defineConfig } from "drizzle-kit";
 
 import { env } from "@/env.js";
 
-export default {
+export default defineConfig({
+    dialect: "postgresql",
     schema: "./src/server/db/schema.ts",
-    driver: "pg",
+    out: "./drizzle",
     dbCredentials: {
-        connectionString: env.DATABASE_URL,
+        url: env.DATABASE_URL,
     },
     tablesFilter: ["launchmvpfast-saas-starterkit_*"],
-} satisfies Config;
+});
