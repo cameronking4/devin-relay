@@ -1,0 +1,25 @@
+---
+title: "Low noise mode for triggers"
+description: "Single-branch workflows, serialized executions, and quieter automation for high-frequency event sources."
+version: "0.4.0"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.0 introduces low noise mode, giving teams fine-grained control over how triggers behave under high event volume.
+
+### Features
+
+- **Low noise mode toggle** — Enable per-trigger to collapse multiple events into a single-branch workflow instead of spawning parallel branches
+- **Serialized executions** — When low noise mode is active, executions for the same trigger run sequentially to avoid conflicts
+- **Branch naming conventions** — Prompt rendering updated to reflect low noise mode branch strategy
+- **Trigger form and wizard** — New toggle and settings exposed in both the create and edit trigger flows
+
+### Technical
+
+- New Drizzle migration adding `lowNoiseMode` attribute to the trigger schema
+- Backend processor updated to serialize execution queuing per trigger when low noise mode is enabled
+- Context builder and template engine updated to support low noise mode branch naming
+
+### Support
+
+Questions about low noise mode or trigger configuration? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
