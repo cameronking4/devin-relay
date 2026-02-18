@@ -1,0 +1,4 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayEvent" ADD COLUMN "executionId" varchar(255);--> statement-breakpoint
+ALTER TABLE "launchmvpfast-saas-starterkit_relayExecution" ADD COLUMN "eventIds" jsonb DEFAULT 'null'::jsonb;--> statement-breakpoint
+ALTER TABLE "launchmvpfast-saas-starterkit_relayEvent" ADD CONSTRAINT "launchmvpfast-saas-starterkit_relayEvent_executionId_launchmvpfast-saas-starterkit_relayExecution_id_fk" FOREIGN KEY ("executionId") REFERENCES "public"."launchmvpfast-saas-starterkit_relayExecution"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "relayEvent_executionId_idx" ON "launchmvpfast-saas-starterkit_relayEvent" USING btree ("executionId");

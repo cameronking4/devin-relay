@@ -17,6 +17,17 @@ type Execution = Awaited<
     >
 >;
 
+function isBatchPayload(
+    raw: unknown,
+): raw is { events: unknown[]; count?: number } {
+    return (
+        typeof raw === "object" &&
+        raw !== null &&
+        "events" in raw &&
+        Array.isArray((raw as { events: unknown[] }).events)
+    );
+}
+
 export function ExecutionDetailView({
     execution,
     projectId,
@@ -51,7 +62,14 @@ export function ExecutionDetailView({
             <TabsContent value="payload">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>Raw payload</CardTitle>
+                        <div>
+                            <CardTitle>Raw payload</CardTitle>
+                            {isBatchPayload(execution.rawPayload) && (
+                                <p className="text-muted-foreground mt-0.5 text-sm">
+                                    Batch of {execution.rawPayload.events.length} events
+                                </p>
+                            )}
+                        </div>
                         <Button variant="outline" size="sm" onClick={copyPayload}>
                             <CopyIcon className="h-4 w-4" />
                             Copy
@@ -106,11 +124,29 @@ export function ExecutionDetailView({
                     <CardHeader>
                         <CardTitle>Errors</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-3">
                         {execution.error ? (
-                            <pre className="bg-destructive/10 text-destructive overflow-auto rounded-md p-4 text-sm whitespace-pre-wrap">
-                                {execution.error}
-                            </pre>
+                            <>
+                                <pre className="bg-destructive/10 text-destructive overflow-auto rounded-md p-4 text-sm whitespace-pre-wrap">
+                                    {execution.error}
+                                </pre>
+                                {execution.error.includes(
+                                    "concurrent session limit",
+                                ) && (
+                                    <p className="text-muted-foreground text-sm">
+                                        <a
+                                            href={siteUrls.devin.app}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="underline hover:no-underline"
+                                        >
+                                            Open Devin app
+                                        </a>{" "}
+                                        to put sessions to sleep or upgrade your
+                                        plan.
+                                    </p>
+                                )}
+                            </>
                         ) : (
                             <p className="text-muted-foreground text-sm">
                                 No errors recorded.

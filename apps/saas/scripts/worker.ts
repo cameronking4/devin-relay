@@ -4,13 +4,36 @@
  * Deploy as a Background Worker on Render.
  */
 import "dotenv/config";
-import { processExecutionJob } from "../src/server/relay/processor";
-import { createExecutionWorker } from "../src/server/relay/queue";
+import {
+    processBatchExecutionJob,
+    processExecutionJob,
+    processWorkflowExecutionJob,
+} from "../src/server/relay/processor";
+import {
+    type ExecutionJobData,
+    createExecutionWorker,
+} from "../src/server/relay/queue";
 
 const worker = createExecutionWorker(async (job) => {
-    const { eventId } = job.data;
-    console.log(`[worker] Processing event ${eventId}`);
-    await processExecutionJob(eventId);
+    const data = job.data as ExecutionJobData;
+    if (data.kind === "batch") {
+        console.log(
+            `[worker] Processing batch for trigger ${data.triggerId} (${data.windowStart} – ${data.windowEnd})`,
+        );
+        await processBatchExecutionJob(data);
+    } else if (data.kind === "single") {
+        console.log(
+            `[worker] Processing event ${data.eventId}${data.retryAfter429 ? ` (429 retry #${data.retryAfter429})` : ""}`,
+        );
+        await processExecutionJob(data);
+    } else if (data.kind === "workflow") {
+        console.log(
+            `[worker] Processing workflow ${data.workflowId} (${data.eventIds.length} events)`,
+        );
+        await processWorkflowExecutionJob(data);
+    } else {
+        throw new Error("Unknown job data shape");
+    }
 });
 
 worker.on("completed", (job) => {

@@ -43,6 +43,20 @@
       "when": 1771433817390,
       "tag": "0005_orange_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771445864938,
+      "tag": "0006_swift_layla_miller",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1771449543369,
+      "tag": "0007_lonely_donald_blake",
+      "breakpoints": true
     }
   ]
 }

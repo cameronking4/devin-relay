@@ -3,7 +3,7 @@
 import { getOrganizations } from "@/server/actions/organization/queries";
 import { getRelayProjectById } from "@/server/actions/relay/queries";
 import { db } from "@/server/db";
-import { relayProjects, relayTriggers } from "@/server/db/schema";
+import { relayProjects, relayTriggers, relayWorkflows } from "@/server/db/schema";
 import { protectedProcedure } from "@/server/procedures";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -300,4 +300,124 @@ export async function validateStoredDevinKey(projectId: string) {
     } catch {
         return { valid: false };
     }
+}
+
+export type WorkflowConditionInput = {
+    triggerId?: string;
+    path: string;
+    operator: string;
+    value: unknown;
+};
+
+export async function createRelayWorkflow(
+    projectId: string,
+    data: {
+        name: string;
+        triggerIds: string[];
+        matchMode: "any" | "all";
+        timeWindowMinutes: number;
+        conditions?: WorkflowConditionInput[];
+        promptTemplate: string;
+        githubRepo?: string;
+        includePaths?: PathPolicyPaths;
+        excludePaths?: PathPolicyPaths;
+    },
+) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    const [workflow] = await db
+        .insert(relayWorkflows)
+        .values({
+            projectId,
+            name: data.name.trim().slice(0, 255),
+            triggerIds: data.triggerIds ?? [],
+            matchMode: data.matchMode ?? "all",
+            timeWindowMinutes: Math.max(1, data.timeWindowMinutes ?? 5),
+            conditions: data.conditions ?? [],
+            promptTemplate: data.promptTemplate,
+            githubRepo: (data.githubRepo ?? "").trim().slice(0, 255),
+            includePaths: data.includePaths ?? [],
+            excludePaths: data.excludePaths ?? [],
+        })
+        .returning();
+    if (!workflow) throw new Error("Failed to create workflow");
+    revalidatePath(siteUrls.relay.project(projectId));
+    revalidatePath(siteUrls.relay.triggers(projectId));
+    return workflow;
+}
+
+export async function updateRelayWorkflow(
+    projectId: string,
+    workflowId: string,
+    data: {
+        name?: string;
+        triggerIds?: string[];
+        matchMode?: "any" | "all";
+        timeWindowMinutes?: number;
+        conditions?: WorkflowConditionInput[];
+        promptTemplate?: string;
+        githubRepo?: string;
+        includePaths?: PathPolicyPaths;
+        excludePaths?: PathPolicyPaths;
+        enabled?: boolean;
+    },
+) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    await db
+        .update(relayWorkflows)
+        .set({
+            ...(data.name !== undefined && { name: data.name.trim().slice(0, 255) }),
+            ...(data.triggerIds !== undefined && { triggerIds: data.triggerIds }),
+            ...(data.matchMode !== undefined && { matchMode: data.matchMode }),
+            ...(data.timeWindowMinutes !== undefined && {
+                timeWindowMinutes: Math.max(1, data.timeWindowMinutes),
+            }),
+            ...(data.conditions !== undefined && { conditions: data.conditions }),
+            ...(data.promptTemplate !== undefined && { promptTemplate: data.promptTemplate }),
+            ...(data.githubRepo !== undefined && {
+                githubRepo: data.githubRepo.trim().slice(0, 255),
+            }),
+            ...(data.includePaths !== undefined && { includePaths: data.includePaths }),
+            ...(data.excludePaths !== undefined && { excludePaths: data.excludePaths }),
+            ...(data.enabled !== undefined && { enabled: data.enabled }),
+        })
+        .where(
+            and(
+                eq(relayWorkflows.id, workflowId),
+                eq(relayWorkflows.projectId, projectId),
+            ),
+        );
+    revalidatePath(siteUrls.relay.project(projectId));
+    revalidatePath(siteUrls.relay.triggers(projectId));
+}
+
+export async function deleteRelayWorkflow(projectId: string, workflowId: string) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    await db
+        .delete(relayWorkflows)
+        .where(
+            and(
+                eq(relayWorkflows.id, workflowId),
+                eq(relayWorkflows.projectId, projectId),
+            ),
+        );
+    revalidatePath(siteUrls.relay.project(projectId));
+    revalidatePath(siteUrls.relay.triggers(projectId));
 }

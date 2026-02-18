@@ -375,6 +375,7 @@ export const relayProjectsRelations = relations(relayProjects, ({ one, many }) =
         references: [organizations.id],
     }),
     triggers: many(relayTriggers),
+    workflows: many(relayWorkflows),
     relayEvents: many(relayEvents),
     executions: many(relayExecutions),
 }));
@@ -418,6 +419,57 @@ export const relayTriggersRelations = relations(relayTriggers, ({ one, many }) =
     executions: many(relayExecutions),
 }));
 
+/** Workflow source: which trigger to watch (trigger has source/eventType labels) */
+export type WorkflowSource = { triggerId: string };
+
+/** Source-scoped condition for workflows */
+export type WorkflowCondition = {
+    triggerId?: string;
+    path: string;
+    operator: string;
+    value: unknown;
+};
+
+export const relayWorkflowMatchModeEnum = pgEnum("relay-workflow-match-mode", [
+    "any",
+    "all",
+]);
+
+export const relayWorkflows = createTable(
+    "relayWorkflow",
+    {
+        id: varchar("id", { length: 255 })
+            .notNull()
+            .primaryKey()
+            .default(sql`gen_random_uuid()`),
+        projectId: varchar("projectId", { length: 255 })
+            .notNull()
+            .references(() => relayProjects.id, { onDelete: "cascade" }),
+        name: varchar("name", { length: 255 }).notNull(),
+        triggerIds: jsonb("triggerIds").$type<string[]>().notNull().default([]),
+        matchMode: relayWorkflowMatchModeEnum("matchMode").notNull().default("all"),
+        timeWindowMinutes: integer("timeWindowMinutes").notNull().default(5),
+        conditions: jsonb("conditions").$type<WorkflowCondition[]>().default([]),
+        promptTemplate: text("promptTemplate").notNull(),
+        githubRepo: varchar("githubRepo", { length: 255 }).notNull().default(""),
+        includePaths: jsonb("includePaths").$type<string[]>().default([]),
+        excludePaths: jsonb("excludePaths").$type<string[]>().default([]),
+        enabled: boolean("enabled").default(true).notNull(),
+        createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    },
+    (t) => ({
+        projectIdIdx: index("relayWorkflow_projectId_idx").on(t.projectId),
+    }),
+);
+
+export const relayWorkflowsRelations = relations(relayWorkflows, ({ one, many }) => ({
+    project: one(relayProjects, {
+        fields: [relayWorkflows.projectId],
+        references: [relayProjects.id],
+    }),
+    executions: many(relayExecutions),
+}));
+
 export const relayEvents = createTable(
     "relayEvent",
     {
@@ -434,6 +486,7 @@ export const relayEvents = createTable(
         deliveryId: varchar("deliveryId", { length: 512 }).notNull(),
         rawPayload: jsonb("rawPayload").notNull(),
         receivedAt: timestamp("receivedAt", { mode: "date" }).notNull().defaultNow(),
+        executionId: varchar("executionId", { length: 255 }),
     },
     (t) => ({
         triggerIdIdx: index("relayEvent_triggerId_idx").on(t.triggerId),
@@ -442,10 +495,11 @@ export const relayEvents = createTable(
             t.deliveryId,
             t.triggerId,
         ),
+        executionIdIdx: index("relayEvent_executionId_idx").on(t.executionId),
     }),
 );
 
-export const relayEventsRelations = relations(relayEvents, ({ one, many }) => ({
+export const relayEventsRelations = relations(relayEvents, ({ one }) => ({
     project: one(relayProjects, {
         fields: [relayEvents.projectId],
         references: [relayProjects.id],
@@ -454,7 +508,10 @@ export const relayEventsRelations = relations(relayEvents, ({ one, many }) => ({
         fields: [relayEvents.triggerId],
         references: [relayTriggers.id],
     }),
-    executions: many(relayExecutions),
+    execution: one(relayExecutions, {
+        fields: [relayEvents.executionId],
+        references: [relayExecutions.id],
+    }),
 }));
 
 export const relayExecutionStatusEnum = pgEnum("relay-execution-status", [
@@ -480,6 +537,11 @@ export const relayExecutions = createTable(
         triggerId: varchar("triggerId", { length: 255 })
             .notNull()
             .references(() => relayTriggers.id, { onDelete: "cascade" }),
+        workflowId: varchar("workflowId", { length: 255 }).references(
+            () => relayWorkflows.id,
+            { onDelete: "set null" },
+        ),
+        eventIds: jsonb("eventIds").$type<string[] | null>(),
         renderedPrompt: text("renderedPrompt"),
         aiSessionId: varchar("aiSessionId", { length: 255 }),
         status: relayExecutionStatusEnum("status").notNull().default("pending"),
@@ -493,6 +555,7 @@ export const relayExecutions = createTable(
     (t) => ({
         eventIdIdx: index("relayExecution_eventId_idx").on(t.eventId),
         projectIdIdx: index("relayExecution_projectId_idx").on(t.projectId),
+        workflowIdIdx: index("relayExecution_workflowId_idx").on(t.workflowId),
         projectCreatedIdx: index("relayExecution_projectId_createdAt_idx").on(
             t.projectId,
             t.createdAt,
@@ -512,5 +575,9 @@ export const relayExecutionsRelations = relations(relayExecutions, ({ one }) => 
     trigger: one(relayTriggers, {
         fields: [relayExecutions.triggerId],
         references: [relayTriggers.id],
+    }),
+    workflow: one(relayWorkflows, {
+        fields: [relayExecutions.workflowId],
+        references: [relayWorkflows.id],
     }),
 }));

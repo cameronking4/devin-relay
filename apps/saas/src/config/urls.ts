@@ -51,6 +51,8 @@ export const siteUrls = {
         billing: "/profile/billing",
     },
     devin: {
+        /** Devin app - manage sessions, put Devins to sleep */
+        app: "https://app.devin.ai",
         /** Devin app session URL - use with session ID from Devin API */
         session: (sessionId: string) =>
             `https://app.devin.ai/sessions/${sessionId}`,
@@ -63,6 +65,11 @@ export const siteUrls = {
         triggerNew: (projectId: string) => `/project/${projectId}/triggers/new`,
         trigger: (projectId: string, triggerId: string) =>
             `/project/${projectId}/triggers/${triggerId}`,
+        workflows: (projectId: string) => `/project/${projectId}/triggers/workflows`,
+        workflowNew: (projectId: string) =>
+            `/project/${projectId}/triggers/workflows/new`,
+        workflow: (projectId: string, workflowId: string) =>
+            `/project/${projectId}/triggers/workflows/${workflowId}`,
         executions: (projectId: string) => `/project/${projectId}/executions`,
         execution: (projectId: string, executionId: string) =>
             `/project/${projectId}/executions/${executionId}`,

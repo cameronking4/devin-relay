@@ -43,7 +43,7 @@ export function ExecutionsTable({
                 <TableHeader>
                     <TableRow>
                         <TableHead>Status</TableHead>
-                        <TableHead>Trigger</TableHead>
+                        <TableHead>Origin</TableHead>
                         <TableHead>Latency</TableHead>
                         <TableHead>Started</TableHead>
                         <TableHead>Devin</TableHead>
@@ -62,7 +62,11 @@ export function ExecutionsTable({
                                     {e.status}
                                 </Badge>
                             </TableCell>
-                            <TableCell>{e.triggerName ?? "—"}</TableCell>
+                            <TableCell>
+                                {e.workflowName
+                                    ? `Workflow: ${e.workflowName}`
+                                    : e.triggerName ?? "—"}
+                            </TableCell>
                             <TableCell>
                                 {e.latencyMs != null
                                     ? `${e.latencyMs} ms`

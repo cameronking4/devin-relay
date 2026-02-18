@@ -19,18 +19,39 @@ export const executionQueue = new Queue(executionQueueName, {
 });
 
 export function createExecutionWorker(
-    processor: (job: { id: string; data: { eventId: string } }) => Promise<void>,
+    processor: (
+        job: { id: string; data: ExecutionJobData },
+    ) => Promise<void>,
 ) {
     return new Worker(
         executionQueueName,
         async (job) => {
-            await processor(job as { id: string; data: { eventId: string } });
+            await processor(job as { id: string; data: ExecutionJobData });
         },
         {
             connection,
-            concurrency: 5,
+            concurrency: 2,
         },
     );
 }
 
-export type ExecutionJobData = { eventId: string };
+export type ExecutionJobData =
+    | {
+          kind: "single";
+          eventId: string;
+          /** Incremented each time we retry after a 429; stops retrying after MAX_429_RETRIES */
+          retryAfter429?: number;
+      }
+    | {
+          kind: "batch";
+          triggerId: string;
+          windowStart: string;
+          windowEnd: string;
+      }
+    | {
+          kind: "workflow";
+          workflowId: string;
+          eventIds: string[];
+          windowStart: string;
+          windowEnd: string;
+      };

@@ -1,5 +1,17 @@
 const DEVIN_API_BASE = "https://api.devin.ai/v1";
 
+/** Thrown when Devin API returns 429 (concurrent session limit, rate limit, etc.) */
+export class DevinRateLimitError extends Error {
+    constructor(
+        message: string,
+        public readonly status: number,
+        public readonly detail?: string,
+    ) {
+        super(message);
+        this.name = "DevinRateLimitError";
+    }
+}
+
 export type ExecuteSessionParams = {
     apiKey: string;
     prompt: string;
@@ -30,6 +42,20 @@ export async function executeSession(
 
     if (!createRes.ok) {
         const err = (await createRes.text()) || createRes.statusText;
+        if (createRes.status === 429) {
+            let detail: string | undefined;
+            try {
+                const parsed = JSON.parse(err) as { detail?: string };
+                detail = parsed.detail;
+            } catch {
+                /* ignore */
+            }
+            throw new DevinRateLimitError(
+                `Devin concurrent session limit: ${detail ?? err}`,
+                createRes.status,
+                detail,
+            );
+        }
         throw new Error(`Devin create session failed: ${createRes.status} ${err}`);
     }
 

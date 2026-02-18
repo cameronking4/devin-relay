@@ -85,6 +85,17 @@ All payloads are generated based on official documentation from:
 - Prometheus: [Alertmanager](https://github.com/prometheus/alertmanager)
 - Datadog, Grafana, PagerDuty: Official webhook documentation
 
+## Testing Event Workflows (multi-trigger)
+
+Relay supports **event workflows** that combine events from multiple triggers. To test:
+
+1. **Create two triggers** in your Relay project (e.g. one for Sentry, one for Vercel). Copy each trigger’s webhook URL.
+2. **Create an event workflow**: In the project’s Triggers page, click **Create workflow**. Name it (e.g. “Sentry + Vercel failure”), select both triggers, set **Match when** to **All**, and set **Time window** to 5 minutes. Save the workflow.
+3. **Send events from the mock demo**: Paste the **first** webhook URL, select Sentry, and send an event (e.g. “Issue Alert Triggered”). Then paste the **second** webhook URL, select Vercel, and send “Deployment Error” (or any event). Do this within the same 5-minute window.
+4. **Check Executions**: In Relay, open **Executions**. You should see one execution with **Origin: Workflow: &lt;your workflow name&gt;**, combining both events in the prompt.
+
+Workflows use the same payload paths as triggers for conditions. The prompt receives `{{payload.summary}}` and `{{payload.sources}}` (events grouped by trigger name).
+
 ## Testing Relay Conditions
 
 Use these payload paths for condition matching in Relay triggers:

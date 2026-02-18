@@ -7,10 +7,21 @@ import {
     relayExecutions,
     relayProjects,
     relayTriggers,
+    relayWorkflows,
 } from "@/server/db/schema";
 import { protectedProcedure } from "@/server/procedures";
 import { renderPrompt } from "@/server/relay/template";
-import { and, desc, eq, gte, inArray, isNotNull, ne, sql } from "drizzle-orm";
+import {
+    and,
+    asc,
+    desc,
+    eq,
+    gte,
+    inArray,
+    isNotNull,
+    ne,
+    sql,
+} from "drizzle-orm";
 
 export async function getOrgProjectAggregateStats() {
     const { currentOrg } = await getOrganizations();
@@ -163,6 +174,59 @@ export async function getRelayProjectForOverview(projectId: string) {
     return row ?? null;
 }
 
+export async function getProjectSettingsForExport(projectId: string) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return null;
+
+    const [project] = await db
+        .select({
+            id: relayProjects.id,
+            name: relayProjects.name,
+            contextInstructions: relayProjects.contextInstructions,
+            hasDevinKey: sql<boolean>`(${relayProjects.devinApiKeyEncrypted} IS NOT NULL AND ${relayProjects.devinApiKeyEncrypted} != '')`,
+        })
+        .from(relayProjects)
+        .where(
+            and(
+                eq(relayProjects.id, projectId),
+                eq(relayProjects.orgId, currentOrg.id),
+            ),
+        )
+        .limit(1);
+    if (!project) return null;
+
+    const triggers = await db.query.relayTriggers.findMany({
+        where: eq(relayTriggers.projectId, projectId),
+        orderBy: desc(relayTriggers.createdAt),
+        columns: {
+            name: true,
+            source: true,
+            eventType: true,
+            githubRepo: true,
+            promptTemplate: true,
+            conditions: true,
+            thresholdConfig: true,
+            includePaths: true,
+            excludePaths: true,
+            enabled: true,
+            concurrencyLimit: true,
+            dailyCap: true,
+            lowNoiseMode: true,
+        },
+    });
+
+    return {
+        exportedAt: new Date().toISOString(),
+        project: {
+            id: project.id,
+            name: project.name,
+            contextInstructions: project.contextInstructions,
+            hasDevinKeyConfigured: project.hasDevinKey,
+        },
+        triggers,
+    };
+}
+
 export async function getProjectStats(projectId: string) {
     const { currentOrg } = await getOrganizations();
     if (!currentOrg) return { triggerCount: 0, executionsToday: 0, lastExecution: null };
@@ -267,6 +331,42 @@ export async function getTriggerById(triggerId: string, projectId: string) {
     return trigger;
 }
 
+export async function getWorkflowsByProjectId(projectId: string) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return [];
+
+    const project = await getRelayProjectById(projectId);
+    if (!project || project.orgId !== currentOrg.id) return [];
+
+    const workflows = await db
+        .select()
+        .from(relayWorkflows)
+        .where(eq(relayWorkflows.projectId, projectId))
+        .orderBy(desc(relayWorkflows.createdAt));
+    return workflows;
+}
+
+export async function getWorkflowById(workflowId: string, projectId: string) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return null;
+
+    const [workflow] = await db
+        .select()
+        .from(relayWorkflows)
+        .where(
+            and(
+                eq(relayWorkflows.id, workflowId),
+                eq(relayWorkflows.projectId, projectId),
+            ),
+        )
+        .limit(1);
+    if (!workflow) return null;
+
+    const project = await getRelayProjectById(projectId);
+    if (!project || project.orgId !== currentOrg.id) return null;
+    return workflow;
+}
+
 export async function getDevinSessionsForOrg(opts?: {
     status?: string;
     projectId?: string;
@@ -347,12 +447,13 @@ export async function getExecutionsByProjectId(
         conditions.push(eq(relayExecutions.triggerId, opts.triggerId));
     }
 
-    return db
+    const rows = await db
         .select({
             id: relayExecutions.id,
             eventId: relayExecutions.eventId,
             projectId: relayExecutions.projectId,
             triggerId: relayExecutions.triggerId,
+            workflowId: relayExecutions.workflowId,
             status: relayExecutions.status,
             latencyMs: relayExecutions.latencyMs,
             startedAt: relayExecutions.startedAt,
@@ -368,6 +469,27 @@ export async function getExecutionsByProjectId(
         .where(and(...conditions))
         .orderBy(desc(relayExecutions.createdAt))
         .limit(limit);
+
+    const workflowIds = [
+        ...new Set(
+            rows.map((r) => r.workflowId).filter((id): id is string => id != null),
+        ),
+    ];
+    const workflowNames =
+        workflowIds.length > 0
+            ? await db
+                  .select({ id: relayWorkflows.id, name: relayWorkflows.name })
+                  .from(relayWorkflows)
+                  .where(inArray(relayWorkflows.id, workflowIds))
+            : [];
+    const workflowNameMap = new Map(workflowNames.map((w) => [w.id, w.name]));
+
+    return rows.map((r) => ({
+        ...r,
+        workflowName: r.workflowId
+            ? workflowNameMap.get(r.workflowId) ?? null
+            : null,
+    }));
 }
 
 export async function getExecutionById(executionId: string, projectId: string) {
@@ -389,11 +511,32 @@ export async function getExecutionById(executionId: string, projectId: string) {
         .limit(1);
     if (!exec) return null;
 
-    const [event] = await db
-        .select({ rawPayload: relayEvents.rawPayload })
-        .from(relayEvents)
-        .where(eq(relayEvents.id, exec.eventId))
-        .limit(1);
+    let rawPayload: unknown = null;
+    const eventIds = exec.eventIds as string[] | null;
+    if (eventIds != null && eventIds.length > 0) {
+        const batchEvents = await db
+            .select({
+                rawPayload: relayEvents.rawPayload,
+                receivedAt: relayEvents.receivedAt,
+            })
+            .from(relayEvents)
+            .where(inArray(relayEvents.id, eventIds))
+            .orderBy(asc(relayEvents.receivedAt));
+        rawPayload = {
+            events: batchEvents.map((e) => ({
+                receivedAt: e.receivedAt.toISOString(),
+                payload: e.rawPayload,
+            })),
+            count: batchEvents.length,
+        };
+    } else {
+        const [event] = await db
+            .select({ rawPayload: relayEvents.rawPayload })
+            .from(relayEvents)
+            .where(eq(relayEvents.id, exec.eventId))
+            .limit(1);
+        rawPayload = event?.rawPayload ?? null;
+    }
 
     const [trigger] = await db
         .select({ name: relayTriggers.name })
@@ -401,10 +544,21 @@ export async function getExecutionById(executionId: string, projectId: string) {
         .where(eq(relayTriggers.id, exec.triggerId))
         .limit(1);
 
+    let workflowName: string | null = null;
+    if (exec.workflowId) {
+        const [wf] = await db
+            .select({ name: relayWorkflows.name })
+            .from(relayWorkflows)
+            .where(eq(relayWorkflows.id, exec.workflowId))
+            .limit(1);
+        workflowName = wf?.name ?? null;
+    }
+
     return {
         ...exec,
-        rawPayload: event?.rawPayload ?? null,
+        rawPayload,
         triggerName: trigger?.name ?? null,
+        workflowName,
     };
 }
 

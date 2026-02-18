@@ -1,7 +1,6 @@
 import { getRelayProjectForOverview } from "@/server/actions/relay/queries";
-import { siteUrls } from "@/config/urls";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ProjectBreadcrumbActions } from "./_components/project-breadcrumb-actions";
 import { ProjectSubNav } from "./_components/project-sub-nav";
 
 export default async function ProjectLayout({
@@ -18,16 +17,10 @@ export default async function ProjectLayout({
     return (
         <div className="w-full space-y-6">
             <div className="mt-16"><div className="h-1 w-full bg-border rounded-full"></div></div>
-            <p className="text-muted-foreground text-md font-medium">
-                <Link
-                    href={siteUrls.relay.projects}
-                    className="hover:text-foreground underline"
-                >
-                    Projects
-                </Link>
-                {" / "}
-                <span className="text-foreground">{project.name}</span>
-            </p>
+            <ProjectBreadcrumbActions
+                projectId={id}
+                projectName={project.name}
+            />
             <ProjectSubNav projectId={id} />
             {children}
         </div>

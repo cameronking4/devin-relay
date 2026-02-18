@@ -6,6 +6,7 @@ import {
     type ThresholdConfig,
 } from "@/server/relay/conditions";
 import { executionQueue } from "@/server/relay/queue";
+import { evaluateWorkflowsOnNewEvent } from "@/server/relay/workflow-engine";
 import { and, eq, gte, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import * as crypto from "node:crypto";
@@ -131,9 +132,11 @@ export async function POST(
     }
 
     const thresholdConfig = trigger.thresholdConfig as ThresholdConfig | null;
+    const windowMinutes = thresholdConfig?.windowMinutes ?? 5;
+
     if (thresholdConfig?.count != null && thresholdConfig.count > 0) {
         const since = new Date(
-            Date.now() - (thresholdConfig.windowMinutes ?? 5) * 60 * 1000,
+            Date.now() - windowMinutes * 60 * 1000,
         );
         const countResult = await db
             .select({ count: sql<number>`count(*)::int` })
@@ -146,15 +149,48 @@ export async function POST(
             );
         const count = countResult[0]?.count ?? 0;
         if (count < thresholdConfig.count) {
+            await evaluateWorkflowsOnNewEvent({
+                projectId: trigger.projectId,
+                triggerId: trigger.id,
+            });
             return NextResponse.json({ status: "ok" }, { status: 200 });
         }
+
+        const windowEnd = new Date();
+        const bucket = Math.floor(
+            Date.now() / (windowMinutes * 60 * 1000),
+        );
+        const jobId = `batch-${triggerId}-${bucket}`.slice(0, 100);
+        await executionQueue.add(
+            "execute-batch",
+            {
+                kind: "batch",
+                triggerId,
+                windowStart: since.toISOString(),
+                windowEnd: windowEnd.toISOString(),
+            },
+            { jobId },
+        );
+        await evaluateWorkflowsOnNewEvent({
+            projectId: trigger.projectId,
+            triggerId: trigger.id,
+        });
+        return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
     }
 
     await executionQueue.add(
         "execute",
-        { eventId: event.id },
+        {
+            kind: "single",
+            eventId: event.id,
+        },
         { jobId: `${triggerId}-${deliveryId}`.slice(0, 100) },
     );
+
+    await evaluateWorkflowsOnNewEvent({
+        projectId: trigger.projectId,
+        triggerId: trigger.id,
+    });
 
     return NextResponse.json({ status: "ok", eventId: event.id }, { status: 200 });
 }

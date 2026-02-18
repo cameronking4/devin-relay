@@ -40,8 +40,14 @@ export function ExecutionSummary({
                     </Badge>
                 </div>
                 <div>
-                    <p className="text-muted-foreground text-sm">Trigger</p>
-                    <p className="text-sm">{execution.triggerName ?? "—"}</p>
+                    <p className="text-muted-foreground text-sm">Origin</p>
+                    <p className="text-sm">
+                        {execution.workflowName ? (
+                            <>Workflow: {execution.workflowName}</>
+                        ) : (
+                            <>Trigger: {execution.triggerName ?? "—"}</>
+                        )}
+                    </p>
                 </div>
                 <div>
                     <p className="text-muted-foreground text-sm">Latency</p>
@@ -94,6 +100,18 @@ export function ExecutionSummary({
                         <p className="text-destructive mt-1 text-sm">
                             {execution.error}
                         </p>
+                        {execution.error.includes(
+                            "concurrent session limit",
+                        ) && (
+                            <a
+                                href={siteUrls.devin.app}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground mt-2 inline-block text-sm underline hover:no-underline"
+                            >
+                                Open Devin app to manage sessions
+                            </a>
+                        )}
                     </div>
                 )}
             </CardContent>

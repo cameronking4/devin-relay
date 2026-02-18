@@ -8,6 +8,14 @@ export type Condition = {
     value: unknown;
 };
 
+/** Source-scoped condition for workflows: optional triggerId to apply only to events from that trigger. */
+export type WorkflowCondition = {
+    triggerId?: string;
+    path: string;
+    operator: string;
+    value: unknown;
+};
+
 const OPERATORS = [
     "eq",
     "neq",
@@ -66,6 +74,35 @@ export function evaluateConditions(
 ): boolean {
     if (!conditions || conditions.length === 0) return true;
     return conditions.every((c) => evaluateCondition(payload, c));
+}
+
+/** Returns true if the event passes all workflow conditions that apply to its trigger. */
+export function passesWorkflowConditions(
+    event: { triggerId: string; rawPayload: unknown },
+    conditions: WorkflowCondition[],
+): boolean {
+    if (!conditions?.length) return true;
+    const applicable = conditions.filter(
+        (c) => !c.triggerId || c.triggerId === event.triggerId,
+    );
+    return applicable.every((c) =>
+        evaluateCondition(event.rawPayload, {
+            path: c.path,
+            operator: c.operator,
+            value: c.value,
+        }),
+    );
+}
+
+/**
+ * Filter events to those that pass all applicable workflow conditions.
+ * Conditions with no triggerId apply to every event; conditions with triggerId apply only to that trigger's events.
+ */
+export function evaluateWorkflowConditions(
+    events: { triggerId: string; rawPayload: unknown }[],
+    conditions: WorkflowCondition[],
+): { triggerId: string; rawPayload: unknown }[] {
+    return events.filter((event) => passesWorkflowConditions(event, conditions));
 }
 
 export type ThresholdConfig = {

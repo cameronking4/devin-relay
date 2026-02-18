@@ -3,6 +3,7 @@ import { triggersPageConfig } from "./_constants/page-config";
 import {
     getTriggersByProjectId,
     getRelayProjectForOverview,
+    getWorkflowsByProjectId,
 } from "@/server/actions/relay/queries";
 import { siteUrls } from "@/config/urls";
 import { notFound } from "next/navigation";
@@ -10,6 +11,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { TriggersTable } from "./_components/triggers-table";
+import { WorkflowsTable } from "./_components/workflows-table";
 
 export default async function TriggersListPage({
     params,
@@ -19,7 +21,10 @@ export default async function TriggersListPage({
     const { id: projectId } = await params;
     const project = await getRelayProjectForOverview(projectId);
     if (!project) notFound();
-    const triggers = await getTriggersByProjectId(projectId);
+    const [triggers, workflows] = await Promise.all([
+        getTriggersByProjectId(projectId),
+        getWorkflowsByProjectId(projectId),
+    ]);
 
     return (
         <div className="w-full space-y-8">
@@ -31,7 +36,12 @@ export default async function TriggersListPage({
                     <p className="max-w-xl text-muted-foreground">
                         {triggersPageConfig.description}
                     </p>
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-2">
+                        <Button variant="outline" asChild>
+                            <Link href={siteUrls.relay.workflowNew(projectId)}>
+                                Create workflow
+                            </Link>
+                        </Button>
                         <Button asChild>
                             <Link href={siteUrls.relay.triggerNew(projectId)}>
                                 <PlusIcon className="h-4 w-4" />
@@ -63,6 +73,21 @@ export default async function TriggersListPage({
                         />
                     )}
                 </div>
+                {workflows.length > 0 && (
+                    <div className="flex flex-col gap-4">
+                        <h2 className="font-heading text-lg font-semibold">
+                            Event workflows
+                        </h2>
+                        <p className="text-muted-foreground text-sm max-w-xl">
+                            Combine events from multiple triggers. Runs when the
+                            match condition is met within the time window.
+                        </p>
+                        <WorkflowsTable
+                            projectId={projectId}
+                            workflows={workflows}
+                        />
+                    </div>
+                )}
             </main>
         </div>
     );

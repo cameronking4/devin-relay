@@ -7,6 +7,68 @@ function sanitizeBranchSuffix(id: string): string {
     return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
 }
 
+/** Format payload for [EVENT DATA] section; supports single object, batch { events, count }, or workflow { sources, summary }. */
+function formatPayloadForEventData(payload: unknown): string {
+    if (typeof payload === "string") {
+        return payload;
+    }
+    const obj = payload as Record<string, unknown>;
+    const batch = obj as { events?: Array<{ receivedAt?: string; payload?: unknown }>; count?: number };
+    if (
+        batch &&
+        Array.isArray(batch.events) &&
+        batch.events.length > 0
+    ) {
+        const sources = obj.sources as Record<string, Array<{ receivedAt?: string; payload?: unknown }>> | undefined;
+        if (sources && typeof sources === "object" && Object.keys(sources).length > 0) {
+            return Object.entries(sources)
+                .map(([sourceName, events]) => {
+                    const block = events
+                        .map((ev, i) => {
+                            const label = ev.receivedAt
+                                ? `Event ${i + 1} (${ev.receivedAt})`
+                                : `Event ${i + 1}`;
+                            const body =
+                                typeof ev.payload === "string"
+                                    ? ev.payload
+                                    : JSON.stringify(ev.payload ?? {}, null, 2);
+                            return `${label}:\n${body}`;
+                        })
+                        .join("\n\n");
+                    return `[${sourceName}]\n${block}`;
+                })
+                .join("\n\n");
+        }
+        return batch.events
+            .map((ev, i) => {
+                const label = ev.receivedAt
+                    ? `Event ${i + 1} (${ev.receivedAt})`
+                    : `Event ${i + 1}`;
+                const body =
+                    typeof ev.payload === "string"
+                        ? ev.payload
+                        : JSON.stringify(ev.payload ?? {}, null, 2);
+                return `${label}:\n${body}`;
+            })
+            .join("\n\n");
+    }
+    return JSON.stringify(payload, null, 2);
+}
+
+/** Build [EVENT SUMMARY] section when payload has summary or window metadata (workflows). */
+function formatEventSummary(payload: unknown): string | null {
+    if (payload == null || typeof payload !== "object") return null;
+    const obj = payload as Record<string, unknown>;
+    const summary = obj.summary as string | undefined;
+    const windowStart = obj.windowStart as string | undefined;
+    const windowEnd = obj.windowEnd as string | undefined;
+    const parts: string[] = [];
+    if (summary) parts.push(summary);
+    if (windowStart && windowEnd) parts.push(`Window: ${windowStart} – ${windowEnd} UTC`);
+    if (parts.length === 0) return null;
+    return parts.join("\n");
+}
+
 export function renderPrompt(
     template: string,
     payload: unknown,
@@ -18,10 +80,7 @@ export function renderPrompt(
 ): string {
     const view = { payload };
     const renderedTask = Mustache.render(template, view);
-    const payloadFormatted =
-        typeof payload === "string"
-            ? payload
-            : JSON.stringify(payload, null, 2);
+    const payloadFormatted = formatPayloadForEventData(payload);
     const parts: string[] = [];
     if (githubRepo?.trim()) {
         const repoUrl = `https://github.com/${githubRepo.trim()}`;
@@ -53,6 +112,10 @@ export function renderPrompt(
     }
     if (contextInstructions?.trim()) {
         parts.push("[CONTEXT INSTRUCTIONS]\n" + contextInstructions.trim());
+    }
+    const eventSummary = formatEventSummary(payload);
+    if (eventSummary) {
+        parts.push("[EVENT SUMMARY]\n" + eventSummary);
     }
     parts.push("[EVENT DATA]\n```json\n" + payloadFormatted + "\n```");
     parts.push("[TASK]\n" + renderedTask);
