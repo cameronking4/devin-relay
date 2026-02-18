@@ -37,16 +37,17 @@ export async function executeSession(
         session_id: string;
     };
 
-    const pollIntervalMs = 2000;
-    const maxAttempts = Math.ceil(timeoutMs / pollIntervalMs);
-    let attempts = 0;
+    const basePollMs = 5000;
+    const maxPollMs = 30000;
+    let elapsed = 0;
     let output = "";
     let consecutiveErrors = 0;
     const maxConsecutiveErrors = 5;
 
-    while (attempts < maxAttempts) {
-        await new Promise((r) => setTimeout(r, pollIntervalMs));
-        attempts++;
+    while (elapsed < timeoutMs) {
+        const pollMs = Math.min(basePollMs + Math.floor(elapsed / 60000) * 5000, maxPollMs);
+        await new Promise((r) => setTimeout(r, pollMs));
+        elapsed += pollMs;
 
         const getRes = await fetch(`${DEVIN_API_BASE}/sessions/${sessionId}`, {
             headers: { Authorization: `Bearer ${apiKey}` },
@@ -64,8 +65,9 @@ export async function executeSession(
                         `Devin get session failed after ${maxConsecutiveErrors} retries: ${status} ${await getRes.text()}`,
                     );
                 }
-                // Retry with exponential backoff
-                await new Promise((r) => setTimeout(r, pollIntervalMs * consecutiveErrors));
+                const backoffMs = Math.min(basePollMs * Math.pow(2, consecutiveErrors - 1), maxPollMs);
+                await new Promise((r) => setTimeout(r, backoffMs));
+                elapsed += backoffMs;
                 continue;
             }
             
