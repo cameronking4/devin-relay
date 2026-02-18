@@ -96,7 +96,7 @@ export function AuthForm({ type }: AuthFormProps) {
                     </div>
                 </div>
 
-                <div className="space-y-3">
+                {/* <div className="space-y-3">
                     <FormField
                         control={form.control}
                         name="email"
@@ -128,14 +128,14 @@ export function AuthForm({ type }: AuthFormProps) {
                         {isLoading && <Icons.loader className="h-4 w-4" />}
                         <span>Continue with Email</span>
                     </Button>
-                </div>
+                </div> */}
 
-                <div className="relative flex items-center justify-center">
+                {/* <div className="relative flex items-center justify-center">
                     <Separator className="w-full" />
                     <p className="absolute bg-background px-2 text-sm font-medium text-muted-foreground">
                         OR
                     </p>
-                </div>
+                </div> */}
 
                 <SocialLogins />
             </form>

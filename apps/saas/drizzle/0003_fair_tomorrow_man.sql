@@ -1,0 +1,1 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ADD COLUMN "githubRepo" varchar(255) DEFAULT '' NOT NULL;

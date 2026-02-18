@@ -40,6 +40,8 @@ import {
     PencilIcon,
     CopyIcon,
     Trash2Icon,
+    PauseIcon,
+    PlayIcon,
 } from "lucide-react";
 
 type TriggerRow = Awaited<
@@ -197,6 +199,7 @@ export function TriggersTable({
                                                 }
                                                 disabled={pending}
                                             >
+                                                {t.enabled ? <PauseIcon className="mr-2 h-4 w-4" /> : <PlayIcon className="mr-2 h-4 w-4" />}
                                                 {t.enabled ? "Disable" : "Enable"}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem

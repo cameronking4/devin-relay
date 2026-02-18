@@ -22,7 +22,7 @@ export const siteUrls = {
     launchmvpfast: "https://www.launchmvpfast.com",
 
     dashboard: {
-        home: "/dashboard",
+        home: "/project",
     },
     feedback: "/feedback",
     organization: {

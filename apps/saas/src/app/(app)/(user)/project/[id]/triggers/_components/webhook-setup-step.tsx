@@ -23,7 +23,7 @@ export function WebhookSetupStep({
     projectId: string;
     onStatusChange?: (isActive: boolean) => void;
 }) {
-    const [hideGuidance, setHideGuidance] = useState(false);
+    const [hideGuidance, setHideGuidance] = useState(true);
 
     const handleStatusChange = (isActive: boolean) => {
         onStatusChange?.(isActive);
@@ -49,14 +49,13 @@ export function WebhookSetupStep({
                         onStatusChange={handleStatusChange}
                     />
                     {!hideGuidance && (
-                        <Alert>
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertDescription>
-                                Once you see a green checkmark indicating
-                                webhook is active, you can continue to the next
-                                step. You can also skip this step and configure
-                                the webhook later.
-                            </AlertDescription>
+                        <Alert className="bg-muted flex items-center px-3 py-2">
+                            <div className="flex items-center space-x-2">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription className="p-0 m-0 text-center">
+                                    You can skip this step and configure the webhook later if needed.
+                                </AlertDescription>
+                            </div>
                         </Alert>
                     )}
                 </CardContent>

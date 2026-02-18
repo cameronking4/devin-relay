@@ -48,7 +48,7 @@ export function SocialLogins() {
     };
 
     return (
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 text-lg">
             <Button
                 onClick={githubLogin}
                 variant="outline"

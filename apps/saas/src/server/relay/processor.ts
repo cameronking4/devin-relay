@@ -87,6 +87,9 @@ export async function processExecutionJob(eventId: string): Promise<void> {
         promptTemplate: trigger.promptTemplate,
         contextInstructions: project.contextInstructions,
         rawPayload: event.rawPayload,
+        githubRepo: trigger.githubRepo ?? "",
+        includePaths: (trigger.includePaths as string[]) ?? [],
+        excludePaths: (trigger.excludePaths as string[]) ?? [],
     });
 
     const [execution] = await db

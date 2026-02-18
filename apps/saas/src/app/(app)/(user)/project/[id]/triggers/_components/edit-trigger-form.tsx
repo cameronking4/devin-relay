@@ -28,11 +28,14 @@ export function EditTriggerForm({
                 name: values.name,
                 source: values.source,
                 eventType: values.eventType,
+                githubRepo: values.githubRepo,
                 promptTemplate: values.promptTemplate,
                 conditions: values.conditions,
                 thresholdConfig: values.thresholdConfig,
                 concurrencyLimit: values.concurrencyLimit,
                 dailyCap: values.dailyCap,
+                includePaths: values.includePaths,
+                excludePaths: values.excludePaths,
             });
             toast.success("Trigger updated");
             router.refresh();

@@ -14,8 +14,9 @@ import { siteUrls } from "@/config/urls";
 
 const DEFAULT_BASIC_INFO: BasicInfoValues = {
     name: "",
-    source: "Custom",
+    source: "",
     eventType: "",
+    githubRepo: "",
 };
 
 const DEFAULT_ADVANCED: AdvancedSettingsValues = {
@@ -23,9 +24,11 @@ const DEFAULT_ADVANCED: AdvancedSettingsValues = {
     thresholdConfig: null,
     concurrencyLimit: 3,
     dailyCap: 50,
+    includePaths: [],
+    excludePaths: [],
 };
 
-const DEFAULT_PROMPT = "Review and fix: {{payload.message}}";
+const DEFAULT_PROMPT = "My application recieved this signal, please review and fix: {{payload.message}}";
 
 export function TriggerWizard({ projectId }: { projectId: string }) {
     const router = useRouter();
@@ -43,6 +46,10 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
             toast.error("Name is required");
             return;
         }
+        if (!basicInfo.githubRepo.trim()) {
+            toast.error("GitHub repository is required (e.g. owner/repo)");
+            return;
+        }
 
         setIsSaving(true);
         try {
@@ -51,11 +58,14 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                 name: basicInfo.name,
                 source: basicInfo.source,
                 eventType: basicInfo.eventType,
+                githubRepo: basicInfo.githubRepo.trim(),
                 promptTemplate, // Use default prompt for now
                 conditions: advanced.conditions,
                 thresholdConfig: advanced.thresholdConfig,
                 concurrencyLimit: advanced.concurrencyLimit,
                 dailyCap: advanced.dailyCap,
+                includePaths: advanced.includePaths,
+                excludePaths: advanced.excludePaths,
             });
             setTriggerId(trigger.id);
             toast.success("Trigger created");
@@ -103,11 +113,14 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                 name: basicInfo.name,
                 source: basicInfo.source,
                 eventType: basicInfo.eventType,
+                githubRepo: basicInfo.githubRepo.trim(),
                 promptTemplate,
                 conditions: advanced.conditions,
                 thresholdConfig: advanced.thresholdConfig,
                 concurrencyLimit: advanced.concurrencyLimit,
                 dailyCap: advanced.dailyCap,
+                includePaths: advanced.includePaths,
+                excludePaths: advanced.excludePaths,
             });
             toast.success("Trigger configured");
             router.push(siteUrls.relay.trigger(projectId, triggerId));
@@ -143,7 +156,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                         </Button>
                         <Button
                             onClick={handleStep1Continue}
-                            disabled={isSaving || !basicInfo.name.trim()}
+                            disabled={isSaving || !basicInfo.name.trim() || !basicInfo.githubRepo.trim()}
                         >
                             {isSaving ? "Creating..." : "Continue"}
                         </Button>
@@ -184,6 +197,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                         collapsible={false}
                         triggerId={triggerId ?? undefined}
                         projectId={projectId}
+                        githubRepo={basicInfo.githubRepo}
                     />
                     <div className="flex justify-between gap-4">
                         <Button
@@ -217,6 +231,10 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                     <PromptConfigStep
                         value={promptTemplate}
                         onChange={setPromptTemplate}
+                        projectId={projectId}
+                        githubRepo={basicInfo.githubRepo}
+                        includePaths={advanced.includePaths}
+                        excludePaths={advanced.excludePaths}
                     />
                     <div className="flex justify-between gap-4">
                         <Button

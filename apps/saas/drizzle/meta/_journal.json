@@ -22,6 +22,20 @@
       "when": 1771410429786,
       "tag": "0002_hard_hitman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771420122677,
+      "tag": "0003_fair_tomorrow_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771421723926,
+      "tag": "0004_parched_stature",
+      "breakpoints": true
     }
   ]
 }

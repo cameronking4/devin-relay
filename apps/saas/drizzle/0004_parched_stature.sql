@@ -1,0 +1,2 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ADD COLUMN "includePaths" jsonb DEFAULT '[]'::jsonb;--> statement-breakpoint
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ADD COLUMN "excludePaths" jsonb DEFAULT '[]'::jsonb;

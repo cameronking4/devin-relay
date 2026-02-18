@@ -7,7 +7,7 @@ export function Promotion() {
                 as="h2"
                 className="text-center font-heading text-3xl font-bold md:text-5xl"
             >
-                Connect a webhook. Trigger Devin. Post to GitHub. 🚀
+                Connect a webhook. Trigger Devin. Automate workflows. 🚀
             </Balancer>
             <Balancer
                 as="p"

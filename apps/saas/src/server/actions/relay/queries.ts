@@ -9,6 +9,7 @@ import {
     relayTriggers,
 } from "@/server/db/schema";
 import { protectedProcedure } from "@/server/procedures";
+import { renderPrompt } from "@/server/relay/template";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 export async function getRelayProjects() {
@@ -118,12 +119,15 @@ export async function getTriggersByProjectId(projectId: string) {
             name: true,
             source: true,
             eventType: true,
+            githubRepo: true,
             conditions: true,
             thresholdConfig: true,
             enabled: true,
             concurrencyLimit: true,
             dailyCap: true,
             promptTemplate: true,
+            includePaths: true,
+            excludePaths: true,
             createdAt: true,
         },
     });
@@ -304,4 +308,45 @@ export async function getWebhookActivity(
         totalEvents: stats?.totalEvents ?? 0,
         lastReceivedAt: stats?.lastReceivedAt ?? null,
     };
+}
+
+const SAMPLE_PAYLOAD = {
+    message: "Sample event data for preview",
+    timestamp: new Date().toISOString(),
+    level: "error",
+    url: "https://example.com/page",
+};
+
+export async function previewDevinPrompt(params: {
+    projectId: string;
+    promptTemplate: string;
+    githubRepo: string;
+    includePaths: string[];
+    excludePaths: string[];
+    samplePayload?: unknown;
+}): Promise<{ prompt: string } | { error: string }> {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return { error: "Not authorized" };
+
+    const [project] = await db
+        .select({ contextInstructions: relayProjects.contextInstructions })
+        .from(relayProjects)
+        .where(
+            and(
+                eq(relayProjects.id, params.projectId),
+                eq(relayProjects.orgId, currentOrg.id),
+            ),
+        )
+        .limit(1);
+    if (!project) return { error: "Project not found" };
+
+    const prompt = renderPrompt(
+        params.promptTemplate,
+        params.samplePayload ?? SAMPLE_PAYLOAD,
+        project.contextInstructions,
+        params.githubRepo || undefined,
+        params.includePaths ?? [],
+        params.excludePaths ?? [],
+    );
+    return { prompt };
 }

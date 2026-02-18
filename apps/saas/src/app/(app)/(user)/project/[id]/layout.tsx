@@ -17,7 +17,8 @@ export default async function ProjectLayout({
 
     return (
         <div className="w-full space-y-6">
-            <p className="text-muted-foreground text-md font-medium mt-6">
+            <div className="mt-16"><div className="h-1 w-full bg-border rounded-full"></div></div>
+            <p className="text-muted-foreground text-md font-medium">
                 <Link
                     href={siteUrls.relay.projects}
                     className="hover:text-foreground underline"

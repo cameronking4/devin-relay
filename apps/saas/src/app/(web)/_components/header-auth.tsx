@@ -26,11 +26,11 @@ export async function HeaderAuth() {
                             className: "flex items-center space-x-1",
                         })}
                     >
-                        <span>Sign Up</span>
-                        <span className="font-light italic">
+                        <span>Dashboard</span>
+                        {/* <span className="font-light italic">
                             {" "}
                             — it&apos;s free
-                        </span>
+                        </span> */}
                     </Link>
                 </Fragment>
             )}

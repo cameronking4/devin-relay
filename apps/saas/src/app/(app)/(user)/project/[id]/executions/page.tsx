@@ -1,4 +1,3 @@
-import { AppPageShell } from "@/app/(app)/_components/page-shell";
 import { executionsPageConfig } from "./_constants/page-config";
 import {
     getExecutionsByProjectId,
@@ -18,23 +17,34 @@ export default async function ExecutionsListPage({
     const executions = await getExecutionsByProjectId(projectId);
 
     return (
-        <AppPageShell
-            title={executionsPageConfig.title}
-            description={executionsPageConfig.description}
-        >
-            {executions.length === 0 ? (
-                <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg border border-dashed border-border p-8">
-                    <p className="text-muted-foreground mb-4 text-center text-sm">
-                        No executions yet. Triggers will create executions when
-                        events match.
+        <div className="w-full space-y-8">
+            <div>
+                <header className="flex w-full flex-col gap-1 border-border">
+                    <h1 className="font-heading text-2xl font-bold">
+                        {executionsPageConfig.title}
+                    </h1>
+                    <p className="max-w-xl text-muted-foreground">
+                        {executionsPageConfig.description}
                     </p>
+                </header>
+            </div>
+            <main className="space-y-8 pb-8">
+                <div className="flex flex-col gap-6">
+                    {executions.length === 0 ? (
+                        <div className="flex min-h-[280px] flex-col items-center justify-center rounded-lg border border-dashed border-border p-8">
+                            <p className="text-muted-foreground mb-4 text-center text-sm">
+                                No executions yet. Triggers will create executions
+                                when events match.
+                            </p>
+                        </div>
+                    ) : (
+                        <ExecutionsTable
+                            projectId={projectId}
+                            executions={executions}
+                        />
+                    )}
                 </div>
-            ) : (
-                <ExecutionsTable
-                    projectId={projectId}
-                    executions={executions}
-                />
-            )}
-        </AppPageShell>
+            </main>
+        </div>
     );
 }

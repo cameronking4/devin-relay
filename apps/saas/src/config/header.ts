@@ -34,11 +34,11 @@ export const navigation: NavigationItem[] = [
         href: siteUrls.support,
         label: "Support",
     },
-    {
-        id: "blogs",
-        href: siteUrls.blogs,
-        label: "Blogs",
-    },
+    // {
+    //     id: "blogs",
+    //     href: siteUrls.blogs,
+    //     label: "Blogs",
+    // },
     {
         id: "docs",
         href: siteUrls.docs,

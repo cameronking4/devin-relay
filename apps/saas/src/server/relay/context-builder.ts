@@ -4,6 +4,9 @@ export type BuildContextParams = {
     promptTemplate: string;
     contextInstructions: string | null;
     rawPayload: unknown;
+    githubRepo: string;
+    includePaths: string[];
+    excludePaths: string[];
 };
 
 export function buildDevinPrompt(params: BuildContextParams): string {
@@ -11,5 +14,8 @@ export function buildDevinPrompt(params: BuildContextParams): string {
         params.promptTemplate,
         params.rawPayload,
         params.contextInstructions,
+        params.githubRepo,
+        params.includePaths,
+        params.excludePaths,
     );
 }

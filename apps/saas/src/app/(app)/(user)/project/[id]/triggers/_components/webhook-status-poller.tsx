@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { getWebhookActivity } from "@/server/actions/relay/queries";
 
 const POLL_INTERVAL_MS = 5000; // 5 seconds
@@ -18,7 +18,6 @@ export function WebhookStatusPoller({
     onStatusChange?: (isActive: boolean) => void;
 }) {
     const [isActive, setIsActive] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lastReceivedAt, setLastReceivedAt] = useState<Date | null>(null);
     const [totalEvents, setTotalEvents] = useState(0);
@@ -27,10 +26,9 @@ export function WebhookStatusPoller({
         if (!triggerId) return;
 
         try {
-            setIsLoading(true);
             setError(null);
             const activity = await getWebhookActivity(triggerId, projectId);
-            
+
             if (activity) {
                 const receivedAt = activity.lastReceivedAt
                     ? new Date(activity.lastReceivedAt)
@@ -48,8 +46,6 @@ export function WebhookStatusPoller({
             setError(
                 e instanceof Error ? e.message : "Unable to check status",
             );
-        } finally {
-            setIsLoading(false);
         }
     }, [triggerId, projectId, onStatusChange]);
 
@@ -70,36 +66,31 @@ export function WebhookStatusPoller({
             <div className="flex items-center gap-2">
                 <Badge
                     variant={isActive ? "outline" : "secondary"}
-                    className="flex items-center gap-1.5 px-3 py-1.5"
+                    className="flex min-w-0 items-center gap-1.5 px-3 py-1.5"
                 >
-                    {isLoading ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : isActive ? (
-                        <CheckCircle2 className="h-3 w-3 text-green-500" />
+                    {isActive ? (
+                        <CheckCircle2 className="h-3 w-3 shrink-0 text-green-500" />
                     ) : (
-                        <XCircle className="h-3 w-3" />
+                        <Loader2 className="h-3 w-3 shrink-0 animate-spin" />
                     )}
-                    {isLoading
-                        ? "Checking..."
-                        : isActive
-                          ? "Active"
-                          : "No events yet"}
+                    <span className="truncate">
+                        {isActive ? "Active" : "Checking..."}
+                    </span>
                 </Badge>
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={() => void checkStatus()}
-                    disabled={isLoading}
                 >
-                    {isLoading ? "Checking..." : "Test connection"}
+                    Test connection
                 </Button>
             </div>
             {error && (
                 <p className="text-destructive text-sm">{error}</p>
             )}
-            {!error && !isLoading && (
+            {!error && (
                 <div className="text-muted-foreground text-sm">
-                    {totalEvents > 0 ? (
+                    {isActive && totalEvents > 0 ? (
                         <>
                             {totalEvents} event{totalEvents !== 1 ? "s" : ""}{" "}
                             received
@@ -108,7 +99,7 @@ export function WebhookStatusPoller({
                             )}
                         </>
                     ) : (
-                        "Waiting for webhook events..."
+                        "Configure the webhook in your server to respond to events."
                     )}
                 </div>
             )}

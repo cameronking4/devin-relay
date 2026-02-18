@@ -18,29 +18,36 @@ import type {
     TriggerThresholdConfig,
 } from "@/server/actions/relay/mutations";
 import { AdvancedSettingsSection } from "./advanced-settings-section";
+import { GithubRepoInput } from "./github-repo-input";
 import { PromptEditor } from "./prompt-editor";
-import { WebhookActivity } from "./webhook-activity";
+import { DevinPromptPreview } from "./devin-prompt-preview";
 
 export type TriggerFormValues = {
     name: string;
     source: string;
     eventType: string;
+    githubRepo: string;
     promptTemplate: string;
     conditions: TriggerConditions;
     thresholdConfig: TriggerThresholdConfig;
     concurrencyLimit: number;
     dailyCap: number;
+    includePaths: string[];
+    excludePaths: string[];
 };
 
 const DEFAULT_VALUES: TriggerFormValues = {
     name: "",
     source: "Custom",
     eventType: "",
-    promptTemplate: "Review and fix: {{payload.message}}",
+    githubRepo: "",
+    promptTemplate: "My application recieved this signal, please review and fix: {{payload.message}}",
     conditions: [],
     thresholdConfig: null,
     concurrencyLimit: 3,
     dailyCap: 50,
+    includePaths: [],
+    excludePaths: [],
 };
 
 export function TriggerForm({
@@ -65,6 +72,9 @@ export function TriggerForm({
     const [eventType, setEventType] = useState(
         initialValues?.eventType ?? DEFAULT_VALUES.eventType,
     );
+    const [githubRepo, setGithubRepo] = useState(
+        initialValues?.githubRepo ?? DEFAULT_VALUES.githubRepo,
+    );
     const [promptTemplate, setPromptTemplate] = useState(
         initialValues?.promptTemplate ?? DEFAULT_VALUES.promptTemplate,
     );
@@ -81,18 +91,30 @@ export function TriggerForm({
     const [dailyCap, setDailyCap] = useState(
         initialValues?.dailyCap ?? DEFAULT_VALUES.dailyCap,
     );
+    const [includePaths, setIncludePaths] = useState<string[]>(
+        initialValues?.includePaths ?? DEFAULT_VALUES.includePaths,
+    );
+    const [excludePaths, setExcludePaths] = useState<string[]>(
+        initialValues?.excludePaths ?? DEFAULT_VALUES.excludePaths,
+    );
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (!githubRepo.trim()) {
+            return; // Required field - browser validation should show message
+        }
         await onSubmit({
             name,
             source,
             eventType,
+            githubRepo,
             promptTemplate,
             conditions,
             thresholdConfig,
             concurrencyLimit,
             dailyCap,
+            includePaths,
+            excludePaths,
         });
     }
 
@@ -140,15 +162,20 @@ export function TriggerForm({
                             Optional label for organization. Actual event filtering is done via conditions below.
                         </p>
                     </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="githubRepo">
+                            GitHub repository <span className="text-destructive">*</span>
+                        </Label>
+                        <GithubRepoInput
+                            value={githubRepo}
+                            onChange={setGithubRepo}
+                        />
+                        <p className="text-muted-foreground text-xs">
+                            The repository Devin will work in. Best when already connected in your Devin organization.
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
-
-            {triggerId && (
-                <WebhookActivity
-                    triggerId={triggerId}
-                    projectId={projectId}
-                />
-            )}
 
             <AdvancedSettingsSection
                 values={{
@@ -156,16 +183,21 @@ export function TriggerForm({
                     thresholdConfig,
                     concurrencyLimit,
                     dailyCap,
+                    includePaths,
+                    excludePaths,
                 }}
                 onChange={(values) => {
                     setConditions(values.conditions);
                     setThresholdConfig(values.thresholdConfig);
                     setConcurrencyLimit(values.concurrencyLimit);
                     setDailyCap(values.dailyCap);
+                    setIncludePaths(values.includePaths);
+                    setExcludePaths(values.excludePaths);
                 }}
                 collapsible={true}
                 triggerId={triggerId}
                 projectId={projectId}
+                githubRepo={githubRepo}
             />
 
             <Card>
@@ -176,10 +208,17 @@ export function TriggerForm({
                         data.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                     <PromptEditor
                         value={promptTemplate}
                         onChange={setPromptTemplate}
+                    />
+                    <DevinPromptPreview
+                        projectId={projectId}
+                        promptTemplate={promptTemplate}
+                        githubRepo={githubRepo}
+                        includePaths={includePaths}
+                        excludePaths={excludePaths}
                     />
                 </CardContent>
             </Card>

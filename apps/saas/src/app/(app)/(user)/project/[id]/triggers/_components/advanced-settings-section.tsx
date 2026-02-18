@@ -24,12 +24,15 @@ import type {
     TriggerConditions,
     TriggerThresholdConfig,
 } from "@/server/actions/relay/mutations";
+import { PathPolicyConfig } from "./path-policy-config";
 
 export type AdvancedSettingsValues = {
     conditions: TriggerConditions;
     thresholdConfig: TriggerThresholdConfig;
     concurrencyLimit: number;
     dailyCap: number;
+    includePaths: string[];
+    excludePaths: string[];
 };
 
 export function AdvancedSettingsSection({
@@ -38,12 +41,15 @@ export function AdvancedSettingsSection({
     collapsible = false,
     triggerId,
     projectId,
+    githubRepo,
 }: {
     values: AdvancedSettingsValues;
     onChange: (values: AdvancedSettingsValues) => void;
     collapsible?: boolean;
     triggerId?: string;
     projectId?: string;
+    /** owner/repo - when set, PathPolicyConfig shows Browse repository button */
+    githubRepo?: string;
 }) {
     const [suggestedPaths, setSuggestedPaths] = useState<string[]>([]);
 
@@ -81,6 +87,22 @@ export function AdvancedSettingsSection({
                         onChange({ ...values, conditions })
                     }
                     suggestedPaths={suggestedPaths}
+                />
+            </div>
+
+            <div>
+                <Label className="mb-2 block">Path policy</Label>
+                <p className="text-muted-foreground mb-4 text-sm">
+                    Restrict which paths Devin can work in. Passed to Devin as
+                    context for policy control.
+                </p>
+                <PathPolicyConfig
+                    includePaths={values.includePaths}
+                    excludePaths={values.excludePaths}
+                    onChange={(includePaths, excludePaths) =>
+                        onChange({ ...values, includePaths, excludePaths })
+                    }
+                    githubRepo={githubRepo}
                 />
             </div>
 

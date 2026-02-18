@@ -8,6 +8,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { PromptEditor } from "./prompt-editor";
+import { DevinPromptPreview } from "./devin-prompt-preview";
 import Mustache from "mustache";
 
 const EXAMPLE_PAYLOAD = {
@@ -23,9 +24,17 @@ const EXAMPLE_PAYLOAD = {
 export function PromptConfigStep({
     value,
     onChange,
+    projectId,
+    githubRepo,
+    includePaths,
+    excludePaths,
 }: {
     value: string;
     onChange: (value: string) => void;
+    projectId?: string;
+    githubRepo?: string;
+    includePaths?: string[];
+    excludePaths?: string[];
 }) {
     let preview = "";
     try {
@@ -60,13 +69,13 @@ export function PromptConfigStep({
                         How your prompt will look with example webhook data.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                     <div className="bg-muted rounded-md p-4">
                         <pre className="whitespace-pre-wrap text-sm">
                             {preview || "Enter a prompt template to see preview"}
                         </pre>
                     </div>
-                    <div className="mt-4">
+                    <div>
                         <p className="text-muted-foreground mb-2 text-xs font-medium">
                             Example payload used:
                         </p>
@@ -74,6 +83,15 @@ export function PromptConfigStep({
                             {JSON.stringify(EXAMPLE_PAYLOAD, null, 2)}
                         </pre>
                     </div>
+                    {projectId && (
+                        <DevinPromptPreview
+                            projectId={projectId}
+                            promptTemplate={value}
+                            githubRepo={githubRepo ?? ""}
+                            includePaths={includePaths ?? []}
+                            excludePaths={excludePaths ?? []}
+                        />
+                    )}
                 </CardContent>
             </Card>
         </div>

@@ -23,17 +23,14 @@ export default async function HomePage() {
     return (
         <WebPageWrapper>
             <WebPageHeader
-                badge="Webhooks → Devin → GitHub"
-                title="Event-Driven AI Orchestration for Engineering Signals"
+                badge="Unlock Event-Based Devin Triggers"
+                title="Instantly act on production signals with managed webhooks for Devin"
             >
                 <Balancer
                     as="p"
-                    className="text-center text-base text-muted-foreground sm:text-lg"
+                    className="text-center text-base text-muted-foreground sm:text-lg max-w-4xl"
                 >
-                    Connect a webhook and trigger Devin within 15 minutes without
-                    writing code. Relay converts webhook events into structured
-                    Devin sessions and routes outputs back into engineering
-                    systems.
+                    Relay converts webhook events into structured Devin sessions and routes outputs back into engineering systems.
                 </Balancer>
 
                 <div className="flex items-center gap-3">
@@ -43,7 +40,7 @@ export default async function HomePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        <Icons.gitHub className="mr-2 h-4 w-4" /> Github
+                        <Icons.gitHub className="mr-2 h-4 w-4" />View Source on Github
                     </Link>
 
                     <Link
@@ -52,7 +49,7 @@ export default async function HomePage() {
                     >
                         Get Started
                         <span className="ml-1 font-light italic">
-                            — no code required
+                            — no code or card required
                         </span>
                     </Link>
                 </div>

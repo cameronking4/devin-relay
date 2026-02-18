@@ -17,7 +17,9 @@ export function AppPageShell({
 
     return (
         <div className="w-full space-y-8">
+            <div className="mt-12">
             <PageHeader title={title} description={description} />
+            </div>
             <Container className="space-y-8 pb-8">{children}</Container>
         </div>
     );

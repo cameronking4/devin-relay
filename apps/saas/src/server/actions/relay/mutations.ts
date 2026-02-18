@@ -14,6 +14,7 @@ import { validateApiKey } from "@/server/relay/devin-adapter";
 
 export type TriggerConditions = { path: string; operator: string; value: unknown }[];
 export type TriggerThresholdConfig = { count: number; windowMinutes: number } | null;
+export type PathPolicyPaths = string[];
 
 export async function createRelayProject(name: string) {
     await protectedProcedure();
@@ -81,11 +82,14 @@ export async function createRelayTrigger(
         name: string;
         source: string;
         eventType: string;
+        githubRepo: string;
         promptTemplate: string;
         conditions?: TriggerConditions;
         thresholdConfig?: TriggerThresholdConfig;
         concurrencyLimit?: number;
         dailyCap?: number;
+        includePaths?: PathPolicyPaths;
+        excludePaths?: PathPolicyPaths;
     },
 ) {
     await protectedProcedure();
@@ -102,11 +106,14 @@ export async function createRelayTrigger(
             name: data.name.trim().slice(0, 255),
             source: data.source,
             eventType: data.eventType.trim().slice(0, 255),
+            githubRepo: data.githubRepo.trim().slice(0, 255),
             promptTemplate: data.promptTemplate,
             conditions: data.conditions ?? [],
             thresholdConfig: data.thresholdConfig ?? null,
             concurrencyLimit: data.concurrencyLimit ?? 3,
             dailyCap: data.dailyCap ?? 50,
+            includePaths: data.includePaths ?? [],
+            excludePaths: data.excludePaths ?? [],
         })
         .returning();
     if (!trigger) throw new Error("Failed to create trigger");
@@ -122,11 +129,14 @@ export async function updateRelayTrigger(
         name?: string;
         source?: string;
         eventType?: string;
+        githubRepo?: string;
         promptTemplate?: string;
         conditions?: TriggerConditions;
         thresholdConfig?: TriggerThresholdConfig;
         concurrencyLimit?: number;
         dailyCap?: number;
+        includePaths?: PathPolicyPaths;
+        excludePaths?: PathPolicyPaths;
     },
 ) {
     await protectedProcedure();
@@ -146,6 +156,9 @@ export async function updateRelayTrigger(
             ...(data.eventType !== undefined && {
                 eventType: data.eventType.trim().slice(0, 255),
             }),
+            ...(data.githubRepo !== undefined && {
+                githubRepo: data.githubRepo.trim().slice(0, 255),
+            }),
             ...(data.promptTemplate !== undefined && {
                 promptTemplate: data.promptTemplate,
             }),
@@ -157,6 +170,8 @@ export async function updateRelayTrigger(
                 concurrencyLimit: data.concurrencyLimit,
             }),
             ...(data.dailyCap !== undefined && { dailyCap: data.dailyCap }),
+            ...(data.includePaths !== undefined && { includePaths: data.includePaths }),
+            ...(data.excludePaths !== undefined && { excludePaths: data.excludePaths }),
         })
         .where(
             and(

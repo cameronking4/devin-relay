@@ -1,19 +1,24 @@
-import { AppPageLoading } from "@/app/(app)/_components/page-loading";
-import { triggersPageConfig } from "./_constants/page-config";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TriggersLoading() {
     return (
-        <AppPageLoading
-            title={triggersPageConfig.title}
-            description={triggersPageConfig.description}
-        >
-            <div className="flex justify-end">
-                <Skeleton className="h-9 w-32" />
+        <div className="w-full space-y-8">
+            <div>
+                <header className="flex w-full flex-col gap-1 border-border">
+                    <Skeleton className="h-8 w-32" />
+                    <Skeleton className="h-5 max-w-xl" />
+                    <div className="flex justify-end">
+                        <Skeleton className="h-9 w-32" />
+                    </div>
+                </header>
             </div>
-            <div className="rounded-md border border-border">
-                <Skeleton className="h-64 w-full" />
-            </div>
-        </AppPageLoading>
+            <main className="space-y-8 pb-8">
+                <div className="flex flex-col gap-6">
+                    <div className="rounded-md border border-border">
+                        <Skeleton className="h-64 w-full" />
+                    </div>
+                </div>
+            </main>
+        </div>
     );
 }

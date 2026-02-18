@@ -138,6 +138,11 @@ export const authOptions: NextAuthOptions = {
         GithubProvider({
             clientId: env.GITHUB_CLIENT_ID,
             clientSecret: env.GITHUB_CLIENT_SECRET,
+            authorization: {
+                params: {
+                    scope: "read:user repo",
+                },
+            },
         }),
         /**
          * ...add more providers here.

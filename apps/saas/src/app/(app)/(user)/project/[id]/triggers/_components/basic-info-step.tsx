@@ -9,11 +9,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { GithubRepoInput } from "./github-repo-input";
 
 export type BasicInfoValues = {
     name: string;
     source: string;
     eventType: string;
+    githubRepo: string;
 };
 
 export function BasicInfoStep({
@@ -79,6 +81,21 @@ export function BasicInfoStep({
                     <p className="text-muted-foreground text-xs">
                         Optional label for organization. Actual event filtering
                         is done via conditions in advanced settings.
+                    </p>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="githubRepo">
+                        GitHub repository <span className="text-destructive">*</span>
+                    </Label>
+                    <GithubRepoInput
+                        value={values.githubRepo}
+                        onChange={(repo) =>
+                            onChange({ ...values, githubRepo: repo })
+                        }
+                    />
+                    <p className="text-muted-foreground text-xs">
+                        The repository Devin will work in. Best when already
+                        connected in your Devin organization settings.
                     </p>
                 </div>
             </CardContent>
