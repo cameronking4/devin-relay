@@ -14,6 +14,8 @@ const MAX_PAYLOAD_BYTES = 512 * 1024; // 512KB
 
 type RouteContext = { params: Promise<{ triggerId: string }> };
 
+export const dynamic = "force-dynamic";
+
 export async function POST(
     request: Request,
     context: RouteContext,
@@ -22,10 +24,19 @@ export async function POST(
 
     let body: string;
     try {
-        body = await request.text();
+        const buffer = await request.arrayBuffer();
+        body = new TextDecoder().decode(buffer);
     } catch {
         return NextResponse.json(
             { error: "Invalid body" },
+            { status: 400 },
+        );
+    }
+
+    const trimmed = body.trim();
+    if (!trimmed) {
+        return NextResponse.json(
+            { error: "Empty body" },
             { status: 400 },
         );
     }
@@ -39,7 +50,7 @@ export async function POST(
 
     let payload: unknown;
     try {
-        payload = JSON.parse(body) as unknown;
+        payload = JSON.parse(trimmed) as unknown;
     } catch {
         return NextResponse.json(
             { error: "Invalid JSON" },
