@@ -62,11 +62,12 @@ export default async function EditTriggerPage({
                                 value: unknown;
                             }[],
                             thresholdConfig: trigger.thresholdConfig,
-                    concurrencyLimit: trigger.concurrencyLimit,
-                    dailyCap: trigger.dailyCap,
-                    includePaths: (trigger.includePaths as string[]) ?? [],
-                    excludePaths: (trigger.excludePaths as string[]) ?? [],
-                }}
+                            concurrencyLimit: trigger.concurrencyLimit,
+                            dailyCap: trigger.dailyCap,
+                            includePaths: (trigger.includePaths as string[]) ?? [],
+                            excludePaths: (trigger.excludePaths as string[]) ?? [],
+                            lowNoiseMode: trigger.lowNoiseMode ?? false,
+                        }}
                     />
                 </div>
             </main>

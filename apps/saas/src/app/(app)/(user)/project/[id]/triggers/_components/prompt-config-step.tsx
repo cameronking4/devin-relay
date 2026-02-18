@@ -12,6 +12,8 @@ import { PromptEditor } from "./prompt-editor";
 import { DevinPromptPreview } from "./devin-prompt-preview";
 import { getRecentEventsForTrigger } from "@/server/actions/relay/queries";
 import { inferPayloadPaths } from "@/lib/payload-paths";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export function PromptConfigStep({
     value,
@@ -21,6 +23,8 @@ export function PromptConfigStep({
     githubRepo,
     includePaths,
     excludePaths,
+    lowNoiseMode = false,
+    onLowNoiseModeChange,
 }: {
     value: string;
     onChange: (value: string) => void;
@@ -29,6 +33,8 @@ export function PromptConfigStep({
     githubRepo?: string;
     includePaths?: string[];
     excludePaths?: string[];
+    lowNoiseMode?: boolean;
+    onLowNoiseModeChange?: (enabled: boolean) => void;
 }) {
     const [suggestedPaths, setSuggestedPaths] = useState<string[]>([]);
     const [samplePayload, setSamplePayload] = useState<unknown>(undefined);
@@ -83,7 +89,35 @@ export function PromptConfigStep({
                         )}
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                    {onLowNoiseModeChange != null && (
+                        <div className="space-y-2">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="lowNoiseMode"
+                                    checked={lowNoiseMode}
+                                    onCheckedChange={(checked) =>
+                                        onLowNoiseModeChange(checked === true)
+                                    }
+                                />
+                                <Label
+                                    htmlFor="lowNoiseMode"
+                                    className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Single branch / low noise mode
+                                </Label>
+                            </div>
+                            <p className="text-muted-foreground text-xs">
+                                Devin will use branch{" "}
+                                <code className="rounded bg-muted px-1">
+                                    relay/&#123;triggerId&#125;
+                                </code>
+                                , update existing PRs instead of creating new
+                                ones, and run one execution at a time per
+                                trigger.
+                            </p>
+                        </div>
+                    )}
                     <PromptEditor
                         value={value}
                         onChange={onChange}
@@ -110,6 +144,8 @@ export function PromptConfigStep({
                             excludePaths={excludePaths ?? []}
                             samplePayload={samplePayload}
                             embedded
+                            lowNoiseMode={lowNoiseMode}
+                            triggerId={triggerId}
                         />
                     </CardContent>
                 </Card>

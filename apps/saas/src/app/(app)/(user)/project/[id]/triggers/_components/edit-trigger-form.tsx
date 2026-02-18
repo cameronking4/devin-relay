@@ -36,6 +36,7 @@ export function EditTriggerForm({
                 dailyCap: values.dailyCap,
                 includePaths: values.includePaths,
                 excludePaths: values.excludePaths,
+                lowNoiseMode: values.lowNoiseMode,
             });
             toast.success("Trigger updated");
             router.refresh();

@@ -7,6 +7,8 @@ export type BuildContextParams = {
     githubRepo: string;
     includePaths: string[];
     excludePaths: string[];
+    lowNoiseMode?: boolean;
+    triggerId?: string;
 };
 
 export function buildDevinPrompt(params: BuildContextParams): string {
@@ -17,5 +19,9 @@ export function buildDevinPrompt(params: BuildContextParams): string {
         params.githubRepo,
         params.includePaths,
         params.excludePaths,
+        {
+            lowNoiseMode: params.lowNoiseMode,
+            triggerId: params.triggerId,
+        },
     );
 }

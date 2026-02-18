@@ -129,6 +129,7 @@ export async function createRelayTrigger(
         dailyCap?: number;
         includePaths?: PathPolicyPaths;
         excludePaths?: PathPolicyPaths;
+        lowNoiseMode?: boolean;
     },
 ) {
     await protectedProcedure();
@@ -153,6 +154,7 @@ export async function createRelayTrigger(
             dailyCap: data.dailyCap ?? 50,
             includePaths: data.includePaths ?? [],
             excludePaths: data.excludePaths ?? [],
+            lowNoiseMode: data.lowNoiseMode ?? false,
         })
         .returning();
     if (!trigger) throw new Error("Failed to create trigger");
@@ -176,6 +178,7 @@ export async function updateRelayTrigger(
         dailyCap?: number;
         includePaths?: PathPolicyPaths;
         excludePaths?: PathPolicyPaths;
+        lowNoiseMode?: boolean;
     },
 ) {
     await protectedProcedure();
@@ -211,6 +214,7 @@ export async function updateRelayTrigger(
             ...(data.dailyCap !== undefined && { dailyCap: data.dailyCap }),
             ...(data.includePaths !== undefined && { includePaths: data.includePaths }),
             ...(data.excludePaths !== undefined && { excludePaths: data.excludePaths }),
+            ...(data.lowNoiseMode !== undefined && { lowNoiseMode: data.lowNoiseMode }),
         })
         .where(
             and(

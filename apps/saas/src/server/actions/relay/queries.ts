@@ -479,6 +479,8 @@ export async function previewDevinPrompt(params: {
     includePaths: string[];
     excludePaths: string[];
     samplePayload?: unknown;
+    lowNoiseMode?: boolean;
+    triggerId?: string;
 }): Promise<{ prompt: string } | { error: string }> {
     const { currentOrg } = await getOrganizations();
     if (!currentOrg) return { error: "Not authorized" };
@@ -502,6 +504,10 @@ export async function previewDevinPrompt(params: {
         params.githubRepo || undefined,
         params.includePaths ?? [],
         params.excludePaths ?? [],
+        {
+            lowNoiseMode: params.lowNoiseMode,
+            triggerId: params.triggerId,
+        },
     );
     return { prompt };
 }

@@ -8,10 +8,12 @@ import {
 import { buildDevinPrompt } from "@/server/relay/context-builder";
 import { decrypt } from "@/server/relay/encryption";
 import { executeSession } from "@/server/relay/devin-adapter";
+import { executionQueue } from "@/server/relay/queue";
 import { env } from "@/env";
 import { and, eq, gte, sql } from "drizzle-orm";
 
 const SESSION_TIMEOUT_MS = 600_000; // 10 min
+const LOW_NOISE_RETRY_DELAY_MS = 20_000; // 20s
 
 export async function processExecutionJob(eventId: string): Promise<void> {
     const events = await db
@@ -32,6 +34,27 @@ export async function processExecutionJob(eventId: string): Promise<void> {
     const trigger = triggers[0];
     if (!trigger || !trigger.enabled) {
         return;
+    }
+
+    // Low noise mode: serialize executions per trigger (one at a time)
+    if (trigger.lowNoiseMode) {
+        const [running] = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(relayExecutions)
+            .where(
+                and(
+                    eq(relayExecutions.triggerId, trigger.id),
+                    eq(relayExecutions.status, "running"),
+                ),
+            );
+        if ((running?.count ?? 0) > 0) {
+            await executionQueue.add(
+                "execute",
+                { eventId },
+                { delay: LOW_NOISE_RETRY_DELAY_MS },
+            );
+            return;
+        }
     }
 
     const projects = await db
@@ -90,6 +113,8 @@ export async function processExecutionJob(eventId: string): Promise<void> {
         githubRepo: trigger.githubRepo ?? "",
         includePaths: (trigger.includePaths as string[]) ?? [],
         excludePaths: (trigger.excludePaths as string[]) ?? [],
+        lowNoiseMode: trigger.lowNoiseMode,
+        triggerId: trigger.id,
     });
 
     const [execution] = await db

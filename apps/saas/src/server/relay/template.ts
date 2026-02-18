@@ -2,6 +2,11 @@ import Mustache from "mustache";
 
 const MAX_PROMPT_LENGTH = 64 * 1024; // 64KB
 
+/** Sanitize trigger ID for use in branch names (alphanumeric, hyphen) */
+function sanitizeBranchSuffix(id: string): string {
+    return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
+}
+
 export function renderPrompt(
     template: string,
     payload: unknown,
@@ -9,6 +14,7 @@ export function renderPrompt(
     githubRepo?: string,
     includePaths: string[] = [],
     excludePaths: string[] = [],
+    options?: { lowNoiseMode?: boolean; triggerId?: string },
 ): string {
     const view = { payload };
     const renderedTask = Mustache.render(template, view);
@@ -21,6 +27,12 @@ export function renderPrompt(
         const repoUrl = `https://github.com/${githubRepo.trim()}`;
         parts.push(
             `[REPOSITORY]\nWork in this repository: ${githubRepo.trim()}\n${repoUrl}\n\nDevin: @${githubRepo.trim()}`,
+        );
+    }
+    if (options?.lowNoiseMode && options?.triggerId) {
+        const branchName = `relay/${sanitizeBranchSuffix(options.triggerId)}`;
+        parts.push(
+            `[GIT STRATEGY]\nUse exactly one branch per trigger: ${branchName}. One PR at a time.\n- If an open PR from you already exists for this repository, add your changes to that branch. Do not create a new PR.\n- If not: git checkout main && git pull && git checkout -b ${branchName}, make changes, push, open one PR.\n- Pull latest main before pushing. Never open multiple PRs for related work—consolidate into one.`,
         );
     }
     const inc = includePaths.filter((p) => p?.trim()).map((p) => p.trim());

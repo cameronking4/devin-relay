@@ -21,6 +21,7 @@ import { AdvancedSettingsSection } from "./advanced-settings-section";
 import { GithubRepoInput } from "./github-repo-input";
 import { PromptEditor } from "./prompt-editor";
 import { DevinPromptPreview } from "./devin-prompt-preview";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export type TriggerFormValues = {
     name: string;
@@ -34,6 +35,7 @@ export type TriggerFormValues = {
     dailyCap: number;
     includePaths: string[];
     excludePaths: string[];
+    lowNoiseMode: boolean;
 };
 
 const DEFAULT_VALUES: TriggerFormValues = {
@@ -48,6 +50,7 @@ const DEFAULT_VALUES: TriggerFormValues = {
     dailyCap: 50,
     includePaths: [],
     excludePaths: [],
+    lowNoiseMode: false,
 };
 
 export function TriggerForm({
@@ -97,6 +100,9 @@ export function TriggerForm({
     const [excludePaths, setExcludePaths] = useState<string[]>(
         initialValues?.excludePaths ?? DEFAULT_VALUES.excludePaths,
     );
+    const [lowNoiseMode, setLowNoiseMode] = useState(
+        initialValues?.lowNoiseMode ?? DEFAULT_VALUES.lowNoiseMode,
+    );
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -115,6 +121,7 @@ export function TriggerForm({
             dailyCap,
             includePaths,
             excludePaths,
+            lowNoiseMode,
         });
     }
 
@@ -209,6 +216,29 @@ export function TriggerForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="lowNoiseMode"
+                            checked={lowNoiseMode}
+                            onCheckedChange={(checked) =>
+                                setLowNoiseMode(checked === true)
+                            }
+                        />
+                        <Label
+                            htmlFor="lowNoiseMode"
+                            className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Single branch / low noise mode
+                        </Label>
+                    </div>
+                    <p className="text-muted-foreground text-xs">
+                        Devin will use branch{" "}
+                        <code className="rounded bg-muted px-1">
+                            relay/{"{"}triggerId{"}"}
+                        </code>
+                        , update existing PRs instead of creating new ones, and
+                        run one execution at a time per trigger.
+                    </p>
                     <PromptEditor
                         value={promptTemplate}
                         onChange={setPromptTemplate}
@@ -219,6 +249,8 @@ export function TriggerForm({
                         githubRepo={githubRepo}
                         includePaths={includePaths}
                         excludePaths={excludePaths}
+                        lowNoiseMode={lowNoiseMode}
+                        triggerId={triggerId}
                     />
                 </CardContent>
             </Card>

@@ -40,6 +40,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
     const [basicInfo, setBasicInfo] = useState<BasicInfoValues>(DEFAULT_BASIC_INFO);
     const [advanced, setAdvanced] = useState<AdvancedSettingsValues>(DEFAULT_ADVANCED);
     const [promptTemplate, setPromptTemplate] = useState(DEFAULT_PROMPT);
+    const [lowNoiseMode, setLowNoiseMode] = useState(false);
 
     const handleStep1Continue = async () => {
         if (!basicInfo.name.trim()) {
@@ -121,6 +122,7 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                 dailyCap: advanced.dailyCap,
                 includePaths: advanced.includePaths,
                 excludePaths: advanced.excludePaths,
+                lowNoiseMode,
             });
             toast.success("Trigger configured");
             router.push(siteUrls.relay.trigger(projectId, triggerId));
@@ -236,6 +238,8 @@ export function TriggerWizard({ projectId }: { projectId: string }) {
                         githubRepo={basicInfo.githubRepo}
                         includePaths={advanced.includePaths}
                         excludePaths={advanced.excludePaths}
+                        lowNoiseMode={lowNoiseMode}
+                        onLowNoiseModeChange={setLowNoiseMode}
                     />
                     <div className="flex justify-between gap-4">
                         <Button

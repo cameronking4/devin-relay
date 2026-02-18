@@ -36,6 +36,13 @@
       "when": 1771421723926,
       "tag": "0004_parched_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771433817390,
+      "tag": "0005_orange_thanos",
+      "breakpoints": true
     }
   ]
 }

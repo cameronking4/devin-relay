@@ -18,6 +18,8 @@ export function DevinPromptPreview({
     excludePaths,
     samplePayload,
     embedded = false,
+    lowNoiseMode,
+    triggerId,
 }: {
     projectId: string;
     promptTemplate: string;
@@ -28,6 +30,10 @@ export function DevinPromptPreview({
     samplePayload?: unknown;
     /** When true, render content without accordion (for single-preview layouts) */
     embedded?: boolean;
+    /** When true, injects GIT STRATEGY for single-branch workflow */
+    lowNoiseMode?: boolean;
+    /** Used for branch name relay/{triggerId} in low noise mode */
+    triggerId?: string;
 }) {
     const [prompt, setPrompt] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -45,6 +51,8 @@ export function DevinPromptPreview({
                 includePaths: includePaths ?? [],
                 excludePaths: excludePaths ?? [],
                 samplePayload,
+                lowNoiseMode,
+                triggerId,
             });
             if ("error" in result) {
                 setError(result.error);
@@ -66,6 +74,8 @@ export function DevinPromptPreview({
         includePaths,
         excludePaths,
         samplePayload,
+        lowNoiseMode,
+        triggerId,
     ]);
 
     useEffect(() => {

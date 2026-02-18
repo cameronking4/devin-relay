@@ -1,0 +1,1 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ADD COLUMN "lowNoiseMode" boolean DEFAULT false NOT NULL;
