@@ -1,0 +1,31 @@
+---
+title: "Low noise mode, execution links, and UI polish"
+description: "Serialize executions per trigger with low noise mode, link directly to Devin sessions, and refreshed project and webhook UIs."
+version: "0.4.0"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.0 introduces low noise mode for triggers and a round of UI and processing improvements across the platform.
+
+### Features
+
+- **Low noise mode** — Enable single-branch, serialized execution per trigger so overlapping events queue instead of fan out
+- **Devin session links** — Execution details and summary views now link directly to the Devin session for each run
+- **Project overview stats** — Aggregate execution counts, success rates, and latency displayed on the project dashboard
+- **Prompt configuration** — Improved prompt editor with better preview and low noise branch-naming support
+- **Project dialog and header** — Refreshed create/edit project dialog and streamlined header actions
+
+### Webhook & processing
+
+- **POST body handling** — Stricter validation and improved parsing of incoming webhook payloads
+- **Mock demo refresh** — New service labels, additional event types, and updated styling in the webhook test tool
+
+### Technical
+
+- New Drizzle migration for the `lowNoiseMode` trigger column
+- Context builder and template engine updated for serialized execution context
+- Footer links and support contact information updated
+
+### Support
+
+Questions or issues? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
