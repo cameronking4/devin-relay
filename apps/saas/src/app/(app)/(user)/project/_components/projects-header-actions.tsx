@@ -18,7 +18,7 @@ export function ProjectsHeaderActions({
     return (
         <div className="flex flex-wrap items-center gap-2">
             <Button onClick={() => setSessionsOpen(true)}>
-                <BotIcon className="h-4 w-4" />
+                <BotIcon className="h-4 w-4 mr-2" />
                 Browse Devin Sessions
             </Button>
             <CreateProjectDialog />

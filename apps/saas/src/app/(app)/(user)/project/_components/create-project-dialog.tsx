@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -50,13 +51,18 @@ export function CreateProjectDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button>
-                    <PlusIcon className="h-4 w-4" />
+                    <PlusIcon className="h-4 w-4 mr-2" />
                     {triggerLabel}
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>New project</DialogTitle>
+                    <DialogDescription>
+                        Projects group webhooks and triggers together. Use them to
+                        organize by team, environment, or integration—e.g. &quot;Prod
+                        Alerts&quot; or &quot;Staging Webhooks&quot;.
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
                     <div className="grid gap-2">
@@ -65,9 +71,12 @@ export function CreateProjectDialog({
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="My Relay Project"
+                            placeholder="e.g. Prod Alerts, Staging Webhooks"
                             required
                         />
+                        <p className="text-muted-foreground text-xs">
+                            Choose a name that helps you find triggers quickly.
+                        </p>
                     </div>
                     <Button type="submit" disabled={pending}>
                         {pending ? "Creating…" : "Create"}
