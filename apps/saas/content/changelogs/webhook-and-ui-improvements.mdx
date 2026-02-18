@@ -1,0 +1,36 @@
+---
+title: "Webhook improvements, project dashboard, and Devin session links"
+description: "Enhanced webhook POST handling, expanded mock demo payloads, new project overview stats, and direct links to Devin sessions from executions."
+version: "0.4.0"
+publishedAt: 2026-02-18
+---
+
+Relay v0.4.0 brings webhook reliability improvements, a richer mock demo, and a revamped project dashboard.
+
+### Features
+
+- **Project overview stats** — Aggregate metrics across all projects displayed on the main project page with a dedicated stats component and activity chart
+- **Project cards** — Redesigned project list with dedicated cards, edit dialogs, and improved empty-state guidance
+- **Devin session links** — Direct links to open Devin sessions from execution detail views, summaries, and the executions table
+- **Header actions** — Configurable header actions on project and page-shell layouts for quick access to create flows
+
+### Webhook improvements
+
+- **POST body processing** — Robust parsing for JSON and URL-encoded formats with validation for empty or missing payloads
+- **Payload size limits** — Requests exceeding the maximum payload size now return clear errors
+- **Consistent delivery IDs** — Payload hashing uses the processed raw body for reliable deduplication
+
+### Mock demo expansion
+
+- **New service labels** — Human-readable service names throughout the demo UI
+- **Additional event types** — GitHub, Stripe, Supabase, and Linear events added alongside expanded Datadog, Grafana, PagerDuty, Sentry, and Vercel payloads
+- **Multi-alert scenarios** — Grafana and Prometheus payloads now support multi-alert structures
+
+### Housekeeping
+
+- Removed obsolete trigger components and starterkit webhook-mock-demo directory
+- Updated footer links and support contact information to match Relay branding
+
+### Support
+
+Questions or issues? Contact [hello@support.relay.dev](mailto:hello@support.relay.dev) or see the [Relay docs](/docs).
