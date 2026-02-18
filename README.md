@@ -8,8 +8,6 @@ Connect a webhook. Trigger Devin. Route outputs to GitHub. **Zero glue code.**
 
 ![Relay — AI orchestration for engineering signals](https://www.launchmvpfast.com/og.png)
 
----
-
 ## The problem
 
 Every team building AI automation writes the same boilerplate:
@@ -24,8 +22,6 @@ Every team building AI automation writes the same boilerplate:
 
 **Relay does all of this.** So you focus on prompts and product, not plumbing.
 
----
-
 ## What Relay delivers
 
 **Event → Context Binding → Prompt Rendering → Devin Session → Structured Action**
@@ -37,8 +33,6 @@ Every team building AI automation writes the same boilerplate:
 
 Not a chatbot. Not a PR bot. Not a Zapier clone. **Relay is the beginning of an AI control plane.**
 
----
-
 ## Who it's for
 
 - **Platform engineers** shipping internal tooling
@@ -49,16 +43,12 @@ If you use GitHub and modern SaaS tooling—and you'd rather not maintain glue c
 
 See [`apps/saas/README.md`](apps/saas/README.md) for environment setup and local development.
 
----
-
 ## Stack
 
 - **Next.js** (App Router, latest) + **TypeScript**
 - **PostgreSQL** (Prisma/Drizzle) + **Redis** (BullMQ)
 - **Devin** (BYOK) + **GitHub** (App installation)
 - **Vercel** (frontend/API) + worker for background jobs
-
----
 
 ## Monorepo structure
 
@@ -68,8 +58,6 @@ apps/
 ├── www/           # Marketing site
 └── webhook-mock-demo/  # Webhook testing demo
 ```
-
----
 
 ## License
 
