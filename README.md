@@ -47,29 +47,6 @@ Not a chatbot. Not a PR bot. Not a Zapier clone. **Relay is the beginning of an 
 
 If you use GitHub and modern SaaS tooling—and you'd rather not maintain glue code—Relay is built for you.
 
----
-
-## Get started
-
-**Live product:** [saas.launchmvpfast.com](https://saas.launchmvpfast.com)
-
-**Goal:** Connect a webhook and trigger Devin within 15 minutes. No code written.
-
-```bash
-# Clone the monorepo
-git clone https://github.com/alifarooq9/launchmvpfast.git
-cd launchmvpfast
-
-# Install dependencies
-pnpm install
-
-# Run Relay (SaaS app)
-pnpm --filter=saas dev
-
-# Run marketing site
-pnpm --filter=www dev
-```
-
 See [`apps/saas/README.md`](apps/saas/README.md) for environment setup and local development.
 
 ---
