@@ -69,6 +69,16 @@ function formatEventSummary(payload: unknown): string | null {
     return parts.join("\n");
 }
 
+/** Wrap an object payload so Mustache renders {{payload}} as JSON instead of [object Object], while still allowing nested access like {{payload.eventType}}. */
+function toMustacheView(payload: unknown): unknown {
+    if (payload == null || typeof payload !== "object" || Array.isArray(payload)) {
+        return payload;
+    }
+    const wrapper = Object.create(payload) as Record<string, unknown>;
+    wrapper.toString = () => JSON.stringify(payload, null, 2);
+    return wrapper;
+}
+
 export function renderPrompt(
     template: string,
     payload: unknown,
@@ -78,7 +88,7 @@ export function renderPrompt(
     excludePaths: string[] = [],
     options?: { lowNoiseMode?: boolean; triggerId?: string },
 ): string {
-    const view = { payload };
+    const view = { payload: toMustacheView(payload) };
     const renderedTask = Mustache.render(template, view);
     const payloadFormatted = formatPayloadForEventData(payload);
     const parts: string[] = [];
@@ -130,6 +140,6 @@ export function renderTemplateOnly(
     template: string,
     payload: unknown,
 ): string {
-    const view = { payload };
+    const view = { payload: toMustacheView(payload) };
     return Mustache.render(template, view).replace(/\0/g, "");
 }
