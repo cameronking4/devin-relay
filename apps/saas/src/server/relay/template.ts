@@ -2,6 +2,33 @@ import Mustache from "mustache";
 
 const MAX_PROMPT_LENGTH = 64 * 1024; // 64KB
 
+/**
+ * Recursively enrich a payload so that nested objects have a toString()
+ * returning JSON instead of "[object Object]" when Mustache renders them
+ * as interpolated values (e.g. {{payload.message}}).
+ *
+ * Section access ({{#payload.resource}}…{{/payload.resource}}) and deep
+ * dot-paths ({{payload.message.text}}) continue to work because the
+ * object structure is preserved.
+ */
+function enrichForMustache(value: unknown): unknown {
+    if (value === null || value === undefined) return value;
+    if (typeof value !== "object") return value;
+    if (Array.isArray(value)) return value.map(enrichForMustache);
+
+    const original = value as Record<string, unknown>;
+    const enriched = Object.fromEntries(
+        Object.entries(original).map(([k, v]) => [k, enrichForMustache(v)]),
+    );
+    Object.defineProperty(enriched, "toString", {
+        value() {
+            return JSON.stringify(original, null, 2);
+        },
+        enumerable: false,
+        configurable: true,
+    });
+    return enriched;
+}
 /** Sanitize trigger ID for use in branch names (alphanumeric, hyphen) */
 function sanitizeBranchSuffix(id: string): string {
     return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
@@ -78,7 +105,7 @@ export function renderPrompt(
     excludePaths: string[] = [],
     options?: { lowNoiseMode?: boolean; triggerId?: string },
 ): string {
-    const view = { payload };
+    const view = { payload: enrichForMustache(payload) };
     const renderedTask = Mustache.render(template, view);
     const payloadFormatted = formatPayloadForEventData(payload);
     const parts: string[] = [];
@@ -130,6 +157,6 @@ export function renderTemplateOnly(
     template: string,
     payload: unknown,
 ): string {
-    const view = { payload };
+    const view = { payload: enrichForMustache(payload) };
     return Mustache.render(template, view).replace(/\0/g, "");
 }
