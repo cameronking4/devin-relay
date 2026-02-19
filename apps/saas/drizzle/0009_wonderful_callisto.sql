@@ -1,0 +1,1 @@
+ALTER TABLE "launchmvpfast-saas-starterkit_relayTrigger" ALTER COLUMN "concurrencyLimit" SET DEFAULT 1;

@@ -29,25 +29,29 @@ export default async function TriggersListPage({
     return (
         <div className="w-full space-y-8">
             <div>
-                <header className="flex w-full flex-col gap-1 border-border">
-                    <h1 className="font-heading text-2xl font-bold">
-                        {triggersPageConfig.title}
-                    </h1>
-                    <p className="max-w-xl text-muted-foreground">
-                        {triggersPageConfig.description}
-                    </p>
-                    <div className="flex justify-end gap-2">
-                        <Button variant="outline" asChild>
-                            <Link href={siteUrls.relay.workflowNew(projectId)}>
-                                Create workflow
-                            </Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href={siteUrls.relay.triggerNew(projectId)}>
-                                <PlusIcon className="h-4 w-4" />
-                                Create trigger
-                            </Link>
-                        </Button>
+                <header className="flex w-full flex-col gap-3">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <h1 className="font-heading text-2xl font-bold">
+                                {triggersPageConfig.title}
+                            </h1>
+                            <p className="text-muted-foreground mt-1.5 max-w-xl text-sm">
+                                {triggersPageConfig.description}
+                            </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                            <Button variant="outline" asChild>
+                                <Link href={siteUrls.relay.workflowNew(projectId)}>
+                                    Create workflow
+                                </Link>
+                            </Button>
+                            <Button asChild>
+                                <Link href={siteUrls.relay.triggerNew(projectId)}>
+                                    <PlusIcon className="h-4 w-4" />
+                                    Create trigger
+                                </Link>
+                            </Button>
+                        </div>
                     </div>
                 </header>
             </div>

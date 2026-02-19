@@ -46,7 +46,7 @@ const DEFAULT_VALUES: TriggerFormValues = {
     promptTemplate: "My application recieved this signal, please review and fix: {{payload.message}}",
     conditions: [],
     thresholdConfig: null,
-    concurrencyLimit: 3,
+    concurrencyLimit: 1,
     dailyCap: 50,
     includePaths: [],
     excludePaths: [],

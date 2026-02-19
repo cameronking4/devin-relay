@@ -28,10 +28,13 @@ export function ConditionBuilder({
     conditions,
     onChange,
     suggestedPaths = [],
+    hideLabel = false,
 }: {
     conditions: TriggerConditions;
     onChange: (conditions: TriggerConditions) => void;
     suggestedPaths?: string[];
+    /** When true, omits the top "Conditions" label (e.g. when inside a card with its own title) */
+    hideLabel?: boolean;
 }) {
     function addRow() {
         onChange([...conditions, { path: "payload.", operator: "eq", value: "" }]);
@@ -58,11 +61,13 @@ export function ConditionBuilder({
     return (
         <div className="space-y-3">
             <div className="flex items-center justify-between">
-                <Label>Conditions</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addRow}>
-                    <PlusIcon className="h-4 w-4" />
-                    Add condition
-                </Button>
+                {!hideLabel && <Label>Conditions</Label>}
+                <div className={hideLabel ? "" : "ml-auto"}>
+                    <Button type="button" variant="outline" size="sm" onClick={addRow}>
+                        <PlusIcon className="h-4 w-4" />
+                        Add condition
+                    </Button>
+                </div>
             </div>
             <p className="text-muted-foreground text-xs">
                 Path uses dot notation. Example: payload.repository.name

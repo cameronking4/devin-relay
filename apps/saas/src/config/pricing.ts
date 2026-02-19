@@ -74,7 +74,7 @@ export const pricingFeatures: PricingFeature[] = [
     },
     {
         id: "7",
-        title: "Higher concurrency limit (default 3 → 10)",
+        title: "Higher concurrency limit (default 1 → 10)",
         inludedIn: [pricingIds.pro, pricingIds.premium],
     },
     {

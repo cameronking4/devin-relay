@@ -451,20 +451,30 @@ export async function getExecutionsByProjectId(
         .select({
             id: relayExecutions.id,
             eventId: relayExecutions.eventId,
+            eventIds: relayExecutions.eventIds,
             projectId: relayExecutions.projectId,
             triggerId: relayExecutions.triggerId,
             workflowId: relayExecutions.workflowId,
             status: relayExecutions.status,
             latencyMs: relayExecutions.latencyMs,
+            error: relayExecutions.error,
             startedAt: relayExecutions.startedAt,
+            completedAt: relayExecutions.completedAt,
             createdAt: relayExecutions.createdAt,
             triggerName: relayTriggers.name,
+            triggerSource: relayTriggers.source,
+            triggerEventType: relayTriggers.eventType,
             aiSessionId: relayExecutions.aiSessionId,
+            eventReceivedAt: relayEvents.receivedAt,
         })
         .from(relayExecutions)
         .innerJoin(
             relayTriggers,
             eq(relayExecutions.triggerId, relayTriggers.id),
+        )
+        .innerJoin(
+            relayEvents,
+            eq(relayExecutions.eventId, relayEvents.id),
         )
         .where(and(...conditions))
         .orderBy(desc(relayExecutions.createdAt))

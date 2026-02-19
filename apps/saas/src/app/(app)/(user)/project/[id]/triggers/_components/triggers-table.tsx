@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
     deleteRelayTrigger,
+    rerunWithLatestEvent,
     setRelayTriggerEnabled,
 } from "@/server/actions/relay/mutations";
 import { toast } from "sonner";
@@ -42,6 +43,7 @@ import {
     Trash2Icon,
     PauseIcon,
     PlayIcon,
+    RotateCcwIcon,
 } from "lucide-react";
 
 type TriggerRow = Awaited<
@@ -192,6 +194,33 @@ export function TriggersTable({
                                             >
                                                 <CopyIcon className="mr-2 h-4 w-4" />
                                                 Copy webhook URL
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={async () => {
+                                                    setPending(true);
+                                                    try {
+                                                        await rerunWithLatestEvent(
+                                                            projectId,
+                                                            t.id,
+                                                        );
+                                                        toast.success(
+                                                            "Re-run queued with latest event",
+                                                        );
+                                                        router.refresh();
+                                                    } catch (e) {
+                                                        toast.error(
+                                                            e instanceof Error
+                                                                ? e.message
+                                                                : "Failed to re-run",
+                                                        );
+                                                    } finally {
+                                                        setPending(false);
+                                                    }
+                                                }}
+                                                disabled={pending}
+                                            >
+                                                <RotateCcwIcon className="mr-2 h-4 w-4" />
+                                                Re-run with latest event
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 onClick={() =>

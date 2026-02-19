@@ -400,7 +400,7 @@ export const relayTriggers = createTable(
         includePaths: jsonb("includePaths").$type<string[]>().default([]),
         excludePaths: jsonb("excludePaths").$type<string[]>().default([]),
         enabled: boolean("enabled").default(true).notNull(),
-        concurrencyLimit: integer("concurrencyLimit").default(3).notNull(),
+        concurrencyLimit: integer("concurrencyLimit").default(1).notNull(),
         dailyCap: integer("dailyCap").default(50).notNull(),
         lowNoiseMode: boolean("lowNoiseMode").default(false).notNull(),
         setupComplete: boolean("setupComplete").default(true).notNull(),

@@ -27,7 +27,7 @@ const DEFAULT_BASIC_INFO: BasicInfoValues = {
 const DEFAULT_ADVANCED: AdvancedSettingsValues = {
     conditions: [],
     thresholdConfig: null,
-    concurrencyLimit: 3,
+    concurrencyLimit: 1,
     dailyCap: 50,
     includePaths: [],
     excludePaths: [],

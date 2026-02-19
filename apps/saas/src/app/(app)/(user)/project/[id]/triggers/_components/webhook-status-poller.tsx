@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, forwardRef, useImperativeHandle } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -8,15 +8,19 @@ import { getWebhookActivity } from "@/server/actions/relay/queries";
 
 const POLL_INTERVAL_MS = 5000; // 5 seconds
 
-export function WebhookStatusPoller({
-    triggerId,
-    projectId,
-    onStatusChange,
-}: {
-    triggerId: string;
-    projectId: string;
-    onStatusChange?: (isActive: boolean) => void;
-}) {
+export type WebhookStatusPollerRef = { checkStatus: () => void };
+
+export const WebhookStatusPoller = forwardRef<
+    WebhookStatusPollerRef,
+    {
+        triggerId: string;
+        projectId: string;
+        onStatusChange?: (isActive: boolean) => void;
+    }
+>(function WebhookStatusPoller(
+    { triggerId, projectId, onStatusChange },
+    ref,
+) {
     const [isActive, setIsActive] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [lastReceivedAt, setLastReceivedAt] = useState<Date | null>(null);
@@ -48,6 +52,8 @@ export function WebhookStatusPoller({
             );
         }
     }, [triggerId, projectId, onStatusChange]);
+
+    useImperativeHandle(ref, () => ({ checkStatus }), [checkStatus]);
 
     useEffect(() => {
         if (!triggerId || isActive) return;
@@ -105,4 +111,4 @@ export function WebhookStatusPoller({
             )}
         </div>
     );
-}
+});

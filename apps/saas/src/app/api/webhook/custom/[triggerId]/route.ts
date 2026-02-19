@@ -112,6 +112,8 @@ export async function POST(
             );
     }
     const shouldExecute = setupComplete || isAbandoned;
+    // Events are always stored below (for connection testing and payload autofill in the wizard).
+    // We only skip queueing Devin execution when !shouldExecute.
 
     const existing = await db
         .select({ id: relayEvents.id })

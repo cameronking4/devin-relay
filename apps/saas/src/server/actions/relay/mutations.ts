@@ -1,12 +1,21 @@
 "use server";
 
 import { getOrganizations } from "@/server/actions/organization/queries";
-import { getRelayProjectById } from "@/server/actions/relay/queries";
+import {
+    getExecutionById,
+    getRelayProjectById,
+    getRecentEventsForTrigger,
+} from "@/server/actions/relay/queries";
 import { db } from "@/server/db";
-import { relayEvents, relayProjects, relayTriggers, relayWorkflows } from "@/server/db/schema";
+import {
+    relayEvents,
+    relayProjects,
+    relayTriggers,
+    relayWorkflows,
+} from "@/server/db/schema";
 import { executionQueue } from "@/server/relay/queue";
 import { protectedProcedure } from "@/server/procedures";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { encrypt, decrypt } from "@/server/relay/encryption";
 import { env } from "@/env";
@@ -152,7 +161,7 @@ export async function createRelayTrigger(
             promptTemplate: data.promptTemplate,
             conditions: data.conditions ?? [],
             thresholdConfig: data.thresholdConfig ?? null,
-            concurrencyLimit: data.concurrencyLimit ?? 3,
+            concurrencyLimit: data.concurrencyLimit ?? 1,
             dailyCap: data.dailyCap ?? 50,
             includePaths: data.includePaths ?? [],
             excludePaths: data.excludePaths ?? [],
@@ -456,4 +465,76 @@ export async function deleteRelayWorkflow(projectId: string, workflowId: string)
         );
     revalidatePath(siteUrls.relay.project(projectId));
     revalidatePath(siteUrls.relay.triggers(projectId));
+}
+
+export async function rerunWithLatestEvent(
+    projectId: string,
+    triggerId: string,
+) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    const recent = await getRecentEventsForTrigger(triggerId, projectId, 1);
+    const latest = recent[0];
+    if (!latest) {
+        throw new Error("No events to re-run. Trigger a webhook first.");
+    }
+
+    const jobId = `${triggerId}-${latest.id}-rerun`.slice(0, 100);
+    await executionQueue.add(
+        "execute",
+        { kind: "single", eventId: latest.id },
+        { jobId },
+    );
+    revalidatePath(siteUrls.relay.executions(projectId));
+}
+
+export async function rerunExecution(projectId: string, executionId: string) {
+    await protectedProcedure();
+    const project = await getRelayProjectById(projectId);
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg || !project || project.orgId !== currentOrg.id) {
+        throw new Error("Project not found");
+    }
+
+    const exec = await getExecutionById(executionId, projectId);
+    if (!exec) throw new Error("Execution not found");
+
+    const eventIds = exec.eventIds as string[] | null;
+    const workflowId = exec.workflowId;
+
+    if (workflowId && eventIds != null && eventIds.length > 0) {
+        const events = await db
+            .select({ receivedAt: relayEvents.receivedAt })
+            .from(relayEvents)
+            .where(inArray(relayEvents.id, eventIds))
+            .orderBy(asc(relayEvents.receivedAt));
+        if (events.length === 0) throw new Error("Events not found");
+        const windowStart = events[0]!.receivedAt;
+        const windowEnd = events[events.length - 1]!.receivedAt;
+        const jobId = `workflow-rerun-${executionId}`.slice(0, 100);
+        await executionQueue.add(
+            "execute-workflow",
+            {
+                kind: "workflow",
+                workflowId,
+                eventIds,
+                windowStart: windowStart.toISOString(),
+                windowEnd: windowEnd.toISOString(),
+            },
+            { jobId },
+        );
+    } else {
+        const jobId = `rerun-${exec.eventId}`.slice(0, 100);
+        await executionQueue.add(
+            "execute",
+            { kind: "single", eventId: exec.eventId },
+            { jobId },
+        );
+    }
+    revalidatePath(siteUrls.relay.executions(projectId));
 }
