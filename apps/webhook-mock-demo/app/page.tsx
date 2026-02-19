@@ -107,7 +107,7 @@ export default function Home() {
 
   return (
     <div className={cn(
-      "bg-background text-foreground flex flex-col",
+      "bg-background text-foreground flex flex-col w-full min-w-0 max-w-full overflow-x-hidden",
       isSideBySide ? "h-screen overflow-hidden" : "min-h-screen"
     )}>
       {/* Header */}
@@ -144,8 +144,8 @@ export default function Home() {
       <LearnMoreDialog open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
 
       <main className={cn(
-        "w-full px-4 py-8 sm:px-6 lg:px-8 flex-1",
-        isSideBySide && "overflow-hidden flex flex-col"
+        "w-full min-w-0 max-w-full px-4 py-8 sm:px-6 lg:px-8 flex-1",
+        isSideBySide && "overflow-hidden flex flex-col min-h-0"
       )}>
         {/* Responsive: Steps 1+2 left, Step 3 right on xl; stacked on smaller */}
         <div className={cn(
@@ -213,9 +213,10 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              layout={false}
               className={cn(
-                "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/10 py-20 text-center",
-                isSideBySide && "xl:flex-1 xl:min-h-[300px]"
+                "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/10 py-20 text-center min-h-0",
+                isSideBySide && "xl:flex-1"
               )}
             >
               <span className="mb-3 text-4xl">📋</span>
@@ -227,10 +228,12 @@ export default function Home() {
               </p>
             </motion.div>
           ) : (
-            <div className={cn(
-              "grid gap-8 lg:grid-cols-2",
-              isSideBySide && "xl:flex-1 xl:min-h-0 xl:grid-rows-1"
-            )}>
+            <div
+              className={cn(
+                "grid gap-8 lg:grid-cols-2 min-w-0",
+                isSideBySide && "xl:flex-1 xl:min-h-0 xl:grid-rows-1"
+              )}
+            >
               {/* Events */}
               <div className={cn(
                 "rounded-2xl border border-border/60 bg-card/50 p-6 shadow-sm flex flex-col min-h-0",
