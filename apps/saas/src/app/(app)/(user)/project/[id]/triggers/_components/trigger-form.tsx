@@ -43,7 +43,7 @@ const DEFAULT_VALUES: TriggerFormValues = {
     source: "Custom",
     eventType: "",
     githubRepo: "",
-    promptTemplate: "My application recieved this signal, please review and fix: {{payload.message}}",
+    promptTemplate: "My application received this signal, please review and fix: {{payload.message}}",
     conditions: [],
     thresholdConfig: null,
     concurrencyLimit: 1,
