@@ -2,6 +2,22 @@ import Mustache from "mustache";
 
 const MAX_PROMPT_LENGTH = 64 * 1024; // 64KB
 
+/** Recursively wraps plain objects so Mustache renders them as JSON instead of [object Object]. */
+function wrapPayloadForMustache(value: unknown): unknown {
+    if (value == null || typeof value !== "object") return value;
+    if (Array.isArray(value)) return value.map(wrapPayloadForMustache);
+    const source = value as Record<string, unknown>;
+    const wrapped: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(source)) {
+        wrapped[k] = wrapPayloadForMustache(v);
+    }
+    Object.defineProperty(wrapped, "toString", {
+        value: () => JSON.stringify(source, null, 2),
+        enumerable: false,
+    });
+    return wrapped;
+}
+
 /** Sanitize trigger ID for use in branch names (alphanumeric, hyphen) */
 function sanitizeBranchSuffix(id: string): string {
     return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
@@ -78,7 +94,7 @@ export function renderPrompt(
     excludePaths: string[] = [],
     options?: { lowNoiseMode?: boolean; triggerId?: string },
 ): string {
-    const view = { payload };
+    const view = { payload: wrapPayloadForMustache(payload) };
     const renderedTask = Mustache.render(template, view);
     const payloadFormatted = formatPayloadForEventData(payload);
     const parts: string[] = [];
@@ -130,6 +146,6 @@ export function renderTemplateOnly(
     template: string,
     payload: unknown,
 ): string {
-    const view = { payload };
+    const view = { payload: wrapPayloadForMustache(payload) };
     return Mustache.render(template, view).replace(/\0/g, "");
 }
