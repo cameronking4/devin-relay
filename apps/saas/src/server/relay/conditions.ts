@@ -27,8 +27,7 @@ const OPERATORS = [
     "exists",
 ] as const;
 
-function getAtPath(obj: unknown, path: string): unknown {
-    const parts = path.replace(/^payload\.?/, "").split(".");
+function traverseParts(obj: unknown, parts: string[]): unknown {
     let current: unknown = obj;
     for (const part of parts) {
         if (current == null || typeof current !== "object") return undefined;
@@ -37,31 +36,58 @@ function getAtPath(obj: unknown, path: string): unknown {
     return current;
 }
 
+function getAtPath(obj: unknown, path: string): unknown {
+    const directParts = path.split(".");
+    const directResult = traverseParts(obj, directParts);
+    if (directResult !== undefined) return directResult;
+
+    if (path.startsWith("payload")) {
+        const stripped = path.replace(/^payload\.?/, "");
+        if (stripped) {
+            return traverseParts(obj, stripped.split("."));
+        }
+    }
+    return undefined;
+}
+
+function coerceNumeric(actual: unknown, value: unknown): [unknown, unknown] {
+    if (typeof actual === "number" && typeof value === "string") {
+        const parsed = Number(value);
+        if (!isNaN(parsed)) return [actual, parsed];
+    }
+    if (typeof actual === "string" && typeof value === "number") {
+        const parsed = Number(actual);
+        if (!isNaN(parsed)) return [parsed, value];
+    }
+    return [actual, value];
+}
+
 function evaluateCondition(
     payload: unknown,
     condition: Condition,
 ): boolean {
     const { path, operator, value } = condition;
     const actual = getAtPath(payload, path);
+    const [cActual, cValue] = coerceNumeric(actual, value);
 
     switch (operator) {
         case "eq":
-            return actual === value;
+            return cActual === cValue;
         case "neq":
-            return actual !== value;
+            return cActual !== cValue;
         case "gt":
-            return typeof actual === "number" && typeof value === "number" && actual > value;
+            return typeof cActual === "number" && typeof cValue === "number" && cActual > cValue;
         case "gte":
-            return typeof actual === "number" && typeof value === "number" && actual >= value;
+            return typeof cActual === "number" && typeof cValue === "number" && cActual >= cValue;
         case "lt":
-            return typeof actual === "number" && typeof value === "number" && actual < value;
+            return typeof cActual === "number" && typeof cValue === "number" && cActual < cValue;
         case "lte":
-            return typeof actual === "number" && typeof value === "number" && actual <= value;
+            return typeof cActual === "number" && typeof cValue === "number" && cActual <= cValue;
         case "contains":
             return typeof actual === "string" && typeof value === "string" && actual.includes(value);
         case "exists":
-            if (value === true) return actual !== undefined && actual !== null;
-            if (value === false) return actual === undefined || actual === null;
+            if (value === true || value === "true") return actual !== undefined && actual !== null;
+            if (value === false || value === "false") return actual === undefined || actual === null;
             return actual !== undefined && actual !== null;
         default:
             return false;
