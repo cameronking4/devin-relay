@@ -7,6 +7,23 @@ function sanitizeBranchSuffix(id: string): string {
     return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
 }
 
+/**
+ * Wrap a payload object so that Mustache renders `{{payload}}` as JSON
+ * instead of `[object Object]`, while preserving nested access like
+ * `{{payload.eventType}}`.
+ */
+function wrapPayloadForMustache(payload: unknown): unknown {
+    if (payload == null || typeof payload !== "object" || Array.isArray(payload)) {
+        return payload;
+    }
+    const wrapped = { ...(payload as Record<string, unknown>) };
+    Object.defineProperty(wrapped, "toString", {
+        value: () => JSON.stringify(payload, null, 2),
+        enumerable: false,
+    });
+    return wrapped;
+}
+
 /** Format payload for [EVENT DATA] section; supports single object, batch { events, count }, or workflow { sources, summary }. */
 function formatPayloadForEventData(payload: unknown): string {
     if (typeof payload === "string") {
@@ -78,7 +95,7 @@ export function renderPrompt(
     excludePaths: string[] = [],
     options?: { lowNoiseMode?: boolean; triggerId?: string },
 ): string {
-    const view = { payload };
+    const view = { payload: wrapPayloadForMustache(payload) };
     const renderedTask = Mustache.render(template, view);
     const payloadFormatted = formatPayloadForEventData(payload);
     const parts: string[] = [];
@@ -130,6 +147,6 @@ export function renderTemplateOnly(
     template: string,
     payload: unknown,
 ): string {
-    const view = { payload };
+    const view = { payload: wrapPayloadForMustache(payload) };
     return Mustache.render(template, view).replace(/\0/g, "");
 }
