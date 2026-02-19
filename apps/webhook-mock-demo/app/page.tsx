@@ -117,7 +117,7 @@ export default function Home() {
         transition={{ duration: 0.4 }}
         className="shrink-0 border-b border-border/60 bg-card/50 backdrop-blur-xl supports-[backdrop-filter]:bg-card/40"
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-full items-center justify-between gap-4 px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -144,7 +144,7 @@ export default function Home() {
       <LearnMoreDialog open={learnMoreOpen} onClose={() => setLearnMoreOpen(false)} />
 
       <main className={cn(
-        "mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-1 min-w-0",
+        "mx-auto max-w-full px-4 py-8 sm:px-6 lg:px-8 flex-1 min-w-0",
         isSideBySide && "overflow-hidden flex flex-col"
       )}>
         {/* Responsive: Steps 1+2 left, Step 3 right on xl; stacked on smaller */}
