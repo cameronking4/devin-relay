@@ -89,7 +89,16 @@ export const authOptions: NextAuthOptions = {
 
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger }) {
+            const needsRefresh =
+                trigger === "signIn" ||
+                trigger === "signUp" ||
+                !token.id;
+
+            if (!needsRefresh) {
+                return token;
+            }
+
             const dbUser = await db.query.users.findFirst({
                 where: eq(users.email, token.email!),
             });
