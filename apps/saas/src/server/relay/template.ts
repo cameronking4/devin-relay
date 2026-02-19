@@ -34,7 +34,7 @@ function sanitizeBranchSuffix(id: string): string {
     return id.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 63);
 }
 
-/** Format payloadfor [EVENT DATA] section; supports single object, batch { events, count }, or workflow { sources, summary }. */
+/** Format payload for [EVENT DATA] section; supports single object, batch { events, count }, or workflow { sources, summary }. */
 function formatPayloadForEventData(payload: unknown): string {
     if (typeof payload === "string") {
         return payload;
