@@ -27,18 +27,26 @@ export const createTable = pgTableCreator(
 
 export const usersRoleEnum = pgEnum("role", ["User", "Admin", "Super Admin"]);
 
-export const users = createTable("user", {
-    id: varchar("id", { length: 255 }).notNull().primaryKey(),
-    name: varchar("name", { length: 255 }),
-    email: varchar("email", { length: 255 }).notNull(),
-    emailVerified: timestamp("emailVerified", {
-        mode: "date",
-    }).default(sql`CURRENT_TIMESTAMP`),
-    image: varchar("image", { length: 255 }),
-    role: usersRoleEnum("role").default("User").notNull(),
-    isNewUser: boolean("isNewUser").default(true).notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
-});
+export const users = createTable(
+    "user",
+    {
+        id: varchar("id", { length: 255 }).notNull().primaryKey(),
+        name: varchar("name", { length: 255 }),
+        email: varchar("email", { length: 255 }).notNull(),
+        emailVerified: timestamp("emailVerified", {
+            mode: "date",
+        }).default(sql`CURRENT_TIMESTAMP`),
+        image: varchar("image", { length: 255 }),
+        role: usersRoleEnum("role").default("User").notNull(),
+        isNewUser: boolean("isNewUser").default(true).notNull(),
+        createdAt: timestamp("createdAt", { mode: "date" })
+            .notNull()
+            .defaultNow(),
+    },
+    (user) => ({
+        emailIdx: index("user_email_idx").on(user.email),
+    }),
+);
 
 export const usersRelations = relations(users, ({ many }) => ({
     accounts: many(accounts),

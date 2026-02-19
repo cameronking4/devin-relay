@@ -90,31 +90,36 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
         async jwt({ token, user, trigger }) {
-            if (trigger === "signIn" || trigger === "signUp" || !token.id) {
-                const dbUser = await db.query.users.findFirst({
-                    where: eq(users.email, token.email!),
-                });
+            const needsRefresh =
+                trigger === "signIn" ||
+                trigger === "signUp" ||
+                !token.id;
 
-                if (!dbUser) {
-                    if (user) {
-                        token.id = user?.id;
-                    }
-                    return token;
-                }
-
-                return {
-                    id: dbUser.id,
-                    role: dbUser.role,
-                    createdAt: dbUser.createdAt,
-                    emailVerified: dbUser.emailVerified,
-                    email: dbUser.email,
-                    name: dbUser.name,
-                    picture: dbUser.image,
-                    isNewUser: dbUser.isNewUser,
-                };
+            if (!needsRefresh) {
+                return token;
             }
 
-            return token;
+            const dbUser = await db.query.users.findFirst({
+                where: eq(users.email, token.email!),
+            });
+
+            if (!dbUser) {
+                if (user) {
+                    token.id = user?.id;
+                }
+                return token;
+            }
+
+            return {
+                id: dbUser.id,
+                role: dbUser.role,
+                createdAt: dbUser.createdAt,
+                emailVerified: dbUser.emailVerified,
+                email: dbUser.email,
+                name: dbUser.name,
+                picture: dbUser.image,
+                isNewUser: dbUser.isNewUser,
+            };
         },
     },
 
