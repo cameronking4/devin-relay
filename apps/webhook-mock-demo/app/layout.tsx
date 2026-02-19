@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Production Signals Mock - Relay Testing",
-  description: "Test Relay webhooks with production-ready events from Sentry, Vercel, Azure DevOps, Typeform, Vanta, CrowdStrike, PostHog, Logflare & more",
+  description: "Test Relay webhooks with production-ready events from Sentry, Vercel, Dynatrace, Azure DevOps, Typeform, Vanta, CrowdStrike, PostHog, Logflare & more",
 };
 
 export default function RootLayout({

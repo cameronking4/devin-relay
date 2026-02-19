@@ -133,7 +133,7 @@ export default function Home() {
                 Relay Production Signals Library
               </h1>
               <p className="text-sm text-muted-foreground">
-                Test Relay <span className="text-xs text-foreground/50 align-baseline">(for Devin){" "}</span>{" "}with production-ready mocked webhook events · 17 services · 90+ events
+                Test Relay <span className="text-xs text-foreground/50 align-baseline">(for Devin){" "}</span>{" "}with production-ready mocked webhook events · 18 services · 95+ events
               </p>
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function Home() {
                 Select a service above to browse events
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                17 services · 90+ production-ready events
+                18 services · 95+ production-ready events
               </p>
             </motion.div>
           ) : (

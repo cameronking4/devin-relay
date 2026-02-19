@@ -120,6 +120,13 @@ export const EVENTS: ServiceEvents = {
     { id: "composite_alarm", name: "Composite Alarm Fired", desc: "Multiple alarms combined condition met", emoji: "🔶" },
     { id: "insights_alarm", name: "Contributor Insights Alarm", desc: "Unusual contributor to metric (e.g. top error source)", emoji: "🔍" },
   ],
+  dynatrace: [
+    { id: "problem_opened", name: "Problem Opened", desc: "New problem detected - affects real users", emoji: "🚨" },
+    { id: "problem_resolved", name: "Problem Resolved", desc: "Problem condition cleared", emoji: "✅" },
+    { id: "problem_merged", name: "Events Merged into Problem", desc: "New root-cause events merged into existing problem", emoji: "🔗" },
+    { id: "problem_infrastructure", name: "Infrastructure Problem", desc: "Host, container, or infrastructure impacted", emoji: "🖥️" },
+    { id: "problem_service", name: "Service Problem", desc: "Application service degraded or failing", emoji: "⚙️" },
+  ],
 };
 
 export const SERVICES = Object.keys(EVENTS) as string[];

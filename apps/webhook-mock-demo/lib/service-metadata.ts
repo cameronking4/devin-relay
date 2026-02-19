@@ -17,6 +17,7 @@ import {
   Gauge,
   GitBranch,
   ClipboardList,
+  Cpu,
   type LucideProps,
 } from "lucide-react";
 
@@ -37,7 +38,8 @@ export type ServiceId =
   | "azure_monitor"
   | "azure_devops"
   | "typeform"
-  | "cloudwatch";
+  | "cloudwatch"
+  | "dynatrace";
 
 export type ServiceMeta = {
   id: ServiceId;
@@ -203,5 +205,14 @@ export const SERVICE_METADATA: Record<ServiceId, ServiceMeta> = {
     gradient: "from-amber-500 to-orange-600",
     bgLight: "bg-amber-50 dark:bg-amber-950/40",
     borderColor: "border-amber-200 dark:border-amber-800/50",
+  },
+  dynatrace: {
+    id: "dynatrace",
+    label: "Dynatrace",
+    description: "Problem notifications & observability",
+    icon: Cpu,
+    gradient: "from-sky-600 to-indigo-700",
+    bgLight: "bg-sky-50 dark:bg-sky-950/40",
+    borderColor: "border-sky-200 dark:border-sky-800/50",
   },
 };

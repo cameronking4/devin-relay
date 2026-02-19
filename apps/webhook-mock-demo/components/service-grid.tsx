@@ -29,6 +29,7 @@ const SERVICE_EMOJIS: Record<ServiceId, string> = {
   azure_devops: "🔷",
   typeform: "📝",
   cloudwatch: "☁️",
+  dynatrace: "📊",
 };
 
 export function ServiceGrid({

@@ -15,6 +15,7 @@ import { generateAzureMonitorPayload } from "./azure-monitor";
 import { generateAzureDevOpsPayload } from "./azure-devops";
 import { generateTypeformPayload } from "./typeform";
 import { generateCloudWatchPayload } from "./cloudwatch";
+import { generateDynatracePayload } from "./dynatrace";
 
 export function generatePayload(
   service: string,
@@ -55,6 +56,8 @@ export function generatePayload(
       return generateTypeformPayload(eventType);
     case "cloudwatch":
       return generateCloudWatchPayload(eventType);
+    case "dynatrace":
+      return generateDynatracePayload(eventType);
     default:
       throw new Error(`Unknown service: ${service}`);
   }
