@@ -30,18 +30,14 @@ export default async function ProjectListPage() {
             <div className="flex flex-col gap-8">
                 <ProjectsOverviewStats stats={aggregateStats} />
 
-                <ExecutionActivityChart
-                    data={aggregateStats.executionHistory}
-                />
-
                 <section>
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-lg font-semibold">
                             Your projects
                         </h2>
-                        {projects.length > 0 && (
+                        {/* {projects.length > 0 && (
                             <ProjectsHeaderActions projects={projects} />
-                        )}
+                        )} */}
                     </div>
 
                     {projects.length === 0 ? (
@@ -80,9 +76,19 @@ export default async function ProjectListPage() {
                                     }}
                                 />
                             ))}
+                        {/* Add New Project Card */}
+                        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 p-6 cursor-pointer hover:bg-muted/50 transition">
+                            <CreateProjectDialog triggerLabel="Create new project" />
+                        </div>
                         </div>
                     )}
                 </section>
+
+
+                <ExecutionActivityChart
+                    data={aggregateStats.executionHistory}
+                />
+
             </div>
         </AppPageShell>
     );

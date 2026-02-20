@@ -33,15 +33,15 @@ export type UserOrgs = {
 type OrgSelectDropdownProps = {
     currentOrg: typeof organizations.$inferSelect;
     userOrgs: UserOrgs[];
+    isCollapsed?: boolean;
 };
 
 export function OrgSelectDropdown({
     currentOrg,
     userOrgs,
+    isCollapsed = false,
 }: OrgSelectDropdownProps) {
     const router = useRouter();
-
-    const isCollapsed = false;
 
     const { setIsPending } = switchOrgPendingState();
 
@@ -72,11 +72,18 @@ export function OrgSelectDropdown({
                     <Button
                         variant="outline"
                         className={cn(
-                            "flex w-full justify-start gap-2 overflow-hidden p-2",
+                            "flex w-full min-w-0 justify-start gap-2 overflow-hidden p-2",
+                            isCollapsed &&
+                                "!size-8 !min-w-0 !shrink-0 p-0 justify-center",
                         )}
                         aria-label="select organization"
                     >
-                        <Avatar className="h-6 w-6">
+                        <Avatar
+                            className={cn(
+                                "h-6 w-6 shrink-0",
+                                isCollapsed && "h-5 w-5",
+                            )}
+                        >
                             <AvatarImage
                                 src={currentOrg?.image ? currentOrg.image : ""}
                             />
