@@ -58,7 +58,7 @@ export default async function HomePage() {
             <div className="-m-2 w-full rounded-xl bg-foreground/5 p-2 ring-1 ring-inset ring-foreground/10 lg:-m-4 lg:rounded-2xl lg:p-4">
                 <div className="relative aspect-video w-full rounded-md bg-muted">
                     <Image
-                        src="https://utfs.io/f/43bbc3c8-cf3c-4fae-a0eb-9183f1779489-294m81.png"
+                        src="/Relay-Dashboard.png"
                         alt="dashboard preview"
                         fill
                         className="block rounded-md border border-border dark:hidden"
@@ -66,7 +66,7 @@ export default async function HomePage() {
                     />
 
                     <Image
-                        src="https://utfs.io/f/fddea366-51c6-45f4-bd54-84d273ad9fb9-1ly324.png"
+                        src="/Relay-Dashboard.png"
                         alt="dashboard preview"
                         fill
                         className="hidden rounded-md border border-border dark:block"
