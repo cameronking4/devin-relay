@@ -3,12 +3,18 @@ import {
     WebPageHeader,
     WebPageWrapper,
 } from "@/app/(web)/_components/general-components";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel";
+import { LoomEmbed } from "@/app/(web)/_components/loom-embed";
 import { Promotion } from "@/app/(web)/_components/promotion";
-import { Testimonials } from "@/app/(web)/_components/testimonials";
 import { buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { siteUrls } from "@/config/urls";
-import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 import type { Metadata } from "next";
@@ -56,30 +62,30 @@ export default async function HomePage() {
             </WebPageHeader>
 
             <div className="-m-2 w-full rounded-xl bg-foreground/5 p-2 ring-1 ring-inset ring-foreground/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                <div className="relative aspect-video w-full rounded-md bg-muted">
-                    <Image
-                        src="/Relay-Dashboard.png"
-                        alt="dashboard preview"
-                        fill
-                        className="block rounded-md border border-border dark:hidden"
-                        priority
-                    />
-
-                    <Image
-                        src="/Relay-Dashboard.png"
-                        alt="dashboard preview"
-                        fill
-                        className="hidden rounded-md border border-border dark:block"
-                        priority
-                    />
-                </div>
+                <Carousel
+                    opts={{ align: "start", loop: true }}
+                    className="w-full"
+                >
+                    <CarouselContent className="-ml-0">
+                        <CarouselItem className="pl-0">
+                            <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-muted shadow-lg">
+                                <LoomEmbed />
+                            </div>
+                        </CarouselItem>
+                        <CarouselItem className="pl-0">
+                            <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-muted shadow-lg">
+                                <LoomEmbed shareUrl="https://www.loom.com/share/f777ce90d6544afd8e726ef07093833c" />
+                            </div>
+                        </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
             </div>
 
             <Promotion />
 
             <Features />
-
-            <Testimonials />
         </WebPageWrapper>
     );
 }
