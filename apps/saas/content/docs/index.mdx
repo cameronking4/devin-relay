@@ -1,31 +1,34 @@
 ---
 title: "Introduction"
-description: "launchmvpfast is an open-source Next.js SaaS Starterkit/Boilerplate designed to expedite the development process of Software as a Service (SaaS) applications. Launch your MVP in days."
+description: "Relay is event-driven AI orchestration for engineering signals. Connect webhooks to Devin, route outputs to GitHub—no glue code required."
 ---
 
-## Creator
+Relay is **event-driven AI orchestration for engineering signals.** Modern dev tools emit webhooks; AI systems reason—but don't natively integrate with those signals. Relay closes the loop.
 
--   Github [@cameronking4](https://github.com/cameronking4)
--   Twitter [@AliFarooqDev](https://www.twitter.com/AliFarooqDev)
+**Connect a webhook. Trigger Devin. Route outputs to GitHub. Zero glue code.**
 
-## Built with
+## What Relay delivers
 
--   [Create T3 App](https://create.t3.gg/)
--   [Next.js](https://nextjs.org/)
--   [Drizzle](https://orm.drizzle.team/)
--   [NextAuth.js](https://next-auth.js.org/)
--   [Resend](https://resend.com/)
--   [Uploadthing](https://uploadthing.com/)
--   [Next MDX Remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)
--   [Tanstack/React Query](https://tanstack.com/query/)
--   [Tailwind CSS](https://tailwindcss.com/)
--   [Shadcn/ui](https://ui.shadcn.com/)
--   [Emilkowalski/Sonner](https://sonner.emilkowal.ski/)
--   [Emilkowalski/Vaul](https://vaul.emilkowal.ski/)
+- **Native GitHub integration** — `pull_request.opened`, `pull_request.synchronize`, `issue_comment.created`, and more.
+- **Generic webhooks** — JSON POST, unique URL per trigger, optional idempotency headers, schema introspection.
+- **BYOK Devin** — your API key, encrypted at rest, never logged.
+- **Full visibility** — raw payload, rendered prompt, Devin output, latency, and errors for every execution.
 
+Not a chatbot. Not a PR bot. Not a Zapier clone. **Relay is the beginning of an AI control plane.**
 
-## For Who is launchmvpfast?
-This project is for developers who want to build a Software as a Service (SaaS) application. It is designed to expedite the development process of SaaS applications. It is a boilerplate that you can use to build your own SaaS application. It is designed to be easy to use and easy to customize. It is built with Next.js, Drizzle, NextAuth.js, Resend, Uploadthing, Next MDX Remote, Tanstack/React Query, Tailwind CSS, Shadcn/ui, Emilkowalski/Sonner, Emilkowalski/Vaul.
+## Who it's for
 
-## Why launchmvpfast?
-launchmvpfast is an open-source Next.js SaaS Starterkit/Boilerplate designed to expedite the development process of Software as a Service (SaaS) applications. Launch your MVP in days.
+- **Platform engineers** shipping internal tooling
+- **DevEx teams** automating code review and feedback loops
+- **AI-forward startups** (10–200 engineers) experimenting with automation
+
+If you use GitHub and modern SaaS tooling—and you'd rather not maintain glue code—Relay is built for you.
+
+## Next steps
+
+- [Installation](/docs/getting-started/installation) — Run Relay locally
+- [Quickstart](/docs/getting-started/quickstart) — First project, trigger, and webhook
+- [Triggers](/docs/concepts/triggers) — Webhook endpoints and event flow
+- [Execution](/docs/concepts/execution) — Run lifecycle and viewing results
+- [Devin](/docs/concepts/devin) — How Relay uses your Devin API key and runs sessions
+- [Testing triggers](/docs/concepts/testing-triggers) — Validate with the test webhook and Production Signals Library

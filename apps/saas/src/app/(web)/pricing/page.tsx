@@ -23,16 +23,19 @@ export default function PricingPage() {
             <WebPageHeader
                 title="Simple Pricing for Platform & DevEx Teams"
                 badge="MVP"
-            >
-                <p className="text-center text-base">
-                    <span>No hidden fees </span>
-                    <span className="font-light italic text-muted-foreground">
-                        — start with one project, one webhook, one trigger
-                    </span>
-                </p>
-            </WebPageHeader>
+                description={
+                    <>
+                        No hidden fees{" "}
+                        <span className="font-light italic">
+                            — start with one project, one webhook, one trigger
+                        </span>
+                    </>
+                }
+            />
 
-            <PricingTable />
+            <div className="w-full max-w-5xl">
+                <PricingTable />
+            </div>
         </WebPageWrapper>
     );
 }

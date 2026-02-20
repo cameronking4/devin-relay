@@ -1,0 +1,172 @@
+---
+title: "Integrations"
+description: "Set up Sentry, Vercel, GitHub, or any custom service to send webhooks to Relay. Setup steps and example payloads."
+---
+
+Relay accepts webhooks from any service that can send HTTP POST requests. This guide covers setup for common integrations and how to use payload paths in conditions and prompt templates.
+
+## Webhook URL
+
+Use your trigger's webhook URL in the integration:
+
+```
+https://your-relay-domain/api/webhook/custom/{triggerId}
+```
+
+Get the URL from the trigger detail page in Relay (Webhook setup step or Webhook URL card). For full API details see [Webhook API](/docs/reference/webhook-api).
+
+---
+
+## Sentry
+
+**Use case:** Send Sentry error alerts to trigger Devin (e.g. auto-investigate or create issues).
+
+### Setup
+
+1. Go to your Sentry project **Settings**.
+2. Navigate to **Alerts** → **Alert Rules**.
+3. Create a new alert rule.
+4. Set the action to **Send a webhook**.
+5. Use your Relay trigger URL as the webhook URL.
+6. Configure the payload format as needed (Sentry may offer a default; you can customize to match the example below if desired).
+
+### Example payload
+
+Use paths like `payload.event.message`, `payload.event.level`, `payload.project.name` in conditions and templates.
+
+```json
+{
+  "event": {
+    "id": "abc123",
+    "message": "Error: Cannot read property 'x' of undefined",
+    "level": "error",
+    "timestamp": "2024-01-15T10:30:00Z"
+  },
+  "project": {
+    "name": "my-app",
+    "slug": "my-app"
+  },
+  "url": "https://sentry.io/organizations/org/issues/123/"
+}
+```
+
+---
+
+## Vercel
+
+**Use case:** Trigger Devin on deployment events (e.g. on deployment failure or success).
+
+### Setup
+
+1. Go to your Vercel **Project settings**.
+2. Navigate to **Integrations** → **Webhooks**.
+3. Click **Create Webhook**.
+4. Select events (e.g. **Deployment Created**, **Deployment Failed**).
+5. Use your Relay trigger URL.
+6. Save the webhook.
+
+### Example payload
+
+Use paths like `payload.payload.deployment.state`, `payload.payload.deployment.error`, `payload.payload.project.name`.
+
+```json
+{
+  "id": "deployment_123",
+  "type": "deployment",
+  "payload": {
+    "deployment": {
+      "id": "dpl_abc123",
+      "url": "https://my-app.vercel.app",
+      "state": "ERROR",
+      "error": "Build failed: npm install error"
+    },
+    "project": {
+      "name": "my-app"
+    }
+  }
+}
+```
+
+---
+
+## GitHub
+
+**Use case:** Trigger Devin on repository events (issues, pull requests, pushes, workflow runs).
+
+### Setup
+
+1. Go to your GitHub **Repository** → **Settings** → **Webhooks**.
+2. Click **Add webhook**.
+3. **Payload URL:** your Relay trigger URL.
+4. **Content type:** `application/json`.
+5. Choose events (e.g. **Issues**, **Pull requests**, **Pushes**, **Workflow runs**).
+6. Save the webhook.
+
+### Example payload (issue opened)
+
+Use paths like `payload.action`, `payload.issue.title`, `payload.issue.body`, `payload.repository.full_name`.
+
+```json
+{
+  "action": "opened",
+  "issue": {
+    "number": 42,
+    "title": "Bug: Login page not loading",
+    "body": "Users report the login page hangs",
+    "state": "open"
+  },
+  "repository": {
+    "name": "my-app",
+    "full_name": "org/my-app"
+  }
+}
+```
+
+---
+
+## Custom service
+
+**Use case:** Any tool that can send HTTP POST with JSON.
+
+### Setup
+
+1. Configure your service to send **POST** requests.
+2. Set **Content-Type** header to `application/json`.
+3. Use your Relay trigger URL as the endpoint.
+4. Send a JSON body. Structure it so you can reference fields in conditions and templates (e.g. `payload.message`, `payload.action`).
+
+### Example payload
+
+```json
+{
+  "message": "Deploy failed on production",
+  "error_count": 3,
+  "action": "deploy_failed",
+  "repository": {
+    "name": "my-app",
+    "branch": "main"
+  }
+}
+```
+
+---
+
+## Using payload paths
+
+In **conditions** (Advanced settings) and **prompt templates**, use dot notation to reference the JSON payload:
+
+- `payload.event.message` — nested field
+- `payload.repository.name` — repository name
+- `payload.action` — top-level field
+
+Templates support variable substitution (e.g. Mustache-style `{{payload.event.message}}`). The rendered prompt is visible on each execution detail page.
+
+## Testing before going live
+
+Use the [Production Signals Library](https://devin-relay-testing.vercel.app) to fire mock events that match these shapes, or use the **Test webhook** block on the trigger detail page. See [Production Signals Library](/docs/guides/production-signals-library) and [Triggers](/docs/concepts/triggers).
+
+## See also
+
+- [Webhook API](/docs/reference/webhook-api) — Endpoint, headers, body, response
+- [Triggers](/docs/concepts/triggers) — Event flow and webhook URL
+- [Advanced settings](/docs/concepts/advanced-settings) — Conditions and path policy

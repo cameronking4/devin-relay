@@ -25,7 +25,7 @@ export default async function EditTriggerPage({
             <div>
                 <header className="flex w-full flex-col gap-1 border-border">
                     <h1 className="font-heading text-2xl font-bold">
-                        Edit trigger
+                        Edit trigger: {trigger.name}
                     </h1>
                     <p className="max-w-xl text-muted-foreground">
                         Update webhook trigger settings.

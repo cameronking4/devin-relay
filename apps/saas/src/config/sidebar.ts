@@ -13,6 +13,8 @@ import {
     UserRoundPlusIcon,
     UsersRoundIcon,
     WebhookIcon,
+    ZapIcon,
+    PlayIcon,
 } from "lucide-react";
 import { siteUrls } from "@/config/urls";
 
@@ -135,6 +137,16 @@ const navigation: SidebarNavItems[] = [
                 label: "Projects",
                 icon: WebhookIcon,
                 href: siteUrls.relay.projects,
+            },
+            {
+                label: "Triggers",
+                icon: ZapIcon,
+                href: siteUrls.relay.triggersAll,
+            },
+            {
+                label: "Executions",
+                icon: PlayIcon,
+                href: siteUrls.relay.executionsAll,
             },
         ],
     },

@@ -1,0 +1,57 @@
+---
+title: "Quickstart"
+description: "Create your first Relay project, add a Devin key, create a trigger, and fire a test webhook."
+---
+
+Get from zero to a working trigger and execution in a few minutes.
+
+## 1. Create a project
+
+In Relay, go to **Relay** in the sidebar and create a new project. Give it a name (e.g. "My first project"). Each project has its own triggers, workflows, and executions.
+
+## 2. Add your Devin API key
+
+Relay uses **your** Devin API key (BYOK). Keys are stored encrypted per project.
+
+1. Open your project.
+2. In the project settings or overview, find **Devin API key**.
+3. Paste your key and click **Validate** to confirm it works.
+4. Save. Relay will use this key for all executions in this project.
+
+Without a valid key, executions will fail at the Devin step. See [Devin](/docs/concepts/devin) for how sessions are run.
+
+## 3. Create a trigger
+
+A trigger is a webhook endpoint plus configuration: when an event arrives, Relay can run Devin with a prompt you define.
+
+1. In the project, go to **Triggers** and click **Create trigger** (or **New trigger**).
+2. **Basic info:** Name the trigger (e.g. "Sentry errors"), and optionally set source/event type for your own labeling.
+3. **Prompt:** Write a prompt template that tells Devin what to do. You can use the webhook payload in the prompt — e.g. `The user reported: {{payload.message}}`. See [Triggers](/docs/concepts/triggers) for template syntax.
+4. **Repository:** Set the GitHub repo (e.g. `owner/repo`) that Devin will work in. This is required for Devin to clone and edit code.
+5. **Webhook URL:** After saving, Relay shows your unique webhook URL: `https://your-domain/api/webhook/custom/{triggerId}`. Copy it for the next step.
+
+You can leave **Advanced settings** (conditions, threshold, path policy, concurrency, daily cap) for later. See [Advanced settings](/docs/concepts/advanced-settings) when you need them.
+
+## 4. Send a test webhook
+
+Two ways to test without wiring up a real service:
+
+**Option A — In-app test**  
+On the trigger detail page, use the **Test webhook** block. Paste a JSON payload and send; you'll see the response and can check **Executions** for the run.
+
+**Option B — Production Signals Library**  
+Use the [Production Signals Library](https://devin-relay-testing.vercel.app): paste your webhook URL, pick a service (e.g. Sentry, Vercel, GitHub), choose an event, and fire. The library sends production-style mock payloads. See [Production Signals Library](/docs/guides/production-signals-library) for details.
+
+## 5. View the execution
+
+1. Go to **Executions** in the project.
+2. Find the run for your test (status: pending → running → completed or failed).
+3. Open it to see the **rendered prompt**, **Devin output**, **error** (if any), and **latency**. If Devin created a session, use the link to open it in the Devin app.
+
+You've completed the loop: **webhook → trigger → prompt → Devin session → result.**
+
+## Next steps
+
+- [Triggers](/docs/concepts/triggers) — Webhook URL, event flow, and configuration
+- [Execution](/docs/concepts/execution) — Statuses, rerun, and viewing output
+- [Production Signals Library](/docs/guides/production-signals-library) — Test with 18+ services and 95+ events

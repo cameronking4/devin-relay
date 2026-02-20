@@ -1,0 +1,40 @@
+---
+title: "Devin"
+description: "How Relay uses your Devin API key: BYOK, prompt rendering, session flow, repository and path policy, rate limits and retries."
+---
+
+Relay uses **Devin** to run the actual AI session: it sends the rendered prompt to the Devin API and polls until the session reaches a terminal state, then stores the output (or error) on the execution.
+
+## BYOK (Bring your own key)
+
+You provide your own Devin API key per project. Relay stores it **encrypted at rest** and does not log it. Only the background worker decrypts the key when running an execution. You can validate the key from the project settings (or when adding it); Relay calls the Devin API to confirm it works.
+
+## How a run works
+
+1. **Prompt rendering** — Relay takes the trigger's (or workflow's) prompt template and the webhook payload, and renders the final prompt. Template variables (e.g. Mustache `{{payload.message}}`) are replaced with values from the payload. Context instructions (repository, branch, path policy, low-noise hint) are appended. See the execution detail to view the exact **rendered prompt** sent to Devin.
+
+2. **Session creation** — The worker calls the Devin API to create a session (POST). It sends the rendered prompt and any repo/path configuration.
+
+3. **Polling** — Relay polls the session until it reaches a terminal state (success or failure). Then it persists the output or error on the execution row and updates status to completed or failed.
+
+4. **Session link** — If Devin returns a session ID, Relay stores it and shows a link to open that session in the Devin app. Use it to inspect what Devin did in the repo.
+
+## Repository and path policy
+
+- **GitHub repository** — You set an `owner/repo` on the trigger (or workflow). Devin uses this repo: clone, branch, and file edits are scoped here.
+
+- **Path policy** — Optional **include** and **exclude** globs limit which files and folders Devin can modify. This is passed into the prompt/context so Devin stays within bounds (e.g. only `src/` or exclude `node_modules`).
+
+## Rate limits and retries
+
+If the Devin API returns **429 (rate limit)**, Relay enqueues a retry job with a delay (e.g. a few minutes). After a limited number of retries, the execution is marked failed. Concurrency is also controlled per trigger (see [Advanced settings](/docs/concepts/advanced-settings)) so you don't overwhelm the API.
+
+## Low-noise mode
+
+When **low-noise mode** is enabled for a trigger, Relay runs only one execution at a time for that trigger. If another event arrives while one is running, it re-enqueues the new run with a delay instead of starting in parallel. This reduces duplicate or overlapping Devin sessions for high-volume triggers.
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — Where prompt template and repo are set
+- [Execution](/docs/concepts/execution) — Where you see rendered prompt, output, and session link
+- [Advanced settings](/docs/concepts/advanced-settings) — Concurrency, daily cap, path policy, low-noise

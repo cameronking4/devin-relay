@@ -19,13 +19,12 @@ export const dynamic = "force-static";
 export default async function BlogsPage() {
     return (
         <WebPageWrapper>
-            <WebPageHeader title="Blog">
-                <p className="text-center text-base">
-                    <span>Get the latest news and updates</span>
-                </p>
-            </WebPageHeader>
+            <WebPageHeader
+                title="Blog"
+                description="Get the latest news and updates"
+            />
 
-            <Card className="w-full">
+            <Card className="w-full max-w-4xl">
                 <CardHeader>
                     <CardTitle>
                         All the latest news and updates from our blog

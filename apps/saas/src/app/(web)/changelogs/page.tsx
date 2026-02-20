@@ -37,14 +37,15 @@ export default async function ChangeLogPage() {
 
     return (
         <WebPageWrapper>
-            <WebPageHeader title="Change Log">
-                <p className="text-center text-base">
-                    <span>
+            <WebPageHeader
+                title="Change Log"
+                description={
+                    <>
                         All the latest features, fixes and work to{" "}
                         {siteConfig.name}.
-                    </span>
-                </p>
-            </WebPageHeader>
+                    </>
+                }
+            />
             <div className="grid w-full max-w-4xl gap-8">
                 {sortedChangelogs.map((changelog, index) => (
                     <ChangeLogCard key={index} {...changelog} />

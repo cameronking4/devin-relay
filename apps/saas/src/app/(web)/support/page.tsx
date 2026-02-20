@@ -26,14 +26,10 @@ export default function ContactPage() {
             <WebPageHeader
                 title={supportPageConfig.title}
                 badge="Platform & DevEx support"
-            >
-                <p>
-                    Questions about webhook setup, Devin integration, or
-                    engineering workflows? Reach out.
-                </p>
-            </WebPageHeader>
+                description="Questions about webhook setup, Devin integration, or engineering workflows? Reach out."
+            />
 
-            <div className="grid max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2">
                 {supportInfos.map((supportInfo) => (
                     <SupportCard key={supportInfo.title} {...supportInfo} />
                 ))}

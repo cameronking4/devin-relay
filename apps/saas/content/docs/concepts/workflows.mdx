@@ -1,0 +1,46 @@
+---
+title: "Workflows"
+description: "Event workflows combine multiple triggers with a time window and match mode (any/all). One execution per match with a batch payload."
+---
+
+**Workflows** let you run Devin when a combination of events from **multiple triggers** happens within a **time window**. For example: "When we get a Sentry error **and** a Vercel deployment failure in the same 15 minutes, run Devin once with both contexts."
+
+## How workflows work
+
+1. **Triggers** — You select one or more triggers that feed the workflow (e.g. Sentry alerts + Vercel deployment events).
+
+2. **Time window** — You set a window in minutes. When a new event arrives for any of those triggers, Relay looks back over that window for **unconsumed** events from the workflow's triggers.
+
+3. **Match mode** — You choose:
+   - **Any** — At least one of the selected triggers has at least one event in the window.
+   - **All** — Every selected trigger has at least one event in the window.
+
+4. **Optional conditions** — You can add workflow-level conditions on the events (e.g. filter by payload path/operator/value). Only events that pass these conditions count toward the match.
+
+5. **Execution** — When the match is satisfied, Relay enqueues **one** workflow execution job. The prompt receives a **batch payload**: events grouped by source (trigger), with optional summary and window metadata. Devin sees all relevant events in one run.
+
+6. **Consumed** — The events used for that workflow run are marked consumed for the workflow so they don't trigger the same workflow again.
+
+## Creating a workflow
+
+From the project's **Triggers** page, use **Event workflows** and **Create workflow**. You'll set:
+
+- **Name** — For your own reference.
+- **Triggers** — Check the triggers that should feed this workflow.
+- **Match mode** — Any or All.
+- **Time window (minutes)** — How far back to look when an event arrives.
+- **Conditions** — Optional filters on payloads.
+- **Prompt template** — The instruction for Devin; you can use the batch payload (e.g. `{{payload.sources}}`, `{{payload.summary}}`).
+- **GitHub repository** — The repo Devin will work in.
+
+## When to use workflows
+
+- **Correlation** — Run Devin when multiple signals occur together (e.g. error + deployment, or issue + comment).
+- **Batching** — Avoid running Devin on every single event; wait until "any" or "all" triggers have fired in the window, then run once with full context.
+- **Reducing noise** — Combine with threshold-like behavior by using "all" and a short window so Devin runs only when several things have happened.
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — Individual webhook endpoints that feed workflows
+- [Execution](/docs/concepts/execution) — Workflow runs appear in the execution list with workflow name
+- [Advanced settings](/docs/concepts/advanced-settings) — Per-trigger options (conditions, threshold, concurrency)

@@ -1,0 +1,53 @@
+---
+title: "Advanced settings"
+description: "Conditions, threshold, path policy, concurrency limit, daily cap, and low-noise mode for triggers."
+---
+
+Triggers support optional **advanced settings** to control which events run Devin, how often, and where Devin can work in the repo.
+
+## Conditions
+
+**Conditions** are AND filters on the webhook payload. Only events that pass all conditions will trigger an execution (or count toward threshold).
+
+- **Path** — A JSON path into the payload, e.g. `payload.event.level` or `payload.repository.name`.
+- **Operator** — Equals, not equals, contains, greater than, etc.
+- **Value** — The value to compare against.
+
+Example: `payload.event.level` equals `error` — only run Devin for error-level events. Use dot notation in templates too (e.g. `{{payload.event.message}}`). See [Integrations](/docs/guides/integrations) for example payloads.
+
+## Threshold
+
+**Threshold** lets you run Devin only after **N matching events** in a **time window** (minutes). For example: "Trigger only after 3 matching events in 10 minutes." This reduces noise when a single event isn't enough to act on, or when you want to batch.
+
+When the threshold is met, Relay enqueues an execution (or batch job) with the events in the window. You can also **backfill** from the trigger UI to process recent unconsumed events.
+
+## Path policy
+
+**Path policy** limits which files and folders Devin can modify in the repository.
+
+- **Include paths** — Glob patterns for paths Devin is allowed to touch (e.g. `src/**`). If empty, no include restriction.
+- **Exclude paths** — Glob patterns for paths Devin must not modify (e.g. `node_modules/**`, `*.lock`).
+
+These are passed into the prompt/context so Devin stays within bounds. Useful for large repos or when you want to restrict changes to a subdirectory.
+
+## Concurrency limit
+
+**Concurrency limit** is the maximum number of executions for this trigger that can be **running** at the same time. New events that would exceed the limit wait in the queue until a slot frees up. Use this to avoid overloading Devin or your repo when a trigger receives a burst of events.
+
+## Daily cap
+
+**Daily cap** is the maximum number of executions (for this trigger) that can run per calendar day. Once the cap is reached, new events for this trigger are not executed until the next day; they can still be stored for visibility. Useful for cost control or rate limiting.
+
+## Low-noise mode
+
+When **low-noise mode** is enabled, Relay runs only **one execution at a time** for this trigger. If an event arrives while one is already running, Relay re-enqueues the new run with a delay (e.g. 20 seconds) instead of starting it in parallel. This serializes executions per trigger and reduces duplicate or overlapping Devin sessions for high-volume sources.
+
+## Where to set these
+
+All of the above are available when **creating** or **editing** a trigger, in the **Advanced settings** section (often collapsible). Conditions and path policy can also be suggested from recent events: the UI may show inferred payload paths to help you build conditions.
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — Webhook URL and event flow
+- [Devin](/docs/concepts/devin) — How path policy and concurrency affect Devin runs
+- [Execution](/docs/concepts/execution) — How to see and rerun executions

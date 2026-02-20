@@ -1,0 +1,47 @@
+---
+title: "Triggers"
+description: "Triggers are webhook endpoints with config: name, prompt template, repo, conditions, and threshold. Learn the event flow and webhook URL."
+---
+
+A **trigger** is a webhook endpoint plus configuration. When a service sends a POST request to your trigger's URL, Relay can store the event, evaluate optional conditions and threshold, and run Devin with a prompt you define.
+
+## Webhook URL
+
+Each trigger has a unique URL:
+
+```
+{origin}/api/webhook/custom/{triggerId}
+```
+
+Example: `https://app.relay.dev/api/webhook/custom/clxyz123...`
+
+You get this URL after creating the trigger (on the trigger detail page and in the webhook setup step). Use it in Sentry, Vercel, GitHub, or any service that can send HTTP webhooks.
+
+## What you configure
+
+- **Name, source, event type** — For your own labeling and filtering.
+- **Prompt template** — The instruction sent to Devin. You can embed the webhook payload using template variables (e.g. Mustache-style `{{payload.message}}`). See [Devin](/docs/concepts/devin) for how the prompt is built.
+- **GitHub repository** — The `owner/repo` Devin will work in (required for code changes).
+- **Advanced settings** (optional): conditions, threshold, path policy, concurrency limit, daily cap, low-noise mode. See [Advanced settings](/docs/concepts/advanced-settings).
+
+## Event flow
+
+1. **POST** — A service sends a JSON payload (or form-encoded `payload`) to your trigger URL.
+2. **Validate** — Relay checks that the trigger exists, is enabled, and the payload is valid (e.g. valid JSON, within size limits).
+3. **Store** — The event is stored. This happens even for disabled triggers so you can test the connection and inspect payloads.
+4. **Conditions & threshold** — If configured, Relay evaluates payload conditions (e.g. `payload.event.level === "error"`) and threshold (e.g. "only run after 3 events in 10 minutes"). If they're not met, no execution is enqueued.
+5. **Workflow evaluation** — If any workflows include this trigger, Relay evaluates them (time window, match mode, workflow conditions). A workflow might consume multiple events and run once.
+6. **Execution** — If no workflow matched (or in addition, for single-event execution), Relay enqueues an execution job: render prompt, call Devin, persist output.
+
+The webhook handler returns `200` with `{ status: "ok", eventId?: "..." }` when the request is accepted. Disabled triggers still return 200 but do not enqueue executions.
+
+## Testing triggers
+
+- **Test webhook block** — On the trigger detail page you can send a test payload and see the response.
+- **Production Signals Library** — Use [devin-relay-testing.vercel.app](https://devin-relay-testing.vercel.app) to fire production-style mock events from 18+ services. See [Production Signals Library](/docs/guides/production-signals-library).
+
+## See also
+
+- [Advanced settings](/docs/concepts/advanced-settings) — Conditions, threshold, path policy, concurrency, daily cap, low-noise
+- [Workflows](/docs/concepts/workflows) — Combine multiple triggers with a time window and match mode
+- [Webhook API](/docs/reference/webhook-api) — Full endpoint reference

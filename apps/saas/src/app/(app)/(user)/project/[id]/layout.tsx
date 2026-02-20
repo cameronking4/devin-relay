@@ -15,8 +15,7 @@ export default async function ProjectLayout({
     if (!project) notFound();
 
     return (
-        <div className="w-full space-y-6">
-            <div className="mt-16"><div className="h-1 w-full bg-border rounded-full"></div></div>
+        <div className="mt-12 w-full space-y-4">
             <ProjectBreadcrumbActions
                 projectId={id}
                 projectName={project.name}

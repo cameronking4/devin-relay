@@ -1,0 +1,102 @@
+---
+title: "Webhook API"
+description: "Reference for POST /api/webhook/custom/[triggerId]: headers, body, response, and behavior."
+---
+
+Relay exposes one webhook endpoint per trigger. Send POST requests with a JSON payload (or form-encoded body) to enqueue executions and/or feed workflows.
+
+## Endpoint
+
+```
+POST /api/webhook/custom/{triggerId}
+```
+
+Replace `{triggerId}` with your trigger's ID (shown in the trigger URL in the Relay UI).
+
+## Headers
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `Content-Type` | Yes | `application/json` for raw JSON body, or `application/x-www-form-urlencoded` when sending the payload in a form field (see Body). |
+
+### Optional (idempotency)
+
+| Header | Description |
+|--------|-------------|
+| `X-Relay-Delivery-Id` | Unique ID for this delivery. If the same ID is sent again for the same trigger, Relay returns 200 without creating a duplicate event or execution. |
+| `X-GitHub-Delivery` | Same behavior as `X-Relay-Delivery-Id` (GitHub sends this; Relay accepts it for idempotency). |
+
+If neither is provided, Relay derives an idempotency key from a hash of the request body. Identical bodies may be deduplicated.
+
+## Body
+
+### JSON
+
+Send the request body as raw JSON:
+
+```
+Content-Type: application/json
+```
+
+The body must be valid JSON. It is stored as the event payload and used for conditions, threshold, and prompt rendering.
+
+### Form-encoded (alternative)
+
+Some services only support form-encoded POSTs. Send the JSON as a string in a single field named `payload`:
+
+```
+Content-Type: application/x-www-form-urlencoded
+
+payload={"event":{"message":"Error"}}
+```
+
+The `payload` value must be valid JSON once decoded.
+
+### Size limit
+
+Maximum body size is **512 KB**. Larger requests receive `413 Payload too large`.
+
+## Response
+
+### Success (200)
+
+When the request is accepted:
+
+```json
+{
+  "status": "ok",
+  "eventId": "evt_..."
+}
+```
+
+- **eventId** — Present when a new event was stored. Omitted when the trigger is disabled, when conditions didn't pass, or when the delivery was deduplicated (same idempotency key).
+- The trigger may still enqueue an execution (or workflow evaluation) depending on conditions, threshold, and workflow rules. A 200 response only means the request was accepted; it does not guarantee that Devin ran.
+
+### Error (4xx)
+
+| Status | Body | Meaning |
+|--------|------|---------|
+| 400 | `{ "error": "Invalid body" }` | Request body could not be read. |
+| 400 | `{ "error": "Missing payload in form body" }` | Form-encoded request had no `payload` field. |
+| 400 | `{ "error": "Empty body" }` | No body or empty body. |
+| 400 | `{ "error": "Invalid JSON" }` | Body (or `payload` field) is not valid JSON. |
+| 404 | `{ "error": "Trigger not found" }` | No trigger exists for the given `triggerId`. |
+| 413 | `{ "error": "Payload too large" }` | Body exceeds 512 KB. |
+| 500 | `{ "error": "Failed to store event" }` | Internal error storing the event (rare). |
+
+## Behavior summary
+
+1. **Validate** — Trigger exists and body is valid JSON within size limit.
+2. **Disabled trigger** — If the trigger is disabled, Relay returns 200 and does not store an event or enqueue work. (Some setups may still store for testing; current implementation returns 200 without eventId when disabled.)
+3. **Idempotency** — If an event with the same delivery ID already exists for this trigger, returns 200 with existing `eventId` and does not create a new event or execution.
+4. **Conditions** — If the trigger has conditions and the payload does not pass them, Relay returns 200 with `{ "status": "ok" }` and does not store an event or enqueue an execution. When conditions pass, the event is stored and execution/workflow logic runs.
+5. **Store event** — Event is inserted with trigger ID, project ID, delivery ID, and raw payload.
+6. **Threshold** — If the trigger uses a threshold (e.g. N events in M minutes), Relay may not enqueue a single-event execution until the threshold is met; it may enqueue a batch job when the threshold is reached. Workflow evaluation still runs when applicable.
+7. **Workflow evaluation** — All enabled workflows that include this trigger are evaluated (time window, match mode, conditions). If a workflow matches, a workflow execution job is enqueued.
+8. **Single execution** — If no threshold is in use (or threshold is met with a single event), a single-event execution job is enqueued.
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — Webhook URL and event flow
+- [Production Signals Library](/docs/guides/production-signals-library) — Test with mock payloads
+- [Integrations](/docs/guides/integrations) — Sentry, Vercel, GitHub, custom

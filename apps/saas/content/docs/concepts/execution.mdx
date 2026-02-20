@@ -1,0 +1,48 @@
+---
+title: "Execution"
+description: "An execution is one run of the pipeline: event to prompt to Devin session to result. Statuses, viewing output, and rerun."
+---
+
+An **execution** is one run of the Relay pipeline: **event → rendered prompt → Devin session → result.** Each webhook event (or workflow match) can create one or more executions, each stored with full context for debugging and audit.
+
+## Lifecycle
+
+1. **Enqueued** — The webhook or workflow engine adds a job to the queue.
+2. **Pending** — The job is waiting for a worker to pick it up.
+3. **Running** — A worker has started: prompt is rendered, Devin session is created and run.
+4. **Completed** or **Failed** — The run finished. Output (and error, if any) are stored; you can see latency and a link to the Devin session when applicable.
+
+## Where to see executions
+
+- **Project → Executions** — List of all executions for the project. Filter by trigger, workflow, status, and time.
+- **Execution detail** — Click an execution to see:
+  - **Rendered prompt** — The final prompt sent to Devin (after template + payload substitution).
+  - **Output** — What Devin returned (e.g. terminal output, result).
+  - **Error** — If the run failed (e.g. Devin API error, timeout).
+  - **Latency** — Time from start to completion.
+  **Devin session link** — If Relay has a session ID, a link opens that session in the Devin app.
+
+Project overview cards also show **Executions today** and **Last execution** for a quick read.
+
+## Rerun
+
+From the execution detail (or list), you can **Rerun** an execution. Relay re-enqueues a job with the same event (or same workflow and events). Useful for retrying after a transient failure or after changing Devin behavior.
+
+## Backfill
+
+For triggers that use **threshold** (e.g. "run after N events in a window"), you can **backfill**: Relay will look at recent unconsumed events for that trigger and enqueue batch jobs as if the threshold had been met. This is an advanced action from the trigger or project UI when you need to catch up after downtime or config changes.
+
+## Status summary
+
+| Status     | Meaning |
+|-----------|---------|
+| Pending   | Job is in the queue, not yet started. |
+| Running   | Worker is executing: prompt rendered, Devin session in progress. |
+| Completed | Run finished successfully; output stored. |
+| Failed    | Run ended with an error; error message stored. |
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — How events become executions
+- [Devin](/docs/concepts/devin) — How Relay calls Devin and renders the prompt
+- [Workflows](/docs/concepts/workflows) — Workflow-driven executions

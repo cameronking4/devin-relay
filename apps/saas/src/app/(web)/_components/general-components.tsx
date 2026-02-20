@@ -27,14 +27,20 @@ export function WebPageWrapper({
     );
 }
 
+const PAGE_HEADER_DESCRIPTION_CLASS =
+    "text-center text-base text-muted-foreground max-w-2xl sm:text-lg";
+
 // This is a page heading used in all public web pages
 export function WebPageHeader({
     title,
     badge,
+    description,
     children,
 }: {
     title: string;
     badge?: string;
+    /** Rendered below the title with consistent subtitle styling */
+    description?: React.ReactNode;
     children?: React.ReactNode;
 }) {
     return (
@@ -51,7 +57,10 @@ export function WebPageHeader({
                 {title}
             </Balancer>
 
-            {children && children}
+            {description != null && (
+                <div className={PAGE_HEADER_DESCRIPTION_CLASS}>{description}</div>
+            )}
+            {children != null && children}
         </div>
     );
 }

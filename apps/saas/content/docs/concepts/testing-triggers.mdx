@@ -1,0 +1,43 @@
+---
+title: "Testing triggers"
+description: "Validate triggers and payloads with the in-app Test webhook block and the Production Signals Library before connecting real services."
+---
+
+Before connecting a real integration (Sentry, Vercel, GitHub, etc.), you can validate that your trigger accepts payloads and runs executions as expected. Relay provides two main options.
+
+## In-app Test webhook block
+
+On the **trigger detail page** in Relay, use the **Test webhook** block.
+
+1. Open your project → **Triggers** → select the trigger.
+2. Find the **Test webhook** section.
+3. Paste or type a JSON payload (e.g. a minimal `{ "message": "Test" }` or a full sample matching your integration).
+4. Send the request. You'll see the HTTP response (status and body).
+5. Go to **Executions** for the project to see the run (pending → running → completed/failed) and inspect the rendered prompt and Devin output.
+
+This is ideal for quick one-off tests and for payloads you craft yourself (e.g. to test conditions or template variables).
+
+## Production Signals Library
+
+The [Production Signals Library](https://devin-relay-testing.vercel.app) lets you fire **production-style mock events** without configuring real services.
+
+1. Copy your trigger's webhook URL from Relay.
+2. Open [devin-relay-testing.vercel.app](https://devin-relay-testing.vercel.app) and paste the URL (Step 1). The app stores it in your browser.
+3. Pick a **service** (e.g. Sentry, Vercel, GitHub) and an **event type** (e.g. "Deployment Error", "Issue Alert Triggered").
+4. Fire the event. The library POSTs the mock payload to your trigger and shows the response.
+5. In Relay, check **Executions** to see the run and verify prompt rendering and Devin behavior.
+
+Mock payloads follow or resemble official docs for each service, so paths like `payload.event.message` or `payload.repository.name` work as they would with real webhooks. See [Production Signals Library](/docs/guides/production-signals-library) for the full list of services and events.
+
+## Recommended flow
+
+1. **Create** the trigger (name, prompt template, repo, optional advanced settings).
+2. **Test** with the in-app block or the Signals Library to confirm the payload is accepted and an execution is created.
+3. **Inspect** the execution (rendered prompt, output, errors) and adjust the template or conditions as needed.
+4. **Connect** the real integration using the same webhook URL (see [Integrations](/docs/guides/integrations)).
+
+## See also
+
+- [Triggers](/docs/concepts/triggers) — Webhook URL and event flow
+- [Production Signals Library](/docs/guides/production-signals-library) — 18 services, 95+ events
+- [Webhook API](/docs/reference/webhook-api) — Endpoint reference

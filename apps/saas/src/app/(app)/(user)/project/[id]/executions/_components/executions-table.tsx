@@ -121,9 +121,15 @@ export function ExecutionsTable({
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex flex-col gap-0.5">
-                                        <span className="font-medium">
+                                        <Link
+                                            href={siteUrls.relay.trigger(
+                                                projectId,
+                                                e.triggerId,
+                                            )}
+                                            className="font-medium hover:underline"
+                                        >
                                             {e.triggerName ?? "—"}
-                                        </span>
+                                        </Link>
                                         {e.triggerSource && (
                                             <span className="text-muted-foreground text-xs">
                                                 {e.triggerSource}

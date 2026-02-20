@@ -1,0 +1,47 @@
+---
+title: "Production Signals Library"
+description: "Test Relay with production-ready mocked webhook events. 18 services, 95+ events at devin-relay-testing.vercel.app."
+---
+
+The **Production Signals Library** is a standalone app that lets you test Relay with production-style webhook payloads without configuring real integrations. Use it to validate triggers, try different event types, and debug payload paths before connecting Sentry, Vercel, GitHub, or other services.
+
+**URL:** [https://devin-relay-testing.vercel.app](https://devin-relay-testing.vercel.app)
+
+## What it does
+
+- **18 services** — Sentry, Vercel, Prometheus, Datadog, Grafana, PagerDuty, GitHub, Vanta, CrowdStrike Falcon, Linear, PostHog, Logflare, OpenTelemetry, Azure Monitor, Azure DevOps, Typeform, AWS CloudWatch, Dynatrace.
+- **95+ events** — Each service has multiple event types (e.g. Sentry issue alert, deployment error, GitHub push, PagerDuty incident triggered). Mock payloads follow official docs where applicable.
+- **Your webhook URL** — You paste your Relay trigger URL; the library stores it in localStorage and sends POST requests to it when you fire an event.
+- **Response log** — You see the HTTP response from Relay (e.g. `200` and `eventId`) so you can confirm delivery and then check **Executions** in Relay.
+
+## How to use
+
+### Step 1 — Webhook URL
+
+1. In Relay, open your project and go to **Triggers**.
+2. Create a trigger (or open an existing one) and copy its **Webhook URL**: `https://your-relay-domain/api/webhook/custom/{triggerId}`.
+3. Open [devin-relay-testing.vercel.app](https://devin-relay-testing.vercel.app).
+4. In **Step 1**, paste your webhook URL. The app saves it in your browser (localStorage) for the next visit.
+
+### Step 2 — Pick a service
+
+Choose one of the 18 services (e.g. Sentry, Vercel, GitHub). The library shows the events available for that service.
+
+### Step 3 — Fire events
+
+1. Select an event type (e.g. "Deployment Error" for Vercel, "Issue Alert Triggered" for Sentry).
+2. Click to send the event. The library POSTs the mock payload to your webhook URL with `Content-Type: application/json` and sets `X-Relay-Delivery-Id` for idempotency.
+3. Check the response in the app (status and body).
+4. In Relay, go to **Executions** for that project to see the run (and the rendered prompt, Devin output, etc.).
+
+## Details
+
+- **Payload format** — Mock payloads are designed to match or resemble real webhook payloads from each service, so conditions and prompt templates that use paths like `payload.event.message` or `payload.repository.name` work as expected.
+- **Same endpoint** — The library calls the same `POST /api/webhook/custom/{triggerId}` endpoint that real integrations use. See [Webhook API](/docs/reference/webhook-api) for the full reference.
+- **No auth** — The library does not store or send any auth tokens; it only sends the JSON body and standard headers. Your Relay app’s trigger ID in the URL is the only identifier.
+
+## Next steps
+
+- [Integrations](/docs/guides/integrations) — Set up real Sentry, Vercel, GitHub, or custom webhooks.
+- [Webhook API](/docs/reference/webhook-api) — Endpoint spec, headers, and response codes.
+- [Triggers](/docs/concepts/triggers) — Event flow and testing with the in-app test webhook block.

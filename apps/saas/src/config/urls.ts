@@ -59,6 +59,10 @@ export const siteUrls = {
     },
     relay: {
         projects: "/project",
+        /** Org-level: browse all triggers across projects */
+        triggersAll: "/triggers",
+        /** Org-level: browse all executions across projects */
+        executionsAll: "/executions",
         projectNew: "/project/new",
         project: (id: string) => `/project/${id}`,
         triggers: (projectId: string) => `/project/${projectId}/triggers`,
@@ -93,6 +97,8 @@ export const publicRoutes: string[] = [
 export const protectedRoutes: string[] = [
     siteUrls.dashboard.home,
     siteUrls.relay.projects,
+    siteUrls.relay.triggersAll,
+    siteUrls.relay.executionsAll,
     siteUrls.feedback,
     siteUrls.organization.members.home,
     siteUrls.organization.members.invite,

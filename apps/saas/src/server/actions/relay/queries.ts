@@ -367,6 +367,160 @@ export async function getWorkflowById(workflowId: string, projectId: string) {
     return workflow;
 }
 
+/** All triggers for the current org with project name, for org-level browse. */
+export async function getTriggersForOrg(opts?: {
+    projectId?: string;
+    enabled?: boolean;
+    limit?: number;
+}) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return [];
+
+    const projectIds = await db
+        .select({ id: relayProjects.id, name: relayProjects.name })
+        .from(relayProjects)
+        .where(eq(relayProjects.orgId, currentOrg.id));
+    const ids = projectIds.map((p) => p.id);
+    if (ids.length === 0) return [];
+
+    const limit = opts?.limit ?? 200;
+    const conditions = [inArray(relayTriggers.projectId, ids)];
+    if (opts?.projectId) {
+        conditions.push(eq(relayTriggers.projectId, opts.projectId));
+    }
+    if (opts?.enabled !== undefined) {
+        conditions.push(eq(relayTriggers.enabled, opts.enabled));
+    }
+
+    const triggers = await db
+        .select({
+            id: relayTriggers.id,
+            projectId: relayTriggers.projectId,
+            name: relayTriggers.name,
+            source: relayTriggers.source,
+            eventType: relayTriggers.eventType,
+            conditions: relayTriggers.conditions,
+            enabled: relayTriggers.enabled,
+            createdAt: relayTriggers.createdAt,
+            projectName: relayProjects.name,
+        })
+        .from(relayTriggers)
+        .innerJoin(
+            relayProjects,
+            eq(relayTriggers.projectId, relayProjects.id),
+        )
+        .where(and(...conditions))
+        .orderBy(desc(relayTriggers.createdAt))
+        .limit(limit);
+
+    const triggerIds = triggers.map((t) => t.id);
+    if (triggerIds.length === 0) return triggers;
+
+    const lastEvents = await db
+        .select({
+            triggerId: relayEvents.triggerId,
+            lastTriggeredAt: sql<Date>`max(${relayEvents.receivedAt})`,
+        })
+        .from(relayEvents)
+        .where(inArray(relayEvents.triggerId, triggerIds))
+        .groupBy(relayEvents.triggerId);
+    const lastByTrigger = new Map(
+        lastEvents.map((r) => [r.triggerId, r.lastTriggeredAt]),
+    );
+
+    return triggers.map((t) => ({
+        ...t,
+        lastTriggeredAt: lastByTrigger.get(t.id) ?? null,
+    }));
+}
+
+/** All executions for the current org with project/trigger/workflow names, for org-level browse. */
+export async function getExecutionsForOrg(opts?: {
+    projectId?: string;
+    status?: string;
+    limit?: number;
+}) {
+    const { currentOrg } = await getOrganizations();
+    if (!currentOrg) return [];
+
+    const projectIds = await db
+        .select({ id: relayProjects.id, name: relayProjects.name })
+        .from(relayProjects)
+        .where(eq(relayProjects.orgId, currentOrg.id));
+    const ids = projectIds.map((p) => p.id);
+    if (ids.length === 0) return [];
+
+    const limit = opts?.limit ?? 200;
+    const conditions = [inArray(relayExecutions.projectId, ids)];
+    if (opts?.projectId) {
+        conditions.push(eq(relayExecutions.projectId, opts.projectId));
+    }
+    if (opts?.status) {
+        conditions.push(
+            eq(
+                relayExecutions.status,
+                opts.status as "pending" | "running" | "completed" | "failed",
+            ),
+        );
+    }
+
+    const rows = await db
+        .select({
+            id: relayExecutions.id,
+            eventId: relayExecutions.eventId,
+            eventIds: relayExecutions.eventIds,
+            projectId: relayExecutions.projectId,
+            triggerId: relayExecutions.triggerId,
+            workflowId: relayExecutions.workflowId,
+            status: relayExecutions.status,
+            latencyMs: relayExecutions.latencyMs,
+            error: relayExecutions.error,
+            startedAt: relayExecutions.startedAt,
+            completedAt: relayExecutions.completedAt,
+            createdAt: relayExecutions.createdAt,
+            triggerName: relayTriggers.name,
+            triggerSource: relayTriggers.source,
+            triggerEventType: relayTriggers.eventType,
+            aiSessionId: relayExecutions.aiSessionId,
+            eventReceivedAt: relayEvents.receivedAt,
+        })
+        .from(relayExecutions)
+        .innerJoin(
+            relayTriggers,
+            eq(relayExecutions.triggerId, relayTriggers.id),
+        )
+        .innerJoin(
+            relayEvents,
+            eq(relayExecutions.eventId, relayEvents.id),
+        )
+        .where(and(...conditions))
+        .orderBy(desc(relayExecutions.createdAt))
+        .limit(limit);
+
+    const projectNameMap = new Map(projectIds.map((p) => [p.id, p.name]));
+    const workflowIds = [
+        ...new Set(
+            rows.map((r) => r.workflowId).filter((id): id is string => id != null),
+        ),
+    ];
+    const workflowNames =
+        workflowIds.length > 0
+            ? await db
+                  .select({ id: relayWorkflows.id, name: relayWorkflows.name })
+                  .from(relayWorkflows)
+                  .where(inArray(relayWorkflows.id, workflowIds))
+            : [];
+    const workflowNameMap = new Map(workflowNames.map((w) => [w.id, w.name]));
+
+    return rows.map((r) => ({
+        ...r,
+        projectName: projectNameMap.get(r.projectId) ?? "Unknown",
+        workflowName: r.workflowId
+            ? workflowNameMap.get(r.workflowId) ?? null
+            : null,
+    }));
+}
+
 export async function getDevinSessionsForOrg(opts?: {
     status?: string;
     projectId?: string;

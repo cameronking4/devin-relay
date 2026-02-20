@@ -1,0 +1,91 @@
+---
+title: "Installation"
+description: "Install and run Relay locally. Prerequisites, clone, env, database, and worker."
+---
+
+This guide covers running the Relay app (SaaS) locally for development or self-hosting.
+
+## Prerequisites
+
+- **Node.js** 18.x or later
+- **pnpm** — the repo uses pnpm workspaces (use `pnpm install`, not npm/yarn)
+- **PostgreSQL** — for the app database
+- **Redis** — for the job queue (BullMQ)
+
+## From repo root
+
+Relay lives in the `apps/saas` workspace. From the monorepo root:
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/cameronking4/devin-relay.git
+cd devin-relay
+pnpm install
+```
+
+### 2. Create the database
+
+```bash
+createdb saas_dev
+```
+
+(Or use your preferred PostgreSQL setup; ensure the connection URL in `.env` matches.)
+
+### 3. Environment
+
+Copy the example env and set required variables:
+
+```bash
+cd apps/saas
+cp .env.example .env
+```
+
+At minimum:
+
+- **NEXTAUTH_SECRET** — required for auth. Generate with: `openssl rand -base64 32`
+- **DATABASE_URL** — PostgreSQL connection string
+- **REDIS_URL** or equivalent — for the execution queue
+
+For full functionality you'll also need: Devin API key, GitHub App (optional), Resend (optional), PostHog (optional). See the app's README for details.
+
+### 4. Apply schema
+
+```bash
+pnpm db:migrate
+```
+
+### 5. Run the app and worker
+
+**Terminal 1 — Next.js dev server:**
+
+```bash
+pnpm --filter=saas dev
+```
+
+**Terminal 2 — Background worker (processes webhook executions):**
+
+```bash
+pnpm --filter=saas worker
+```
+
+Or from `apps/saas`: `pnpm dev` and `pnpm worker`.
+
+### 6. Open the app
+
+Open [http://localhost:3000](http://localhost:3000) in your browser. Sign in (OAuth or credentials as configured) and create a project to get started.
+
+## Scripts reference
+
+| Command | Description |
+|--------|--------------|
+| `pnpm dev` | Next.js dev server |
+| `pnpm dev:demo` | Run without full env validation (UI exploration) |
+| `pnpm worker` | Run the Relay job worker |
+| `pnpm db:migrate` | Apply Drizzle migrations |
+| `pnpm db:generate` | Generate new migrations |
+| `pnpm db:studio` | Open Drizzle Studio |
+
+## Next
+
+- [Quickstart](/docs/getting-started/quickstart) — Create your first project, trigger, and fire a webhook.
