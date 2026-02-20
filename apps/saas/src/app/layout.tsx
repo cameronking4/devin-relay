@@ -9,6 +9,7 @@ import {
     twitterMetadata,
     ogMetadata,
 } from "@/app/shared-metadata";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
     ...defaultMetadata,
@@ -34,6 +35,7 @@ export default function RootLayout({
                     {children}
                     <Toaster richColors position="top-right" expand />
                 </Providers>
+                <Analytics />
             </body>
         </html>
     );

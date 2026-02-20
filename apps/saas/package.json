@@ -44,6 +44,7 @@
         "@tanstack/react-table": "^8.16.0",
         "@types/mdx": "^2.0.13",
         "@uploadthing/react": "^6.4.4",
+        "@vercel/analytics": "^1.5.0",
         "bullmq": "^5.34.5",
         "canvas-confetti": "^1.9.4",
         "class-variance-authority": "^0.7.1",
