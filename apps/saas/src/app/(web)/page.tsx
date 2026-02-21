@@ -48,7 +48,7 @@ export default async function HomePage() {
                     >
                         <Icons.gitHub className="mr-2 h-4 w-4" />View Source on Github
                     </Link>
-
+{/* 
                     <Link
                         href={siteUrls.auth.signup}
                         className={buttonVariants()}
@@ -57,7 +57,7 @@ export default async function HomePage() {
                         <span className="ml-1 font-light italic">
                             — no code or card required
                         </span>
-                    </Link>
+                    </Link> */}
                 </div>
             </WebPageHeader>
 

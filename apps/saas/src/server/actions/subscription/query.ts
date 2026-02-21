@@ -122,87 +122,110 @@ export async function getSubscriptionsCount({
     status,
 }: SubscriptionCountByMonth) {
     await protectedProcedure();
-    configureLemonSqueezy();
 
     const dateBeforeMonths = subMonths(new Date(), 6);
-
     const startDateOfTheMonth = startOfMonth(dateBeforeMonths);
-
-    const subscriptions = await listSubscriptions({
-        filter: {
-            storeId: env.LEMONSQUEEZY_STORE_ID,
-            status,
-        },
-    });
-
     const months = eachMonthOfInterval({
         start: startDateOfTheMonth,
         end: new Date(),
     });
 
-    const subscriptionsCountByMonth = months.map((month) => {
-        const monthStr = format(month, "MMM-yyy");
-        const count =
-            subscriptions.data?.data.filter(
-                (subscription) =>
-                    format(
-                        new Date(subscription.attributes.created_at),
-                        "MMM-yyy",
-                    ) === monthStr,
-            )?.length ?? 0;
-        return { Date: monthStr, SubsCount: count };
-    });
+    const emptyCountByMonth = months.map((month) => ({
+        Date: format(month, "MMM-yyy"),
+        SubsCount: 0,
+    }));
 
-    return {
-        totalCount: subscriptions.data?.data.length ?? 0,
-        subscriptionsCountByMonth,
-    };
+    try {
+        configureLemonSqueezy();
+
+        const subscriptions = await listSubscriptions({
+            filter: {
+                storeId: env.LEMONSQUEEZY_STORE_ID,
+                status,
+            },
+        });
+
+        const subscriptionsCountByMonth = months.map((month) => {
+            const monthStr = format(month, "MMM-yyy");
+            const count =
+                subscriptions.data?.data.filter(
+                    (subscription) =>
+                        format(
+                            new Date(subscription.attributes.created_at),
+                            "MMM-yyy",
+                        ) === monthStr,
+                )?.length ?? 0;
+            return { Date: monthStr, SubsCount: count };
+        });
+
+        return {
+            totalCount: subscriptions.data?.data.length ?? 0,
+            subscriptionsCountByMonth,
+        };
+    } catch {
+        return {
+            totalCount: 0,
+            subscriptionsCountByMonth: emptyCountByMonth,
+        };
+    }
 }
 
 export async function getRevenueCount() {
     await protectedProcedure();
-    configureLemonSqueezy();
 
     const dateBeforeMonths = subMonths(new Date(), 6);
-
     const startDateOfTheMonth = startOfMonth(dateBeforeMonths);
-
-    const orders = await listOrders({
-        filter: {
-            storeId: env.LEMONSQUEEZY_STORE_ID,
-        },
-    });
-
-    const totalRevenue =
-        orders.data?.data.reduce(
-            (acc, order) => acc + order.attributes.total,
-            0,
-        ) ?? 0;
-
     const months = eachMonthOfInterval({
         start: startDateOfTheMonth,
         end: new Date(),
     });
 
-    const revenueCountByMonth = months.map((month) => {
-        const monthStr = format(month, "MMM-yyy");
-        const revenueCount =
-            orders.data?.data
-                .filter(
-                    (order) =>
-                        format(
-                            new Date(order.attributes.created_at),
-                            "MMM-yyy",
-                        ) === monthStr,
-                )
-                ?.reduce((acc, order) => acc + order.attributes.total, 0) ?? 0;
+    const emptyRevenueByMonth = months.map((month) => ({
+        Date: format(month, "MMM-yyy"),
+        RevenueCount: 0,
+    }));
 
-        const count = revenueCount / 100;
-        return { Date: monthStr, RevenueCount: count };
-    });
+    try {
+        configureLemonSqueezy();
 
-    return {
-        totalRevenue: totalRevenue / 100,
-        revenueCountByMonth,
-    };
+        const orders = await listOrders({
+            filter: {
+                storeId: env.LEMONSQUEEZY_STORE_ID,
+            },
+        });
+
+        const totalRevenue =
+            orders.data?.data.reduce(
+                (acc, order) => acc + order.attributes.total,
+                0,
+            ) ?? 0;
+
+        const revenueCountByMonth = months.map((month) => {
+            const monthStr = format(month, "MMM-yyy");
+            const revenueCount =
+                orders.data?.data
+                    .filter(
+                        (order) =>
+                            format(
+                                new Date(order.attributes.created_at),
+                                "MMM-yyy",
+                            ) === monthStr,
+                    )
+                    ?.reduce((acc, order) => acc + order.attributes.total, 0) ??
+                0;
+
+            const count = revenueCount / 100;
+            return { Date: monthStr, RevenueCount: count };
+        });
+
+        return {
+            totalRevenue: totalRevenue / 100,
+            revenueCountByMonth,
+        };
+    } catch {
+        return {
+            totalRevenue: 0,
+            revenueCountByMonth: emptyRevenueByMonth,
+        };
+    }
 }
